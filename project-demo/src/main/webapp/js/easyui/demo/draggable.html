@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Draggable - jQuery EasyUI demo</title>
+	<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="demo.css">
+	<style type="text/css">
+		.cc{
+			position:relative;
+			overflow:auto;
+			width:400px;
+			height:200px;
+			background:#fafafa;
+			border:1px solid #ccc;
+		}
+		#dd1{
+			margin:0px;
+			width:100px;
+			height:100px;
+			background:#fff;
+			border:1px solid #ccc;
+		}
+		#dd2{
+			width:100px;
+			height:100px;
+			background:#fafafa;
+			border:1px solid #ccc;
+			position:absolute;
+			left:600px;
+			top:200px;
+		}
+		#dd3{
+			width:100px;
+			height:100px;
+			background:red;
+			position:absolute;
+			left:450px;
+			top:200px;
+		}
+	</style>
+	<script type="text/javascript" src="../jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="../jquery.easyui.min.js"></script>
+	<script>
+		$(function(){
+			$('#dd1').draggable();
+			$('#dd2').draggable({axis:null,handle:'#title'});
+			$('#dd3').draggable();
+		});
+
+		function start(){
+			$('#dd1').draggable({disabled:false,edge:5});
+		}
+		function stop(){
+			$('#dd1').draggable({disabled:true});
+		}
+	</script>
+</head>
+<body>
+	<h2>Draggable</h2>
+	<div class="demo-info">
+		<div class="demo-tip icon-tip"></div>
+		<div>
+			Move below box by clicking on it with mouse.
+		</div>
+	</div>
+	<div style="margin:10px 0"></div>
+	
+	<div class="cc">
+		<div id="dd1">
+			<a href="#" onclick="start()">Start Drag</a><br/>
+			<a href="#" onclick="stop()">Stop Drag</a>
+		</div>
+	</div>
+	<div id="dd2">
+		<div id="title" style="padding:5px;background:#ccc;">Title</div>
+	</div>
+	<div id="dd3"></div>
+</body>
+</html>

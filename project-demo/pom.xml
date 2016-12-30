@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.github.jeffreyning</groupId>
+  <artifactId>project-demo</artifactId>
+  <version>0.0.1-RELEASE</version>
+  <packaging>war</packaging>
+  
+  <dependencies>
+    	<dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+  	  	<dependency>
+  		<groupId>com.github.minxinjituan</groupId>
+  		<artifactId>micro-executor-core</artifactId>
+  		<version>0.0.1-RELEASE</version>
+  	</dependency>
+	<dependency>
+  		<groupId>com.github.minxinjituan</groupId>
+  		<artifactId>micro-executor-cxf</artifactId>
+  		<version>0.0.1-RELEASE</version>
+  	</dependency>
+
+  	<dependency>
+  		<groupId>com.github.minxinjituan</groupId>
+  		<artifactId>micro-executor-spring</artifactId>
+  		<version>0.0.1-RELEASE</version>
+  	</dependency>  	
+	<dependency>
+  		<groupId>com.github.jeffreyning</groupId>
+  		<artifactId>nh-micro-engine</artifactId>
+  		<version>0.0.1-RELEASE</version>
+  	</dependency> 
+	<dependency>
+  		<groupId>com.github.jeffreyning</groupId>
+  		<artifactId>nhesb-service-servlet</artifactId>
+  		<version>0.0.3-RELEASE</version>
+  	</dependency>   
+  	
+  	<dependency>
+  		<groupId>com.github.jeffreyning</groupId>
+  		<artifactId>nhcache-base</artifactId>
+  		<version>0.0.1-RELEASE</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.github.jeffreyning</groupId>
+  		<artifactId>nhcache-redis</artifactId>
+  		<version>0.0.1-RELEASE</version>
+  	</dependency>  
+  </dependencies>
+  
+    <build>
+      <pluginManagement>
+          <plugins>	
+               <plugin>
+                  <artifactId>maven-compiler-plugin</artifactId>
+                  <version>3.5.1</version>
+                  <configuration>
+                      <source>1.6</source>
+                      <target>1.6</target>
+                      <encoding>UTF-8</encoding>
+                         <compilerArguments>
+	            			<extdirs>${project.basedir}/src/main/webapp/WEB-INF/lib</extdirs>
+	      					</compilerArguments>
+                  </configuration>
+              </plugin>
+          </plugins>
+      </pluginManagement>
+  </build>   
+</project>

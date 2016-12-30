@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:jaxws="http://cxf.apache.org/jaxws"
+	   xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	   xmlns:cxf="http://cxf.apache.org/core"
+	   xmlns:simple="http://cxf.apache.org/simple" 
+	   xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	   xsi:schemaLocation="http://cxf.apache.org/jaxws 
+	   					   http://cxf.apache.org/schemas/jaxws.xsd
+	   					   http://cxf.apache.org/jaxrs 
+	   					   http://cxf.apache.org/schemas/jaxrs.xsd
+						   http://cxf.apache.org/core
+						   http://cxf.apache.org/schemas/core.xsd
+						   http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						   http://cxf.apache.org/transports/http/configuration 
+             				http://cxf.apache.org/schemas/configuration/http-conf.xsd
+						   http://cxf.apache.org/simple
+						   http://cxf.apache.org/schemas/simple.xsd"
+	   default-autowire="byName" default-lazy-init="false">
+
+	<!-- 导入CXF初始配置 -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />	
+	
+       <http-conf:conduit name="*.http-conduit">   
+          <http-conf:client ConnectionTimeout="5000" ReceiveTimeout="30000"/>  
+       </http-conf:conduit>
+       
+	<bean class="com.mx.micro.executor.ExecutorFactory">
+	<property name="executorMap">
+			<map key-type="java.lang.String">  
+                <entry>  
+                    <key><value>default</value></key>  
+                    <!-- <ref bean="simpleExecutor"></ref>  --> 
+                    <!-- <ref bean="cxfExecutor"></ref>  -->
+                    <!-- <ref bean="akkaExecutor"></ref>  -->
+                    <ref bean="springExecutor"></ref> 
+                </entry>  
+
+            </map> 
+	</property>
+	</bean>
+<!-- 	<bean id="simpleExecutor" class="com.mx.micro.executor.SimpleExecutor">
+	<property name="rootPackage" value="com.mx.dic.handler"></property>
+	</bean> -->
+	
+	<bean id="springExecutor" class="com.mx.micro.executor.spring.SpringExecutor"></bean>
+	
+	<!-- <bean id="cxfExecutor" class="com.mx.micro.executor.cxf.CXFExecutor"></bean> -->
+
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:nhesbclient.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" /> 
+	</bean>
+
+
+<!-- 	<bean class="com.nh.esb.ws.NhEsbClientFactory" init-method="init">
+	<property name="addressMap4BeanList" >
+	<list>
+	<ref bean="addressSysB"/>
+	</list>
+	</property>
+	</bean>
+	
+	<bean id="addressSysB" class="com.nh.esb.core.NhEsbAddress">
+	<property name="sysid" value="dicService"></property>
+	<property name="ip" value="localhost"></property>
+	<property name="port" value="8080"></property>
+	<property name="url" value="http://localhost:8080/dicService/webservice/nhCmdService"></property>
+	</bean> -->
+
+
+<bean class="com.micro.minxin.rule.engine.core.GroovyInitUtil" init-method="initGroovy">
+<property name="fileList">
+<list>
+<!-- <bean class="com.micro.minxin.rule.engine.core.GFileBean">
+<property name="ruleName" value="test"></property>
+<property name="jarFileFlag" value="true"></property>
+<property name="rulePath" value="/groovy/"></property>
+</bean>
+<bean class="com.micro.minxin.rule.engine.core.GFileBean">
+<property name="ruleName" value="DAIHOU_shisuan"></property>
+<property name="jarFileFlag" value="true"></property>
+<property name="rulePath" value="/groovy/"></property>
+</bean>
+
+<bean class="com.micro.minxin.rule.engine.core.GFileBean">
+<property name="ruleName" value="DAIHOU_lilv01"></property>
+<property name="jarFileFlag" value="true"></property>
+<property name="rulePath" value="/groovy/"></property>
+</bean>
+
+<bean class="com.micro.minxin.rule.engine.core.GFileBean">
+<property name="ruleName" value="DAIHOU_li_lv_ji_suan"></property>
+<property name="jarFileFlag" value="true"></property>
+<property name="rulePath" value="/groovy/"></property>
+</bean> -->
+<bean class="com.micro.minxin.rule.engine.core.GFileBean">
+<property name="jarFileFlag" value="true"></property>
+<property name="dirFlag" value="true"></property>
+<property name="rulePath" value="/groovy/"></property>
+</bean>
+</list>
+</property>
+</bean>
+
+<bean id="wsGroovyCmdHandler" class="com.project.frame.handler.WsGroovyCmdHandler"/>
+
+
+
+     
+<bean id="loadCacheTimer" class="com.nh.cache.redis.LoadCacheTimer" />
+
+ 
+<!--  定时器配置 -->
+<bean id="timeDitail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+<property name="targetObject" ref="loadCacheTimer"></property>
+<property name="targetMethod" value="doJob"></property>
+</bean>
+<bean id="timeTigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+<property name="jobDetail" ref="timeDitail"></property>
+<property name="cronExpression">
+<value>0 * * * * ?</value>
+</property>
+</bean>
+
+
+<bean id="groovyLoadTimer" class="com.micro.minxin.rule.engine.core.GroovyLoadTimer" />
+
+ 
+<!--  定时器配置 -->
+<bean id="groovyLoadTimerDitail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+<property name="targetObject" ref="groovyLoadTimer"></property>
+<property name="targetMethod" value="doJob"></property>
+</bean>
+<bean id="groovyLoadTimerTigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+<property name="jobDetail" ref="groovyLoadTimerDitail"></property>
+<property name="cronExpression">
+<value>0 * * * * ?</value>
+</property>
+</bean>
+
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="timeDitail" />
+		<property name="startDelay" value="1" />
+		<property name="repeatCount" value="0" />
+	</bean>
+
+<!-- 启动定时器 -->
+<bean id="startJob" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+<property name="triggers">
+<list>
+<ref bean="timeTigger"/>  
+<ref bean="groovyLoadTimerTigger"/> 
+<ref bean="simpleTrigger"/>
+</list>
+</property>
+</bean> 
+
+<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+      <property name="maxTotal" value="300"/>
+      <property name="maxIdle" value="100"/>
+      <property name="maxWaitMillis" value="3000"/>
+      <property name="testOnBorrow" value="true"/>
+      <property name="testOnReturn" value="true"/>
+    </bean>
+    
+   
+    <bean id = "jedisPool" class="redis.clients.jedis.JedisPool">
+      <constructor-arg index="0" ref="jedisPoolConfig"/>
+      <constructor-arg index="1" value="localhost"/>
+      <constructor-arg index="2" value="6379" type="int"/>
+      <constructor-arg index="3" value="5000" type="int"/>
+     <!-- <constructor-arg index="4" value=""/> -->
+   
+    </bean>
+
+<bean class="com.nh.cache.redis.RedisPool">
+<property name="jedisPool" ref="jedisPool"></property>
+</bean>
+</beans>
