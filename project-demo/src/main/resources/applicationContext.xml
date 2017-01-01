@@ -79,49 +79,48 @@
 	</bean> -->
 
 
-<bean class="com.micro.minxin.rule.engine.core.GroovyInitUtil" init-method="initGroovy">
+<bean class="com.nh.micro.rule.engine.core.GroovyInitUtil" init-method="initGroovy">
 <property name="fileList">
 <list>
-<!-- <bean class="com.micro.minxin.rule.engine.core.GFileBean">
+<!-- <bean class="com.nh.micro.rule.engine.core.GFileBean">
 <property name="ruleName" value="test"></property>
 <property name="jarFileFlag" value="true"></property>
 <property name="rulePath" value="/groovy/"></property>
 </bean>
-<bean class="com.micro.minxin.rule.engine.core.GFileBean">
+<bean class="com.nh.micro.rule.engine.core.GFileBean">
 <property name="ruleName" value="DAIHOU_shisuan"></property>
 <property name="jarFileFlag" value="true"></property>
 <property name="rulePath" value="/groovy/"></property>
 </bean>
 
-<bean class="com.micro.minxin.rule.engine.core.GFileBean">
+<bean class="com.nh.micro.rule.engine.core.GFileBean">
 <property name="ruleName" value="DAIHOU_lilv01"></property>
 <property name="jarFileFlag" value="true"></property>
 <property name="rulePath" value="/groovy/"></property>
 </bean>
 
-<bean class="com.micro.minxin.rule.engine.core.GFileBean">
+<bean class="com.nh.micro.rule.engine.core.GFileBean">
 <property name="ruleName" value="DAIHOU_li_lv_ji_suan"></property>
 <property name="jarFileFlag" value="true"></property>
 <property name="rulePath" value="/groovy/"></property>
 </bean> -->
-<bean class="com.micro.minxin.rule.engine.core.GFileBean">
+
+
+<!--<bean class="com.nh.micro.rule.engine.core.GFileBean">
 <property name="jarFileFlag" value="true"></property>
 <property name="dirFlag" value="true"></property>
 <property name="rulePath" value="/groovy/"></property>
 </bean>
+-->
 </list>
 </property>
 </bean>
 
-<bean id="wsGroovyCmdHandler" class="com.project.frame.handler.WsGroovyCmdHandler"/>
+<bean id="wsGroovyCmdHandler" class="com.project.frame.handler.WsGroovyCmdHandler"/><!--
 
-
-
-     
+    
 <bean id="loadCacheTimer" class="com.nh.cache.redis.LoadCacheTimer" />
 
- 
-<!--  定时器配置 -->
 <bean id="timeDitail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 <property name="targetObject" ref="loadCacheTimer"></property>
 <property name="targetMethod" value="doJob"></property>
@@ -134,10 +133,9 @@
 </bean>
 
 
-<bean id="groovyLoadTimer" class="com.micro.minxin.rule.engine.core.GroovyLoadTimer" />
+<bean id="groovyLoadTimer" class="com.nh.micro.rule.engine.core.GroovyLoadTimer" />
 
  
-<!--  定时器配置 -->
 <bean id="groovyLoadTimerDitail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 <property name="targetObject" ref="groovyLoadTimer"></property>
 <property name="targetMethod" value="doJob"></property>
@@ -155,7 +153,7 @@
 		<property name="repeatCount" value="0" />
 	</bean>
 
-<!-- 启动定时器 -->
+
 <bean id="startJob" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 <property name="triggers">
 <list>
@@ -180,11 +178,11 @@
       <constructor-arg index="1" value="localhost"/>
       <constructor-arg index="2" value="6379" type="int"/>
       <constructor-arg index="3" value="5000" type="int"/>
-     <!-- <constructor-arg index="4" value=""/> -->
-   
+  
     </bean>
 
 <bean class="com.nh.cache.redis.RedisPool">
 <property name="jedisPool" ref="jedisPool"></property>
 </bean>
+-->
 </beans>
