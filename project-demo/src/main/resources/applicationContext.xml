@@ -112,6 +112,11 @@
 <property name="rulePath" value="/groovy/"></property>
 </bean>
 -->
+<bean class="com.nh.micro.rule.engine.core.GFileBean">
+<property name="ruleName" value="nhlogin"></property>
+<property name="jarFileFlag" value="false"></property>
+<property name="rulePath" value="e:/mywork/groovy-dir/nhuser/"></property>
+</bean>
 </list>
 </property>
 </bean>

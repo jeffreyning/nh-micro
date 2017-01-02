@@ -38,6 +38,11 @@ public class GroovyExecUtil {
 			GOutputParam gOutputParam) {
 		return execGroovy(groovyName, "execGroovy", gInputParam, gOutputParam);
 	}
+
+	public static boolean execGroovySimple4Obj(String groovyName, GInputParam gInputParam,
+			GOutputParam gOutputParam,GContextParam gContextParam) {
+		return execGroovy(groovyName, "execGroovy", gInputParam, gOutputParam,gContextParam);
+	}
 	
 	public static boolean execGroovy(String groovyName, String methodName,
 			Object... paramArray) {

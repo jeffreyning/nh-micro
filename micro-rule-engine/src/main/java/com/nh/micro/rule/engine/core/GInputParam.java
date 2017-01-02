@@ -21,6 +21,15 @@ public class GInputParam {
 	public void setParamData(Object paramData) {
 		this.paramData = paramData;
 	}
+	public String subName=null;
+
+	public String getSubName() {
+		return subName;
+	}
+
+	public void setSubName(String subName) {
+		this.subName = subName;
+	}
 
 
 

@@ -4,6 +4,8 @@ package com.nh.micro.rule.engine.core;
 
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -59,7 +61,7 @@ public class GroovyLoadUtil {
 		logger.info("groovy content=" + content);
 		ClassLoader parent = GroovyLoadUtil.class.getClassLoader();
 		GroovyClassLoader loader = new GroovyClassLoader(parent);
-		Class<?> groovyClass = loader.parseClass(content);
+		Class<?> groovyClass = loader.parseClass(content,name+".groovy");
 		GroovyObject groovyObject = (GroovyObject) groovyClass.newInstance();
 		GroovyExecUtil.getGroovyMap().put(name, groovyObject);
 		logger.info("finish load groovy name=" + name);
