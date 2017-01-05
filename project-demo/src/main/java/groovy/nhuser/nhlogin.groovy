@@ -25,26 +25,61 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 
 class nrule{
- public void execGroovy(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
-Map inMap=gInputParam.getParamData();
-Map outMap=gOutputParam.getResultObj();
-System.out.println("test");
-if(gInputParam.getSubName().equals("login")){
-	execLogin(gInputParam,gOutputParam,gContextParam);
-}
-  return ;
- }
-public void execLogin(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
-Map inMap=gInputParam.getParamData();
-Map outMap=gOutputParam.getResultObj();
-String nhUserName=inMap.get("nhUserName");
-String nhPassWord=inMap.get("nhPassWord");
-HttpServletRequest httpRequest = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-HttpServletResponse httpResponse=((ServletWebRequest)RequestContextHolder.getRequestAttributes()).getResponse();
-HttpSession httpSession=httpRequest.getSession();
-if(nhUserName.equals(nhPassWord)){
-httpSession.setAttribute("nhUserName",nhUserName);
-}
-
-}
+	public void execGroovy(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		Map inMap=gInputParam.getParamData();
+		Map outMap=gOutputParam.getResultObj();
+		System.out.println("test");
+		if(gInputParam.getSubName().equals("login")){
+			execLogin(gInputParam,gOutputParam,gContextParam);
+		}
+		if(gInputParam.getSubName().equals("login_go")){
+			execLoginGo(gInputParam,gOutputParam,gContextParam);
+		}
+		return ;
+	}
+	public void execLogin(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		Map inMap=gInputParam.getParamData();
+		Map outMap=gOutputParam.getResultObj();
+		String nhUserName=inMap.get("nhUserName");
+		String nhPassWord=inMap.get("nhPassWord");
+		System.out.println("this is http");
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		System.out.println(httpRequest);
+		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+		System.out.println(httpSession);
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		System.out.println(httpResponse);
+		if(nhUserName.equals(nhPassWord)){
+			httpSession.setAttribute("nhUserName",nhUserName);
+			gOutputParam.setResultStatus(0);
+			return;
+		}
+		gOutputParam.setResultStatus(1);
+		gOutputParam.setResultMsg("µÇÂ¼Ê§°Ü");
+		return;
+	}
+	public void execLoginGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		Map inMap=gInputParam.getParamData();
+		Map outMap=gOutputParam.getResultObj();
+		String nhUserName=inMap.get("nhUserName");
+		String nhPassWord=inMap.get("nhPassWord");
+		String nhMainPage=inMap.get("nhMainPage");
+		String nhFailPage=inMap.get("nhFailPage");
+		System.out.println("this is http");
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		System.out.println(httpRequest);
+		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+		System.out.println(httpSession);
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		System.out.println(httpResponse);
+		if(nhUserName.equals(nhPassWord)){
+			httpSession.setAttribute("nhUserName",nhUserName);
+			httpRequest.getRequestDispatcher(nhMainPage).forward(httpRequest, httpResponse);
+			return;
+		}else{
+			httpRequest.getRequestDispatcher(nhFailPage).forward(httpRequest, httpResponse);
+			return;
+		}
+		
+	}
 }

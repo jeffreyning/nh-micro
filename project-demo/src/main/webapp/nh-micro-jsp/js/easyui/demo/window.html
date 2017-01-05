@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html style="width:100%;height:100%;overflow:hidden">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Window - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="demo.css">
+	<script type="text/javascript" src="../jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="../jquery.easyui.min.js"></script>
+	<script>
+		function resize(){
+			$('#w').window({
+				title: 'New Title',
+				width: 600,
+				modal: true,
+				shadow: false,
+				closed: false,
+				height: 300
+			});
+		}
+		function open1(){
+			$('#w').window('open');
+		}
+		function close1(){
+			$('#w').window('close');
+		}
+		function test(){
+			$('#test').window('open');
+		}
+	</script>
+</head>
+<body style="height:100%;width:100%;overflow:hidden;border:none;" >
+	<h2>Window</h2>
+	<div class="demo-info">
+		<div class="demo-tip icon-tip"></div>
+		<div>Window can be dragged freely on screen.</div>
+	</div>
+	
+	<div style="margin:10px 0">
+		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="resize()">Resize</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="open1()">Open</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="close1()">Close</a>
+	</div>
+	<div style="position:relative;width:400px;height:300px;border:1px solid #ccc;overflow:auto;">
+		<div class="easyui-window" title="Inline Window" inline="true" style="width:250px;height:150px;padding:10px">
+			This window stay inside its parent
+		</div>
+	</div>
+	<div id="w" class="easyui-window" title="My Window" iconCls="icon-save" style="width:500px;height:200px;padding:5px;">
+		<div class="easyui-layout" fit="true">
+			<div region="center" border="false" style="padding:10px;background:#fff;border:1px solid #ccc;">
+				jQuery EasyUI framework help you build your web page easily.
+				<br/><br/>
+				click <a href="#" onclick="test()">here</a> to popup another window.
+			</div>
+			<div region="south" border="false" style="text-align:right;padding:5px 0;">
+				<a class="easyui-linkbutton" iconCls="icon-ok" href="javascript:void(0)" onclick="resize()">Ok</a>
+				<a class="easyui-linkbutton" iconCls="icon-cancel" href="javascript:void(0)" onclick="resize()">Cancel</a>
+			</div>
+		</div>
+	</div>
+	<div id="test" class="easyui-window" closed="true" modal="true" title="Test Window" style="width:300px;height:100px;"></div>
+</body>
+</html>
