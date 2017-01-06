@@ -8,7 +8,7 @@
 <script type="text/javascript" src="<%=path%>/nh-micro-jsp/js/easyui/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="<%=path%>/nh-micro-jsp/js/json2.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>系统登录</title>
+<title>nh-micro系统登录</title>
 <style type="text/css">
 <!--
 *{overflow:hidden; font-size:9pt;}
@@ -49,7 +49,7 @@ success:function(data,status){
 		alert("用户名或密码不正确");
 		return;		
 	}
-	window.location.href="<%=path%>/index.jsp";
+	window.location.href="<%=path%>/nh-micro-jsp/main.jsp";
 
 },
 error:function(data){
