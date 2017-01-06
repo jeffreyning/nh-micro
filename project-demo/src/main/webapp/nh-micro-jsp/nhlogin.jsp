@@ -29,13 +29,13 @@ var nhPassWord=$('#nhPassWord').val();
 var cmdDataObj={};
 cmdDataObj.nhUserName=nhUserName;
 cmdDataObj.nhPassWord=nhPassWord;
-cmdDataObj.subName="login";
-var cmdData=JSON.stringify(cmdDataObj);
+cmdDataObj.groovySubName="login";
+//var cmdData=JSON.stringify(cmdDataObj);
 var loginUrl="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhlogin";
 
 $.ajax({
 url:loginUrl,
-data:"cmdData="+cmdData,
+data:cmdDataObj,
 type:"post",
 dataType:"json",
 success:function(data,status){
