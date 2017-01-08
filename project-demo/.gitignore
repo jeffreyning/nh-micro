@@ -11,3 +11,5 @@ bin/
 *.iml
 *.log
 .classpath
+.WebContent
+.bin-groovy

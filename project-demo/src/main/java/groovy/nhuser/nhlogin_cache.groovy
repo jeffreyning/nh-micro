@@ -24,7 +24,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 
-class nrule{
+class nrule2{
 	public void execGroovy(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 		Map inMap=gInputParam.getParamData();
 		Map outMap=gOutputParam.getResultObj();
@@ -57,7 +57,7 @@ class nrule{
 			return;
 		}
 		gOutputParam.setResultStatus(1);
-		gOutputParam.setResultMsg("µÇÂ¼Ê§°Ü");
+		gOutputParam.setResultMsg("ï¿½ï¿½Â¼Ê§ï¿½ï¿½");
 		return;
 	}
 

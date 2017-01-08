@@ -3,8 +3,11 @@ package com.project.frame.handler;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
 
 
+
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 
@@ -22,7 +25,14 @@ import com.nh.micro.rule.engine.core.GroovyExecUtil;
 
 @Component
 public class WsGroovyCmdHandler implements INhCmdHandler {
-
+@Resource
+	public JdbcTemplate jdbcTemplate;
+	public JdbcTemplate getJdbcTemplate() {
+	return jdbcTemplate;
+}
+public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+	this.jdbcTemplate = jdbcTemplate;
+}
 	@Override
 	public void execHandler(NhCmdRequest request, NhCmdResult result) {
 		String groovyName=request.getSubName();
@@ -41,7 +51,7 @@ public class WsGroovyCmdHandler implements INhCmdHandler {
 		gContextParam.getContextMap().put("httpRequest", NhServletCmdContextHolder.getNhServletCmdContext().get().getHttpRequest());
 		gContextParam.getContextMap().put("httpResponse", NhServletCmdContextHolder.getNhServletCmdContext().get().getHttpResponse());
 		gContextParam.getContextMap().put("httpSession", NhServletCmdContextHolder.getNhServletCmdContext().get().getHttpSession());
-		
+		gContextParam.getContextMap().put("jdbcTemplate", jdbcTemplate);
 		
 		boolean status=GroovyExecUtil.execGroovySimple4Obj(groovyName, gInputParam, gOutputParam,gContextParam);
 		if(status==false){

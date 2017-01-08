@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  */
 public class GroovyExecUtil {
-
+	public static Boolean throwFlag=true;
 	protected static Log logger = LogFactory.getLog(GroovyExecUtil.class);
 	private static Map<String, GroovyObject> groovyMap = new HashMap<String, GroovyObject>();
 
@@ -52,6 +52,9 @@ public class GroovyExecUtil {
 			return true;
 		} catch (Throwable t) {
 			logger.error(t.toString(), t);
+			if(throwFlag){
+				throw new RuntimeException(t);
+			}
 			return false;
 		}
 	}

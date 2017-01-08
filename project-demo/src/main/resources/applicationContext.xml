@@ -57,6 +57,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath*:nhesbclient.properties</value>
+				<value>classpath*:db.properties</value>
 			</list>
 		</property>
 		<property name="ignoreUnresolvablePlaceholders" value="true" /> 
@@ -118,7 +119,15 @@
 <property name="dirFlag" value="true"></property>
 <property name="rulePath" value="/groovy/nhuser/"></property>
 </bean>
-</list>
+
+<!--<bean class="com.nh.micro.rule.engine.core.GFileBean">
+<property name="jarFileFlag" value="false"></property>
+<property name="dirFlag" value="true"></property>
+<property name="rulePath" value="C:\Users\Administrator\git\nh-micro\project-demo\src\main\java\groovy\nhuser"></property>
+</bean>
+
+
+--></list>
 </property>
 </bean>
 
@@ -191,4 +200,26 @@
 <property name="jedisPool" ref="jedisPool"></property>
 </bean>
 -->
+
+
+    <bean id="dataSource"  
+        class="org.apache.commons.dbcp.BasicDataSource"  
+        destroy-method="close">  
+        <property name="driverClassName"  
+            value="com.mysql.jdbc.Driver" />  
+        <property name="url" value="${db.url}" />  
+        <property name="username" value="${db.user}" />  
+        <property name="password" value="${db.pass}" />  
+    </bean>     
+  
+    <bean id = "TransactionManager"   
+         class = "org.springframework.jdbc.datasource.DataSourceTransactionManager">   
+         <property name = "dataSource" ref="dataSource"/>   
+    </bean>  
+      
+    <bean id = "jdbcTemplate"   
+         class = "org.springframework.jdbc.core.JdbcTemplate">   
+         <property name = "dataSource" ref="dataSource"/>   
+    </bean> 
+
 </beans>
