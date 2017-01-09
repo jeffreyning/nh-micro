@@ -298,8 +298,7 @@ function addOne(){
 	}
 }
 function updateSubmit(){
-	var url = "<%=path%>generalUserContraller/updateGeneralUserBean.do";
-		//		alert(url);
+	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=updateUser";
 		$.post(url, $("#updateOneForm").serialize(), function(data, stats) {
 			if (stats == "success" && data.success == true) {
 				$.messager.show({
@@ -643,48 +642,34 @@ function updateSubmit(){
 				</tr>
 				<tr>
 					<td align="right">用户标识：</td>
-					<td><input type="text" id="userId" name="userId" value=""
+					<td><input type="text" id="user_id" name="user_id" value=""
 						onkeyup="value=value.replace(/[\W]/g,'') "
-						onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" /></td>
+						 /></td>
 				</tr>
 				<tr>
 					<td align="right">用户名称：</td>
-					<td><input type="text" id="userName" name="userName" value="" /></td>
+					<td><input type="text" id="user_name" name="user_name" value="" /></td>
 				</tr>
 				<tr>
 					<td align="right">是否启用：</td>
-					<td><select name="state" id="state" class="easyui-combobox"
+					<td><select name="state" id="user_state" class="easyui-combobox"
 						style="width: 235px;" panelHeight="70px" editable="false">
-							<option value="1" selected="selected">启用</option>
-							<option value="0">禁用</option>
+							<option value="0">启用</option>
+							<option value="1">禁用</option>
 					</select></td>
 				</tr>
-				<!-- <tr>
-					<td>密码：</td>
-					<td><input type="password" id="passWord" name="passWord" value="" /></td>
-				</tr> -->
 				<tr>
 					<td align="right">电话：</td>
-					<td><input type="text" id="mobile" name="mobile" value="" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')" /></td>
+					<td><input type="text" id="user_mobile" name="user_mobile" value="" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"  /></td>
 				</tr>
 				<tr>
 					<td align="right">身份证号：</td>
-					<td><input type="text" id="id_number" name="id_Number" value="" onkeyup="value=value.replace(/[\W]/g,'') "       onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" /></td>
+					<td><input type="text" id="user_id_number" name="user_id_number" value="" onkeyup="value=value.replace(/[\W]/g,'') "  /></td>
 				</tr>
 				<tr>
 					<td align="right">备注：</td>
-					<!-- <td><input type="text" id="remarks" name="remarks" value="" /></td> -->
-					<td><input class="easyui-textbox" id="remarks" name="remarks"
+					<td><input class="easyui-textbox" id="user_remark" name="user_remark"
 						data-options="multiline:true" style="height: 60px;"></input></td>
-				</tr>
-				<tr>
-					<td align="right">所属机构：</td>
-					<td><input type="text" id="userOrg" name="userOrg"
-						onClick="clicke('3')" /></td>
-				</tr>
-				<tr>
-					<td><input type="hidden" id="userOrgId" name="userOrgId"
-						value="" /></td>
 				</tr>
 				<!-- <tr>
 					<td>系统角色：</td>
@@ -704,7 +689,7 @@ function updateSubmit(){
 			<div id="buttons"
 				style="margin-top: 20px; margin-left: 40px; padding-bottom: 10px;">
 				<a class="easyui-linkbutton dPbtnDark70"
-					href="javascript:addOrUpdate();">确认</a> <a
+					href="javascript:updateSubmit();">确认</a> <a
 					class="easyui-linkbutton dPbtnLight70"
 					href="javascript:updatecancel();">取消</a>
 			</div>

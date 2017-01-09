@@ -45,7 +45,9 @@ class nrule{
 		if(groovySubName.equals("createUser")){
 			createUser(gInputParam,gOutputParam,gContextParam);
 		}
-
+		if(groovySubName.equals("updateUser")){
+			updateUser(gInputParam,gOutputParam,gContextParam);
+		}
 		return ;
 	}
 	public void getUserListAll(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
@@ -124,4 +126,24 @@ class nrule{
 		return;
 	}
 
+	public void updateUser(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		JdbcTemplate jdbcTemplate=gContextParam.getContextMap().get("jdbcTemplate");
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		String user_id=httpRequest.getParameter("user_id");
+		String user_name=httpRequest.getParameter("user_name");
+		String user_type=httpRequest.getParameter("user_type");
+		String user_remark=httpRequest.getParameter("user_remark");
+		String sql="update nh_micro_user set user_name=?,user_type=?,user_remark=? where user_id=?";
+		Integer retStatus=jdbcTemplate.update(sql,new PreparedStatementSetter(){
+			public void setValues(PreparedStatement ps) throws Exception {
+		   ps.setString(1,user_name);
+		   ps.setString(2,user_type);
+		   ps.setString(3,user_remark);
+		   ps.setString(4,user_id);
+		   }
+	   });
+		gOutputParam.setResultObj(retStatus);
+		return;
+	}
+	
 }
