@@ -15,6 +15,7 @@
 <script type="text/javascript" src="<%=path%>/nh-micro-jsp/js/easyui/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="<%=path%>/nh-micro-jsp/js/easyui/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="<%=path%>/nh-micro-jsp/js/json2.js"></script>
+<script type="text/javascript" src="<%=path%>/nh-micro-jsp/js/common.js"></script>
 <script type="text/javascript" src="<%=path%>/nh-micro-jsp/js/zTree/js/jquery.ztree.core-3.4.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=path%>/nh-micro-jsp/js/zTree/css/zTreeStyle/zTreeStyle.css">
 <script type="text/javascript">
@@ -168,16 +169,15 @@ function remove(){
 		var result = confirm("确定要删除吗？");
 		if(result == true){
 			var querydata = $('#searchForm').serializeObject();
-			var Id = sels.id;
-// 			alert(Id);
-			$.post(webPath+"generalUserContraller/deleteGeneralUserBean.do?Id="+Id,function(data,stats){
-						if(stats=="success" && data.success == true){
+			var user_id = sels.user_id;
+			var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=delUser";
+			url=url+"&user_id="+user_id;
+			$.post(url,function(data,stats){
+						if(stats=="success" ){
 							$.messager.show({
 								msg : data.msg,
 								title : "消息"
 							});
-// 							$.messager.alert('消息',data.msg,"info");
-
 							$('#userInfoList').datagrid('reload',querydata);
 						}
 					}
@@ -211,8 +211,7 @@ function changePwd(){
 
 function changeSubmit(){
 	var sels = $('#userInfoList').datagrid("getSelected");
-	$("#changePassword").form("load", sels);
-	var newPwd = $("#changePassword #newPwd").val();
+	var newPwd = $("#changePassword #user_password").val();
 	var confirmPwd = $("#changePassword #confirmPwd").val();
 	if(newPwd==""||newPwd=="undifine"){
 		$.messager.show({
@@ -236,16 +235,15 @@ function changeSubmit(){
 		return false;
 	}
 	var dataO = $("#changePwdForm").serializeObject();
-	url="<%=path%>generalUserContraller/restPassWord.do",
+	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=modifyPass";
+
      $.post(url,dataO,function(data,stats){
-			if(stats=="success" && data.success == true){
+			if(stats=="success"){
 				$.messager.show({
 					msg : data.msg,
 					title : "消息"
 				});
 				$("#changePassword").dialog('close');
-				window.parent.location.href = "<%=path%>/login.jsp";
-				//$("#changePwdForm").form("clear");
 			}else{
 				$("#changePassword").dialog('close');
 				$.messager.show({
@@ -300,7 +298,7 @@ function addOne(){
 function updateSubmit(){
 	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=updateUser";
 		$.post(url, $("#updateOneForm").serialize(), function(data, stats) {
-			if (stats == "success" && data.success == true) {
+			if (stats == "success" ) {
 				$.messager.show({
 					msg : data.msg,
 					title : "消息"
@@ -471,17 +469,7 @@ function updateSubmit(){
 	}
 
 	function moveIn() {
-		/*  var checkeds = $('#noAttrDataGrid').datagrid('getSelections');
-		 if(checkeds.length == 0){
-		     alert("请选择要移入的属性");
-		     return;
-		   }
-		
-		var idStr = "[ ";
-		    for(var i = 0; i < checkeds.length; i++){
-		      idStr +="{id:'" +checkeds[i].id + "'}";
-		    }
-		    idStr+=" ]"; */
+
 		var obj = $('#noAttrDataGrid').datagrid('getSelected');
 		if (obj == null) {
 			alert("请选择要移入的属性");
@@ -604,13 +592,14 @@ function updateSubmit(){
 			<table id="changePwdTable"
 				style="margin-top: 35px; margin-left: -40px;">
 				<tr>
-					<td><input type="hidden" id="id" name="id" value="" /> <input
-						type="hidden" id="userId" name="userId" value="" /> <input
-						type="hidden" id="userName" name="userName" value="" /></td>
+					<td>
+					<input	type="hidden" id="user_id" name="user_id" value="" /> 
+					<input	type="hidden" id="user_name" name="user_name" value="" />
+					</td>
 				</tr>
 				<tr>
 					<td align="right">新密码：</td>
-					<td><input type="password" id="newPwd" name="newPwd" value="" /></td>
+					<td><input type="password" id="user_password" name="user_password" value="" /></td>
 				</tr>
 				<tr>
 					<td align="right">确认密码：</td>

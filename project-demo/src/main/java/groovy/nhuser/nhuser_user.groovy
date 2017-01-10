@@ -48,6 +48,12 @@ class nrule{
 		if(groovySubName.equals("updateUser")){
 			updateUser(gInputParam,gOutputParam,gContextParam);
 		}
+		if(groovySubName.equals("delUser")){
+			delUser(gInputParam,gOutputParam,gContextParam);
+		}
+		if(groovySubName.equals("modifyPass")){
+			modifyPass(gInputParam,gOutputParam,gContextParam);
+		}
 		return ;
 	}
 	public void getUserListAll(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
@@ -145,5 +151,34 @@ class nrule{
 		gOutputParam.setResultObj(retStatus);
 		return;
 	}
+	public void delUser(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		JdbcTemplate jdbcTemplate=gContextParam.getContextMap().get("jdbcTemplate");
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		String user_id=httpRequest.getParameter("user_id");
+		String sql="delete from nh_micro_user where user_id=?";
+		Integer retStatus=jdbcTemplate.update(sql,new PreparedStatementSetter(){
+			public void setValues(PreparedStatement ps) throws Exception {
+		   ps.setString(1,user_id);
+		   }
+	   });
+		gOutputParam.setResultObj(retStatus);
+		return;
+	}
 	
+	public void modifyPass(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		JdbcTemplate jdbcTemplate=gContextParam.getContextMap().get("jdbcTemplate");
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		String user_id=httpRequest.getParameter("user_id");
+		String user_password=httpRequest.getParameter("user_password");
+
+		String sql="update nh_micro_user set user_password=? where user_id=?";
+		Integer retStatus=jdbcTemplate.update(sql,new PreparedStatementSetter(){
+			public void setValues(PreparedStatement ps) throws Exception {
+		   ps.setString(1,user_password);
+		   ps.setString(2,user_id);
+		   }
+	   });
+		gOutputParam.setResultObj(retStatus);
+		return;
+	}
 }
