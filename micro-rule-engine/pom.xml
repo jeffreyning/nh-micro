@@ -2,14 +2,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.jeffreyning</groupId>
   <artifactId>nh-micro-engine</artifactId>
-  <version>0.0.1-RELEASE</version>
+  <version>0.0.2-RELEASE</version>
   
   <dependencies>
-  <dependency>
+<!--   <dependency>
 	  <groupId>com.github.jeffreyning</groupId>
 	  <artifactId>nhcache-base</artifactId>
 	  <version>0.0.1-RELEASE</version>
-  </dependency>
+  </dependency> -->
   </dependencies>
   
   
@@ -18,7 +18,7 @@
    <description>micro-rule-engine</description>
    <url>https://github.com/jeffreyning/nh-micro</url>
     <properties>
-        <project.release.version>0.0.1-RELEASE</project.release.version>
+        <project.release.version>0.0.2-RELEASE</project.release.version>
     </properties>
 
 

@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,7 +37,7 @@ public class GroovyInitUtil {
 		fs=temp.listFiles();
 		  for(int i=0; i<fs.length; i++){
 			  File file=fs[i];
-		   System.out.println(file.getAbsolutePath());
+		   //System.out.println(file.getAbsolutePath());
 		   if(file.isFile()){
 			   if(file.getName().endsWith(".groovy")){
 				   String fullName=file.getAbsolutePath();
@@ -50,10 +52,24 @@ public class GroovyInitUtil {
 		  }
 	}
 	public static void initOneFile(String fullName,Boolean flag,String ruleName,String stamp)  throws Exception {
+		String fileTime="";
+		if (stamp != null && stamp.equals("true")) {
+			if (flag == true) {
+				fileTime=fileTime(new File(GroovyInitUtil.class.getResource(fullName).toURI()).getAbsolutePath());
+			}else{
+				fileTime=fileTime(fullName);
+			}
+			
+			boolean sameFlag=GroovyLoadUtil.checkStamp(ruleName, fileTime);
+			if(sameFlag){
+				return;
+			}
+		}
+		
+		GroovyLoadUtil.setTypeFlag(ruleName, GroovyLoadUtil.LOADTYPE_FILE);
 		InputStream is = null;
 		if (flag == true) {
 			is = GroovyInitUtil.class.getResourceAsStream(fullName);
-
 		} else {
 			is = new FileInputStream(fullName);
 		}
@@ -67,11 +83,13 @@ public class GroovyInitUtil {
 		String content = strb.toString();
 		is.close();
 		is = null;
-		if (stamp != null) {
-			GroovyLoadUtil.loadGroovyStampCheck(ruleName, content, stamp);
+		if (stamp != null && stamp.equals("true")) {
+	
+			GroovyLoadUtil.loadGroovyStampCheck(ruleName, content, fileTime);
 		} else {
 			GroovyLoadUtil.loadGroovy(ruleName, content);
 		}		
+		
 	}
 	public static void initGroovy() throws Exception {
 		for (GFileBean fileBean : fileList) {
@@ -92,4 +110,12 @@ public class GroovyInitUtil {
 		}
 	}
 
+	public static String fileTime(String fullName){
+		File tempFile=new File(fullName);
+		long time=tempFile.lastModified();
+		Date tempDate=new Date(time);
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String ret=sdf.format(tempDate);
+		return ret;
+	}
 }

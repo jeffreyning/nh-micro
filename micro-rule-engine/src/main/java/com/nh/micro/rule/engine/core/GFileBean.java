@@ -8,7 +8,7 @@ package com.nh.micro.rule.engine.core;
 public class GFileBean {
 	public String ruleName;
 	public String rulePath = "";
-	public String ruleStamp = "";
+	public String ruleStamp = "true";
 
 	public String getRuleName() {
 		return ruleName;
@@ -51,5 +51,14 @@ public class GFileBean {
 
 	public void setDirFlag(Boolean dirFlag) {
 		this.dirFlag = dirFlag;
+	}
+	public String jarFileName;
+
+	public String getJarFileName() {
+		return jarFileName;
+	}
+
+	public void setJarFileName(String jarFileName) {
+		this.jarFileName = jarFileName;
 	}
 }

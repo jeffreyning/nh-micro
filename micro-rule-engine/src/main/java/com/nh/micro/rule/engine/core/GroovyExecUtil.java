@@ -3,8 +3,9 @@ package com.nh.micro.rule.engine.core;
 import groovy.lang.GroovyObject;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * 
@@ -13,7 +14,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class GroovyExecUtil {
 	public static Boolean throwFlag=true;
-	protected static Log logger = LogFactory.getLog(GroovyExecUtil.class);
+	//protected static Log logger = LogFactory.getLog(GroovyExecUtil.class);
+	private static Logger logger=Logger.getLogger(GroovyLoadUtil.class);
 	private static Map<String, GroovyObject> groovyMap = new HashMap<String, GroovyObject>();
 
 	public static Map<String, GroovyObject> getGroovyMap() {
@@ -24,7 +26,7 @@ public class GroovyExecUtil {
 		GroovyExecUtil.groovyMap = groovyMap;
 	}
 
-	private static GroovyObject getGroovyObj(String groovyName) {
+	public static GroovyObject getGroovyObj(String groovyName) {
 		GroovyObject groovyObject = getGroovyMap().get(groovyName);
 		return groovyObject;
 	}
@@ -58,5 +60,19 @@ public class GroovyExecUtil {
 			return false;
 		}
 	}
-
+	
+	public static Object execGroovyRetObj(String groovyName, String methodName,
+			Object... paramArray) {
+		try {
+			GroovyObject groovyObject = (GroovyObject) getGroovyObj(groovyName);
+			Object retObj=groovyObject.invokeMethod(methodName, paramArray);
+			return retObj;
+		} catch (Throwable t) {
+			logger.error(t.toString(), t);
+			if(throwFlag){
+				throw new RuntimeException(t);
+			}
+			return null;
+		}
+	}
 }
