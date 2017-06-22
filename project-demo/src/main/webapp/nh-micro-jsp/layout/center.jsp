@@ -10,7 +10,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 	$(function() {
 		$centerFrame=$("#jn_Frame");
-		$centerFrame.attr("src","layout/home.jsp");
+		$centerFrame.attr("src","<%=path%>/nh-micro-jsp/layout/home.jsp");
 
 	});
 </script>

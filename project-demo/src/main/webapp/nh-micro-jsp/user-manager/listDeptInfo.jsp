@@ -32,12 +32,12 @@ String path = request.getContextPath();
 			},
 			data : {
 				key : {
-					name : "dept_name"
+					name : "meta_name"
 				},
 				simpleData : { //简单的数据源，一般开发中都是从数据库里读取，API有介绍，这里只是本地的                           
 					enable : true,
-					idKey : "dept_id", //id和pid，这里不用多说了吧，树的目录级别  
-					pIdKey : "parent_id",
+					idKey : "meta_key", //id和pid，这里不用多说了吧，树的目录级别  
+					pIdKey : "dbcol_ext_parent_id",
 					rootPId : "root" //根节点  
 				}
 			},
@@ -57,15 +57,13 @@ String path = request.getContextPath();
 					url:url,
 					type:'post',
 					dataType:'json',
-					data:"groovySubName=getDept",
+					data:"groovySubName=getInfoListAll",
 					success:function(data,status){
-						var resultData=data.resultData;
-						console.log(resultData);
-						var resultDataObj=JSON.parse(resultData);
-						var groovyResultObj=resultDataObj.resultObj;
-						console.log(groovyResultObj);
+						//var resultData=data.resultData;
+						//var resultDataObj=JSON.parse(resultData);
+						//var groovyResultObj=resultDataObj.resultObj;
 				
-						treeData=groovyResultObj;
+						treeData=data;
 						$.fn.zTree.init($("#tree"),setting, treeData);  
 					}
 				});            
@@ -86,18 +84,18 @@ String path = request.getContextPath();
 
         
         function Adduser(){
-        	var parent_id=$("#updatelistReponsitory #dept_id").val();
-        	$("#addlistReponsitory #parent_id").val(parent_id);
+        	var parent_id=$("#updatelistReponsitory #meta_key").val();
+        	$("#addlistReponsitory #dbcol_ext_parent_id").val(parent_id);
         	$("#addlistReponsitory").dialog('open').dialog('setTitle', '添加机构');
         } 
         function setUser(seleObj){
     		if (seleObj != null&&seleObj !="") {
-
-    			$("#updatelistReponsitoryForm #dept_id").val(seleObj.dept_id);
-    			$("#updatelistReponsitoryForm #dept_name").val(seleObj.dept_name);
-    			$("#updatelistReponsitoryForm #parent_id").val(seleObj.parent_id);
-    			$("#updatelistReponsitoryForm #dept_type").val(seleObj.dept_type);
-    			$("#updatelistReponsitoryForm #dept_remark").val(seleObj.dept_remark);
+    			$("#updatelistReponsitoryForm #id").val(seleObj.id);
+    			$("#updatelistReponsitoryForm #meta_key").val(seleObj.meta_key);
+    			$("#updatelistReponsitoryForm #meta_name").val(seleObj.meta_name);
+    			$("#updatelistReponsitoryForm #dbcol_ext_parent_id").val(seleObj.dbcol_ext_parent_id);
+    			$("#updatelistReponsitoryForm #dbcol_ext_dept_type").val(seleObj.dbcol_ext_dept_type);
+    			$("#updatelistReponsitoryForm #remark").val(seleObj.remark);
 
     		}	
         } 
@@ -105,8 +103,8 @@ String path = request.getContextPath();
     		$.messager.confirm("信息提示", "确认要删除‘" + dept_id + "’吗？",
  					function(confirm) {
  						if (confirm) {
- 							var url = "<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_dept&groovySubName=delDept";
- 							$.post(url, {"dept_id" : dept_id}, function(data, status) {
+ 							var url = "<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_dept&groovySubName=delInfo";
+ 							$.post(url, {"id" : dept_id}, function(data, status) {
  								if (status == "success") {
  									$.messager.show({
  										msg : "删除成功",
@@ -128,7 +126,7 @@ String path = request.getContextPath();
 
     	function addlistReponsitory() {
     		$("#addlistReponsitoryForm #addparentId").val("");
-    		var url = "<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_dept&groovySubName=createDept";
+    		var url = "<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_dept&groovySubName=createInfo";
     		var dataO = $("#addlistReponsitoryForm").serialize();
     		if($("#addlistReponsitoryForm").form('validate')){
     			$.post(url, dataO, function(data, status) {
@@ -148,7 +146,7 @@ String path = request.getContextPath();
     	
     	function upodatelistReponsitory(){
 
-    			var url = "<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_dept&groovySubName=updateDept";
+    			var url = "<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_dept&groovySubName=updateInfo";
 	   			var dataO = $("#updatelistReponsitoryForm").serialize();
 	   			if($("#updatelistReponsitoryForm").form('validate')){
 	   				$.post(url,dataO,function(data,status){
@@ -180,7 +178,7 @@ String path = request.getContextPath();
     <div id="toolbar" class="dRbtnsToolbar">
         <a href="#" class="easyui-linkbutton dRbtnAdd" iconcls="icon-addOne" onclick="Adduser()">添加</a><a href="#" class="easyui-linkbutton dRbtnUpdate" 
         iconcls="icon-edit" onclick="upodatelistReponsitory()" >修改</a><a href="#" class="easyui-linkbutton dRbtnDelete" 
-        iconcls="icon-remove" onclick="Deluser($('#updatelistReponsitory #dept_id').val())" >删除</a>
+        iconcls="icon-remove" onclick="Deluser($('#updatelistReponsitory #id').val())" >删除</a>
     </div>
     
   		<div id="updatelistReponsitory" align="left" buttons="#buttonsAdd" class="dRumPack">
@@ -189,19 +187,23 @@ String path = request.getContextPath();
 			<form id="updatelistReponsitoryForm" novalidate action=""  method="post">
 				<table>
 					<tr>
+						<!-- <td>Id：</td> -->
+						<td><input type="hidden" id="id" name="id" value="" /></td>
+					</tr>				
+					<tr>
 						<td align="right">机构编码：</td>
-						<td><input type="text" id="dept_id" name="dept_id"  onkeyup="value=value.replace(/[\W]/g,'') "  
+						<td><input type="text" id="meta_key" name="meta_key"  onkeyup="value=value.replace(/[\W]/g,'') "  
 							cols="30" class="" validtype="name" required missingMessage="不能为空" ></input></td>
 					</tr>
 					<tr>
 						<td align="right">机构名称：</td>
-						<td><input type="text" id="dept_name" name="dept_name" 
+						<td><input type="text" id="meta_name" name="meta_name" 
 							cols="30" class="" required missingMessage="不能为空"></input></td>
 					</tr>
 					<tr>
 						<td align="right">机构类型：</td>
 						<td>
-						 <select id="dept_type" name="dept_type">
+						 <select id="dbcol_ext_dept_type" name="dbcol_ext_dept_type">
 						 			<option value="" selected="">--请选择--</option>
                                     <option value="1">1级部门</option>
                                     <option value="2">2级部门</option>   
@@ -212,14 +214,14 @@ String path = request.getContextPath();
 					</tr>
 					<tr>
 						<td align="right">机构描述：</td>
-						<td><input class="" id="dept_remark" name="dept_remark" data-options="multiline:true" style="height:60px;"></input></td>
+						<td><input class="" id="remark" name="remark" data-options="multiline:true" style="height:60px;"></input></td>
 					</tr>
 
 
 					<tr>
 						<td align="right"></td>
 						<td>
-							<input type="hidden" id="parent_id" name="parent_id" />
+							<input type="hidden" id="dbcol_ext_parent_id" name="dbcol_ext_parent_id" />
 						</td>
 					</tr>
 
@@ -237,18 +239,18 @@ String path = request.getContextPath();
 				<table>
 					<tr>
 						<td align="right">机构编码：</td>
-						<td><input type="text" id="dept_id" name="dept_id"  onkeyup="value=value.replace(/[\W]/g,'') "  
+						<td><input type="text" id="meta_key" name="meta_key"  onkeyup="value=value.replace(/[\W]/g,'') "  
 							cols="30" class="" validtype="name" required missingMessage="不能为空" ></input></td>
 					</tr>
 					<tr>
 						<td align="right">机构名称：</td>
-						<td><input type="text" id="dept_name" name="dept_name" 
+						<td><input type="text" id="meta_name" name="meta_name" 
 							cols="30" class="" required missingMessage="不能为空"></input></td>
 					</tr>
 					<tr>
 						<td align="right">机构类型：</td>
 						<td>
-						 <select id="dept_type" name="dept_type">
+						 <select id="dbcol_ext_dept_type" name="dbcol_ext_dept_type">
 						 			<option value="" selected="">--请选择--</option>
                                     <option value="1">1级部门</option>
                                     <option value="2">2级部门</option>   
@@ -259,14 +261,14 @@ String path = request.getContextPath();
 					</tr>
 					<tr>
 						<td align="right">机构描述：</td>
-						<td><input class="" id="dept_remark" name="dept_remark" data-options="multiline:true" style="height:60px;"></input></td>
+						<td><input class="" id="remark" name="remark" data-options="multiline:true" style="height:60px;"></input></td>
 					</tr>
 
 
 					<tr>
 						<td align="right"></td>
 						<td>
-							<input type="hidden" id="parent_id" name="parent_id" />
+							<input type="hidden" id="dbcol_ext_parent_id" name="dbcol_ext_parent_id" />
 						</td>
 					</tr>
 

@@ -13,41 +13,27 @@
             <scope>provided</scope>
         </dependency>
 
-  	  	<dependency>
-  		<groupId>com.github.minxinjituan</groupId>
-  		<artifactId>micro-executor-core</artifactId>
-  		<version>0.0.1-RELEASE</version>
-  	</dependency>
-	<dependency>
-  		<groupId>com.github.minxinjituan</groupId>
-  		<artifactId>micro-executor-cxf</artifactId>
-  		<version>0.0.1-RELEASE</version>
-  	</dependency>
 
-  	<dependency>
-  		<groupId>com.github.minxinjituan</groupId>
-  		<artifactId>micro-executor-spring</artifactId>
-  		<version>0.0.1-RELEASE</version>
-  	</dependency>  	
-	<dependency>
-  		<groupId>com.github.jeffreyning</groupId>
-  		<artifactId>nh-micro-engine</artifactId>
-  		<version>0.0.1-RELEASE</version>
-  	</dependency> 
 	<dependency>
   		<groupId>com.github.jeffreyning</groupId>
   		<artifactId>nhesb-service-servlet</artifactId>
   		<version>0.0.3-RELEASE</version>
-  	</dependency>   
+  	</dependency>  
   	
-  	<dependency>
+  	
+	<dependency>
   		<groupId>com.github.jeffreyning</groupId>
-  		<artifactId>nhcache-base</artifactId>
+  		<artifactId>nh-micro-engine</artifactId>
+  		<version>0.0.2-RELEASE</version>
+  	</dependency>   	 
+	<dependency>
+  		<groupId>com.github.jeffreyning</groupId>
+  		<artifactId>nh-micro-db</artifactId>
   		<version>0.0.1-RELEASE</version>
-  	</dependency>
-  	<dependency>
+  	</dependency>   	
+	<dependency>
   		<groupId>com.github.jeffreyning</groupId>
-  		<artifactId>nhcache-redis</artifactId>
+  		<artifactId>nh-micro-template</artifactId>
   		<version>0.0.1-RELEASE</version>
   	</dependency>  
   </dependencies>

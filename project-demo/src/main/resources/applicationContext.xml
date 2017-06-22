@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" 
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"	   
 	   xmlns:jaxws="http://cxf.apache.org/jaxws"
 	   xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	   xmlns:cxf="http://cxf.apache.org/core"
@@ -16,6 +18,8 @@
 						   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 						   http://cxf.apache.org/transports/http/configuration 
              				http://cxf.apache.org/schemas/configuration/http-conf.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd             				
 						   http://cxf.apache.org/simple
 						   http://cxf.apache.org/schemas/simple.xsd"
 	   default-autowire="byName" default-lazy-init="false">
@@ -26,33 +30,10 @@
 	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />	
 	
-       <http-conf:conduit name="*.http-conduit">   
-          <http-conf:client ConnectionTimeout="5000" ReceiveTimeout="30000"/>  
-       </http-conf:conduit>
+    <http-conf:conduit name="*.http-conduit">   
+       <http-conf:client ConnectionTimeout="5000" ReceiveTimeout="30000"/>  
+    </http-conf:conduit>
        
-	<bean class="com.mx.micro.executor.ExecutorFactory">
-	<property name="executorMap">
-			<map key-type="java.lang.String">  
-                <entry>  
-                    <key><value>default</value></key>  
-                    <!-- <ref bean="simpleExecutor"></ref>  --> 
-                    <!-- <ref bean="cxfExecutor"></ref>  -->
-                    <!-- <ref bean="akkaExecutor"></ref>  -->
-                    <ref bean="springExecutor"></ref> 
-                </entry>  
-
-            </map> 
-	</property>
-	</bean>
-<!-- 	<bean id="simpleExecutor" class="com.mx.micro.executor.SimpleExecutor">
-	<property name="rootPackage" value="com.mx.dic.handler"></property>
-	</bean> -->
-	
-	<bean id="springExecutor" class="com.mx.micro.executor.spring.SpringExecutor"></bean>
-	
-	<!-- <bean id="cxfExecutor" class="com.mx.micro.executor.cxf.CXFExecutor"></bean> -->
-
-
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
@@ -64,142 +45,7 @@
 	</bean>
 
 
-<!-- 	<bean class="com.nh.esb.ws.NhEsbClientFactory" init-method="init">
-	<property name="addressMap4BeanList" >
-	<list>
-	<ref bean="addressSysB"/>
-	</list>
-	</property>
-	</bean>
-	
-	<bean id="addressSysB" class="com.nh.esb.core.NhEsbAddress">
-	<property name="sysid" value="dicService"></property>
-	<property name="ip" value="localhost"></property>
-	<property name="port" value="8080"></property>
-	<property name="url" value="http://localhost:8080/dicService/webservice/nhCmdService"></property>
-	</bean> -->
 
-
-<bean class="com.nh.micro.rule.engine.core.GroovyInitUtil" init-method="initGroovy">
-<property name="fileList">
-<list>
-<!-- <bean class="com.nh.micro.rule.engine.core.GFileBean">
-<property name="ruleName" value="test"></property>
-<property name="jarFileFlag" value="true"></property>
-<property name="rulePath" value="/groovy/"></property>
-</bean>
-<bean class="com.nh.micro.rule.engine.core.GFileBean">
-<property name="ruleName" value="DAIHOU_shisuan"></property>
-<property name="jarFileFlag" value="true"></property>
-<property name="rulePath" value="/groovy/"></property>
-</bean>
-
-<bean class="com.nh.micro.rule.engine.core.GFileBean">
-<property name="ruleName" value="DAIHOU_lilv01"></property>
-<property name="jarFileFlag" value="true"></property>
-<property name="rulePath" value="/groovy/"></property>
-</bean>
-
-<bean class="com.nh.micro.rule.engine.core.GFileBean">
-<property name="ruleName" value="DAIHOU_li_lv_ji_suan"></property>
-<property name="jarFileFlag" value="true"></property>
-<property name="rulePath" value="/groovy/"></property>
-</bean> -->
-
-
-<!--<bean class="com.nh.micro.rule.engine.core.GFileBean">
-<property name="jarFileFlag" value="true"></property>
-<property name="dirFlag" value="true"></property>
-<property name="rulePath" value="/groovy/"></property>
-</bean>
--->
-<bean class="com.nh.micro.rule.engine.core.GFileBean">
-<property name="ruleName" value="nhlogin"></property>
-<property name="jarFileFlag" value="true"></property>
-<property name="dirFlag" value="true"></property>
-<property name="rulePath" value="/groovy/nhuser/"></property>
-</bean>
-
-<!--<bean class="com.nh.micro.rule.engine.core.GFileBean">
-<property name="jarFileFlag" value="false"></property>
-<property name="dirFlag" value="true"></property>
-<property name="rulePath" value="C:\Users\Administrator\git\nh-micro\project-demo\src\main\java\groovy\nhuser"></property>
-</bean>
-
-
---></list>
-</property>
-</bean>
-
-<bean id="wsGroovyCmdHandler" class="com.project.frame.handler.WsGroovyCmdHandler"/><!--
-
-    
-<bean id="loadCacheTimer" class="com.nh.cache.redis.LoadCacheTimer" />
-
-<bean id="timeDitail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-<property name="targetObject" ref="loadCacheTimer"></property>
-<property name="targetMethod" value="doJob"></property>
-</bean>
-<bean id="timeTigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-<property name="jobDetail" ref="timeDitail"></property>
-<property name="cronExpression">
-<value>0 * * * * ?</value>
-</property>
-</bean>
-
-
-<bean id="groovyLoadTimer" class="com.nh.micro.rule.engine.core.GroovyLoadTimer" />
-
- 
-<bean id="groovyLoadTimerDitail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-<property name="targetObject" ref="groovyLoadTimer"></property>
-<property name="targetMethod" value="doJob"></property>
-</bean>
-<bean id="groovyLoadTimerTigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-<property name="jobDetail" ref="groovyLoadTimerDitail"></property>
-<property name="cronExpression">
-<value>0 * * * * ?</value>
-</property>
-</bean>
-
-	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="timeDitail" />
-		<property name="startDelay" value="1" />
-		<property name="repeatCount" value="0" />
-	</bean>
-
-
-<bean id="startJob" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-<property name="triggers">
-<list>
-<ref bean="timeTigger"/>  
-<ref bean="groovyLoadTimerTigger"/> 
-<ref bean="simpleTrigger"/>
-</list>
-</property>
-</bean> 
-
-<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-      <property name="maxTotal" value="300"/>
-      <property name="maxIdle" value="100"/>
-      <property name="maxWaitMillis" value="3000"/>
-      <property name="testOnBorrow" value="true"/>
-      <property name="testOnReturn" value="true"/>
-    </bean>
-    
-   
-    <bean id = "jedisPool" class="redis.clients.jedis.JedisPool">
-      <constructor-arg index="0" ref="jedisPoolConfig"/>
-      <constructor-arg index="1" value="localhost"/>
-      <constructor-arg index="2" value="6379" type="int"/>
-      <constructor-arg index="3" value="5000" type="int"/>
-  
-    </bean>
-
-<bean class="com.nh.cache.redis.RedisPool">
-<property name="jedisPool" ref="jedisPool"></property>
-</bean>
--->
 
 
     <bean id="dataSource"  
@@ -212,14 +58,83 @@
         <property name="password" value="${db.pass}" />  
     </bean>     
   
-    <bean id = "TransactionManager"   
-         class = "org.springframework.jdbc.datasource.DataSourceTransactionManager">   
-         <property name = "dataSource" ref="dataSource"/>   
-    </bean>  
       
-    <bean id = "jdbcTemplate"   
-         class = "org.springframework.jdbc.core.JdbcTemplate">   
-         <property name = "dataSource" ref="dataSource"/>   
+    
+	<!-- 配置微服务全局变量（使用微服务dao时必须配置） -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name = "dataSource" ref="dataSource"/>
+    </bean>
+    <bean class="com.nh.micro.db.MicroDbHolder" lazy-init="false">
+        <property name="dbHolder">
+            <map>
+                <entry>
+                    <key>
+                        <value>default</value>
+                    </key>
+                    <ref bean="jdbcTemplate"></ref></entry>
+            </map>
+        </property>
     </bean> 
+    
+	<!-- 固化controller层处理对象 -->
+	<bean id="wsGroovyCmdHandler" class="com.project.frame.handler.WsGroovyCmdHandler"/>
+	
+    <!-- 配置platform transaction manager-->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--micro 声明式事物管理，配置事物管理advice-->
+    <tx:advice id="txAdviceMicro" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="execHandler" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <!--micro 配置事物管理advice作用范围与作用条件-->
+    <aop:config>
+        <aop:pointcut id="serviceLayerTransactionMicro" expression="execution( * com.project.frame.handler.*..*(..))"/>
+        <aop:advisor pointcut-ref="serviceLayerTransactionMicro" advice-ref="txAdviceMicro"/>
+    </aop:config>    
+	
+
+
+	<!-- groovy启动加载 -->
+	<bean class="com.nh.micro.rule.engine.core.GroovyInitUtil" init-method="initGroovy" lazy-init="false">
+		<property name="fileList">
+			<list>
+				<bean class="com.nh.micro.rule.engine.core.GFileBean">
+				<property name="ruleStamp" value="true"></property>
+				<property name="jarFileFlag" value="true"></property>
+				<property name="dirFlag" value="true"></property>
+				<property name="rulePath" value="/groovy/"></property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 定时更新groovy -->
+	<bean id="groovyLoadTimer" class="com.nh.micro.rule.engine.core.GroovyLoadTimer" />
+	 
+	<bean id="groovyLoadTimerDitail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	<property name="targetObject" ref="groovyLoadTimer"></property>
+	<property name="targetMethod" value="doJob"></property>
+	</bean>
+	
+	
+	<bean id="groovyLoadTimerTigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	<property name="jobDetail" ref="groovyLoadTimerDitail"></property>
+	<property name="cronExpression">
+	<value>0/5 * * * * ?</value>
+	</property>
+	</bean>
+	
+	<!-- 启动定时器 -->
+	<bean id="startJob" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"  autowire="no">
+	<property name="triggers">
+	<list>
+	<ref bean="groovyLoadTimerTigger"/>
+	</list>
+	</property>
+	</bean>   	
 
 </beans>

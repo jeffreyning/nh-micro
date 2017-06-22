@@ -19,6 +19,11 @@
 <script type="text/javascript" src="<%=path%>/nh-micro-jsp/js/zTree/js/jquery.ztree.core-3.4.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=path%>/nh-micro-jsp/js/zTree/css/zTreeStyle/zTreeStyle.css">
 <script type="text/javascript">
+
+function getDivContent(){
+	alert($("#checkOrgdialog").html());
+}
+
 $(function(){
 	$('#userInfoList').datagrid({
 		nowrap:true,
@@ -27,22 +32,28 @@ $(function(){
 		fitColumns: true,
 		pageSize : 10,
 		pageList : [ 10, 20, 30, 40, 50 ],
-		url:"<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=getUserList4Page",
+		url:"<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=getInfoList4Page",
 		columns:[[
 					{
-						field : 'user_id',
+						field : 'id',
+						title : 'id',
+						width : 100
+
+					},
+					{
+						field : 'meta_key',
 						title : '用户标识',
 						width : 250,
 						sortable:true
 					},
 					{
-						field : 'user_name',
+						field : 'meta_name',
 						title : '用户名',
 						width : 200,
 						sortable:true
 					},
 					{
-						field : 'user_status',
+						field : 'dbcol_ext_user_status',
 						title : '是否启用',
 						width : 80,
 						formatter: function(value, row, index){
@@ -54,30 +65,30 @@ $(function(){
 						}
 					},
 					{
-						field : 'user_roleid',
+						field : 'dbcol_ext_roleid',
 						title : '系统角色',
 						width : 200
 					},
 					{
-						field : 'user_orgid',
+						field : 'dbcol_ext_orgid',
 						title : '所属机构',
 						width : 200
 
 					},
 					{
-						field : 'user_mobile',
+						field : 'dbcol_ext_user_mobile',
 						title : '手机号',
 						width : 200
 
 					},
 					{
-						field : 'user_id_number',
+						field : 'dbcol_ext_user_id_num',
 						title : '身份证',
 						width : 200
 
 					},
 					{
-						field : 'user_email',
+						field : 'dbcol_ext_user_email',
 						title : 'email',
 						width : 200
 
@@ -114,6 +125,27 @@ $(function(){
 			}
 		
 		},{
+			id : "setRole",
+			text : "角色设置",
+			iconCls : "icon-edit",
+			handler : function() {
+				SetRole();
+			}
+		
+		},	
+		{
+			id : "setDept",
+			text : "部门设置",
+			iconCls : "icon-edit",
+			handler : function() {
+				clicke();
+			}
+		
+		},
+		
+		
+		
+		{
 			id : "refresh",
 			text : "刷新",
 			iconCls : "icon-reload",
@@ -169,9 +201,9 @@ function remove(){
 		var result = confirm("确定要删除吗？");
 		if(result == true){
 			var querydata = $('#searchForm').serializeObject();
-			var user_id = sels.user_id;
-			var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=delUser";
-			url=url+"&user_id="+user_id;
+			var id = sels.id;
+			var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=delInfo";
+			url=url+"&id="+id;
 			$.post(url,function(data,stats){
 						if(stats=="success" ){
 							$.messager.show({
@@ -204,6 +236,8 @@ function changePwd(){
 		alert('请选择行');
 		return false;
 	}else{
+		$("#changePwdForm").form("clear");
+		$("#changePwdForm").form("load",sels);
 		$("#changePassword").dialog('open').dialog('setTitle', '密码重置');
 	}
 	
@@ -211,7 +245,7 @@ function changePwd(){
 
 function changeSubmit(){
 	var sels = $('#userInfoList').datagrid("getSelected");
-	var newPwd = $("#changePassword #user_password").val();
+	var newPwd = $("#changePassword #dbcol_ext_user_password").val();
 	var confirmPwd = $("#changePassword #confirmPwd").val();
 	if(newPwd==""||newPwd=="undifine"){
 		$.messager.show({
@@ -259,7 +293,7 @@ function addOrUpdate(){
 	var dataO = $("#updateOneForm").serialize();
 
 	if(temp=="add"){
-		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=createUser";
+		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=createInfo";
 		$.post(url,dataO,function(data,stats){
 			if(stats=="success" && data.success == true){
 				$.messager.show({
@@ -280,11 +314,11 @@ function addOne(){
 	var temp = $("#addForm #addShowForm_temp").val();
 
 	if(temp=="add"){
-		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=createUser";
+		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=createInfo";
 		$.post(url,dataO,function(data,stats){
-			if(stats=="success" && data.success == true){
+			if(stats=="success" ){
 				$.messager.show({
-					msg : data.msg,
+					msg : "操作成功",
 					title : "消息"
 				});
 				refresh();
@@ -296,11 +330,11 @@ function addOne(){
 	}
 }
 function updateSubmit(){
-	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=updateUser";
+	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_user&groovySubName=updateInfo";
 		$.post(url, $("#updateOneForm").serialize(), function(data, stats) {
 			if (stats == "success" ) {
 				$.messager.show({
-					msg : data.msg,
+					msg : "操作成功",
 					title : "消息"
 				});
 				refresh();
@@ -343,54 +377,87 @@ function updateSubmit(){
 	}
 	var clicktype;
 	//加载树
-	function clicke(str) {
-		clicktype = str;
+	function clicke() {
+		var sels = $('#userInfoList').datagrid("getSelected");
+		if(sels == ''|| sels==null){
+			alert('请选择行');
+			return false;
+		}
+		var userId=sels.meta_key;
+		//clicktype = str;
 		$("#checkOrgdialog").dialog('open').dialog('setTitle', '选择机构');
-		initTree();
+		initTree(userId);
 	}
 
 	var zTreeObj;
 	var setting = {
-		//async : true, //需要采用异步方式获取子节点数据,默认false   
-		//asyncUrl :webPath+'theorganizationController/QueryZTree.do', //当 async = true 时，设置异步获取节点的 URL 地址 ,允许接收 function 的引用   
-		/* async :{
-		 enable: true,
-		 url:webPath+'theorganizationController/QueryZTree.do',
-		 autoParam: ["id", "name"],
-		 type:"post"
-		 } */
-		treeNodeKey : "id", //在isSimpleData格式下，当前节点id属性  
-		treeNodeParentKey : "parentId", //在isSimpleData格式下，当前节点的父节点id属性  
-		showLine : true, //是否显示节点间的连线  
-		checkable : false,//每个节点上是否显示 CheckBox   */ 
+	
+        check: {
+            enable: true,
+            chkboxType: { "Y": "", "N": "" }
+        },
+		data : {
+			key : {
+				name : "meta_name"
+			},
+			simpleData : { //简单的数据源，一般开发中都是从数据库里读取，API有介绍，这里只是本地的                           
+				enable : true,
+				idKey : "meta_key", //id和pid，这里不用多说了吧，树的目录级别  
+				pIdKey : "dbcol_ext_parent_id",
+				rootPId : "root" //根节点  
+			}
+		},		
 		callback : {
 			onClick : zTreeOnClick
 		}
 	};
 
 	var zNodes;
-	//第一次加载树
-	/* $(function(){  
-	 initTree();
-	 }); */
 
-	function initTree() {
+
+	function initTree(userId) {
+		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_dept&groovySubName=getInfoListAll";
 		$.ajax({
 			async : false,
 			cache : false,
 			type : 'POST',
 			dataType : "json",
-			url : webPath + 'theorganizationController/QueryZTree.do',
+			url:url,
+			//url : webPath + 'theorganizationController/QueryZTree.do',
 			success : function(data) {
 				zNodes = data;
+				zTreeObj = $.fn.zTree.init($("#tree"), setting, zNodes);
+				checkSelectTreeNode(zTreeObj,userId);
 			},
 			error : function() {
 				alert("请求失败");
 			}
 		});
-		zTreeObj = $.fn.zTree.init($("#tree"), setting, zNodes);
+		
+		
 	}
 
+	function checkSelectTreeNode(treeObj,userId){
+		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_ref_user_dept&groovySubName=getInfoListAll";
+		url=url+"&user_id="+userId;
+		$.ajax({
+			async : false,
+			cache : false,
+			type : 'POST',
+			dataType : "json",
+			url:url,
+			success : function(data) {
+                for (var i = 0; i < data.length; i++) {
+                	console.log(data[i].meta_key);
+                    var node = treeObj.getNodeByParam("id", data[i].meta_key, null);
+                    treeObj.checkNode(node);
+                }
+			},
+			error : function() {
+				alert("请求失败");
+			}
+		});		
+	}
 	var seleObj;
 	function zTreeOnClick(event, treeId, treeNode) {
 		//alert(treeNode.id + ", " + treeNode.name+","+treeNode.nodeType);
@@ -401,21 +468,21 @@ function updateSubmit(){
 
 	function SetRole() {
 		var sels = $("#userInfoList").datagrid("getSelected");
-		update_userid = sels.userId;
-		//alert(update_userid);
+		update_userid = sels.meta_key;
+		
 		$("#aur").dialog('open').dialog('setTitle', '角色配置');
-		queryRole_Set();
+		queryRole_Set(update_userid);
 	}
 
 	var hasAttrDataGrid;
 	var noAttrDataGrid;
-	function queryRole_Set() {
+	function queryRole_Set(userid) {
+		var ref_url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_ref_user_role&groovySubName=getInfoList4Ref&user_id="+userid;
+		
 		hasAttrDataGrid = $('#hasAttrDataGrid')
 				.datagrid(
 						{
-							url : webPath
-									+ 'generalUserContraller/queryRolelistByUserid.do?userid='
-									+ update_userid,
+							url : ref_url,
 							nowrap : true,
 							striped : true,
 							rownumbers : false,
@@ -424,24 +491,25 @@ function updateSubmit(){
 								width : '1',
 								title : 'id',
 								field : 'id',
-								sortable : true,
+								sortable : false,
 								hidden : true
 							}, {
 								width : '1',
-								title : 'role_id',
-								field : 'role_id',
-								sortable : true,
+								title : '角色id',
+								field : 'meta_key',
+								sortable : false,
 								hidden : true
 							}, {
 								width : '150',
-								title : '名称',
-								field : 'role_name',
-								sortable : true
+								title : '角色名称',
+								field : 'meta_name',
+								sortable : false
 							} ] ]
 						});
+		var role_url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_role&groovySubName=getInfoListAll";
 
 		noAttrDataGrid = $('#noAttrDataGrid').datagrid({
-			url : webPath + 'generalUserContraller/queryRoleBylist.do',
+			url : role_url,
 			nowrap : true,
 			striped : true,
 			rownumbers : false,
@@ -455,14 +523,14 @@ function updateSubmit(){
 			}, {
 				width : '1',
 				title : 'role_id',
-				field : 'role_id',
+				field : 'meta_key',
 				sortable : true,
 				hidden : true
 			}, {
 				width : '150',
-				title : '名称',
-				field : 'role_name',
-				sortable : true
+				title : '角色名称',
+				field : 'meta_name',
+				sortable : false
 			} ] ]
 		});
 
@@ -484,14 +552,15 @@ function updateSubmit(){
 			}
 
 		}
+		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_ref_user_role&groovySubName=createInfo";
 
-		var url = webPath + 'generalUserContraller/addSysRoleUser.do';
+		//var url = webPath + 'generalUserContraller/addSysRoleUser.do';
 		var dataO = {
-			'userid' : update_userid,
-			'roleid' : obj.role_id
+			'meta_key' : update_userid,
+			'meta_name' : obj.meta_key
 		};
 		$.post(url, dataO, function(data, stats) {
-			if (stats == "success" && data.success == true) {
+			if (stats == "success") {
 				$('#hasAttrDataGrid').datagrid('reload');
 				//$('#noAttrDataGrid').datagrid('reload');
 				$.messager.show({
@@ -525,13 +594,13 @@ function updateSubmit(){
 			alert("请选择要移入的属性");
 			return;
 		}
-		var url = webPath + 'generalUserContraller/DeleteSysRoleUser.do';
+		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=nhuser_ref_user_role&groovySubName=delInfo";
+		//var url = webPath + 'generalUserContraller/DeleteSysRoleUser.do';
 		var dataO = {
-			'userid' : update_userid,
-			'roleid' : obj.role_id
+			'id' : obj.id,
 		};
 		$.post(url, dataO, function(data, stats) {
-			if (stats == "success" && data.success == true) {
+			if (stats == "success") {
 				$('#hasAttrDataGrid').datagrid('reload');
 				//$('#noAttrDataGrid').datagrid('reload');
 				$.messager.show({
@@ -548,9 +617,14 @@ function updateSubmit(){
 		});
 
 	}
+	
+    
+	
+	
 </script>
 </head>
 <body id="userRole" class="easyui-layout">
+
 	<div id="roleQuery" class="dQueryMod" region="north"
 		style="height: 55px">
 		<form id="searchForm">
@@ -558,8 +632,8 @@ function updateSubmit(){
 				<tr>
 					<td>用户标识：</td>
 					<td><input type="text" id="userId" name="userId"
-						class="dInputText" onkeyup="value=value.replace(/[\W]/g,'') "
-						onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" /></td>
+						class="dInputText"
+						 /></td>
 					<td>用户名称：</td>
 					<td><input type="text" id="userName" name="userName"
 						class="dInputText" /></td>
@@ -593,13 +667,14 @@ function updateSubmit(){
 				style="margin-top: 35px; margin-left: -40px;">
 				<tr>
 					<td>
+					<input	type="hidden" id="id" name="id" value="" />
 					<input	type="hidden" id="user_id" name="user_id" value="" /> 
 					<input	type="hidden" id="user_name" name="user_name" value="" />
 					</td>
 				</tr>
 				<tr>
 					<td align="right">新密码：</td>
-					<td><input type="password" id="user_password" name="user_password" value="" /></td>
+					<td><input type="password" id="dbcol_ext_user_password" name="dbcol_ext_user_password" value="" /></td>
 				</tr>
 				<tr>
 					<td align="right">确认密码：</td>
@@ -631,17 +706,17 @@ function updateSubmit(){
 				</tr>
 				<tr>
 					<td align="right">用户标识：</td>
-					<td><input type="text" id="user_id" name="user_id" value=""
-						onkeyup="value=value.replace(/[\W]/g,'') "
+					<td><input type="text" id="meta_id" name="meta_id" value=""
+						
 						 /></td>
 				</tr>
 				<tr>
 					<td align="right">用户名称：</td>
-					<td><input type="text" id="user_name" name="user_name" value="" /></td>
+					<td><input type="text" id="meta_name" name="meta_name" value="" /></td>
 				</tr>
 				<tr>
 					<td align="right">是否启用：</td>
-					<td><select name="state" id="user_state" class="easyui-combobox"
+					<td><select name="dbcol_ext_state" id="dbcol_ext_user_state" class="easyui-combobox"
 						style="width: 235px;" panelHeight="70px" editable="false">
 							<option value="0">启用</option>
 							<option value="1">禁用</option>
@@ -649,30 +724,17 @@ function updateSubmit(){
 				</tr>
 				<tr>
 					<td align="right">电话：</td>
-					<td><input type="text" id="user_mobile" name="user_mobile" value="" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"  /></td>
+					<td><input type="text" id="dbcol_ext_user_mobile" name="dbcol_ext_user_mobile" value="" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"  /></td>
 				</tr>
 				<tr>
 					<td align="right">身份证号：</td>
-					<td><input type="text" id="user_id_number" name="user_id_number" value="" onkeyup="value=value.replace(/[\W]/g,'') "  /></td>
+					<td><input type="text" id="dbcol_ext_user_id_num" name="dbcol_ext_user_id_num" value="" onkeyup="value=value.replace(/[\W]/g,'') "  /></td>
 				</tr>
 				<tr>
 					<td align="right">备注：</td>
-					<td><input class="easyui-textbox" id="user_remark" name="user_remark"
+					<td><input class="easyui-textbox" id="dbcol_ext_user_remark" name="dbcol_ext_user_remark"
 						data-options="multiline:true" style="height: 60px;"></input></td>
 				</tr>
-				<!-- <tr>
-					<td>系统角色：</td>
-					<td>
-						<div id="sp">
-							<input type="checkbox" id="sysRoles1" name="sysRoles"
-								value="超级管理员角色"><span>超级管理员角色</span><br /> <input
-								type="checkbox" id="sysRoles2" name="sysRoles"
-								value="业务用户角色"><span>业务用户角色</span><br /> <input
-								type="checkbox" id="sysRoles3" name="sysRoles"
-								value="系统级管理员角色"><span>系统级管理员角色</span><br />
-						</div>
-					</td>
-				</tr> -->
 
 			</table>
 			<div id="buttons"
@@ -685,7 +747,6 @@ function updateSubmit(){
 		</form>
 	</div>
 
-	<!-- 添加2015/4/17 -->
 	<div id="addOne" class="easyui-dialog" modal="true" align="center"
 		style="padding: 10px; border: 0px; margin: 0px; width: 540px;"
 		closed="true" resizable="true" inline="false">
@@ -699,22 +760,22 @@ function updateSubmit(){
 				</tr>
 				<tr>
 					<td align="right">用户标识：</td>
-					<td><input type="text" id="user_id" name="user_id" value=""
-						onkeyup="value=value.replace(/[\W]/g,'') "
+					<td><input type="text" id="meta_key" name="meta_key" value=""
+						
 						 /></td>
 				</tr>
 				<tr>
 					<td align="right">用户名称：</td>
-					<td><input type="text" id="user_name" name="user_name" value="" /></td>
+					<td><input type="text" id="meta_name" name="meta_name" value="" /></td>
 				</tr>
 				<tr>
 					<td align="right">密码：</td>
-					<td><input type="password" id="user_passWord" name="user_passWord"
+					<td><input type="password" id="dbcol_ext_user_passWord" name="dbcol_ext_user_password"
 						value="" /></td>
 				</tr>
 				<tr>
 					<td align="right">是否启用：</td>
-					<td><select name="user_state" id="user_state" class="easyui-combobox"
+					<td><select name="dbcol_ext_user_state" id="dbcol_ext_user_state" class="easyui-combobox"
 						panelHeight="140px" editable="false" style="width: 235px">
 							<option value="0" selected="selected">启用</option>
 							<option value="1">禁用</option>
@@ -722,30 +783,18 @@ function updateSubmit(){
 				</tr>
 				<tr>
 					<td align="right">电话：</td>
-					<td><input type="text" id="user_mobile" name="user_mobile" value=""  onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" /></td>
+					<td><input type="text" id="dbcol_ext_user_mobile" name="dbcol_ext_user_mobile" value=""  onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" /></td>
 				</tr>
 				<tr>
 					<td align="right">身份证号：</td>
-					<td><input type="text" id="user_id_number" name="user_id_Number" value=""   onkeyup="value=value.replace(/[\W]/g,'') "  /></td>
+					<td><input type="text" id="dbcol_ext_user_id_num" name="dbcol_ext_user_id_num" value=""   onkeyup="value=value.replace(/[\W]/g,'') "  /></td>
 				</tr>
 				<tr>
 					<td align="right">备注：</td>
 					<!-- <td><input type="text" id="remarks" name="remarks" value="" /></td> -->
-					<td><input class="easyui-textbox" id="user_remark" name="user_remark"
+					<td><input class="easyui-textbox" id="dbcol_ext_user_remark" name="dbcol_ext_user_remark"
 						data-options="multiline:true" style="height: 60px;"></input></td>
 				</tr>
-
-				<%-- <tr>
-				<td></td>
-					<td><a class="easyui-linkbutton" href="javascript:SetRole();">角色配置</a></td>
-				
-					<td>系统角色：</td>
-					<td>
-					<select class="easyui-combobox" id="searchPart" name="role_name" style="width: 140px;" 
-					data-options="url:'<%=basePath%>generalUserContraller/queryRoleBylist.do',method:'post',valueField:'id',textField:'role_name',editable:false,required:true,multiple:true,panelHeight:'auto'">  
-					</select>  
-					</td>
-				</tr> --%>
 
 			</table>
 			<div id="buttons"
@@ -769,7 +818,7 @@ function updateSubmit(){
 				href="javascript:checkOrg();">确认</a> <a
 				class="easyui-linkbutton dPbtnLight70" href="javascript:Orgclose();">取消</a>
 		</div>
-
+<!-- remark -->
 	</div>
 
 
@@ -778,9 +827,10 @@ function updateSubmit(){
 		align="center"
 		style="padding: 20px 10px 15px 10px; border: 0px; margin: 0px; width: 600px;"
 		closed="true" resizable="true" inline="false">
-		<div class="easyui-tabs lyr_aur lyr_auro"
+		<div class="easyui-tab"
 			style="width: 210px; height: auto; overflow: hidden; background: #f8f8f8; float: left; margin-left: 8px; border: 1px solid #e2e2e2;"
 			title="系统角色">
+			系统角色<br>
 			<table id="noAttrDataGrid"></table>
 		</div>
 
@@ -790,13 +840,13 @@ function updateSubmit(){
 				class="easyui-linkbutton dPbtnMove">《 移出</a>
 		</div>
 
-		<div class="easyui-tabs lyr_aur"
+		<div class="easyui-tab"
 			style="width: 210px; height: auto; overflow: hidden; background: #f8f8f8; float: left; margin-left: 30px; border: 1px solid #e2e2e2;"
 			title="拥有角色">
+			拥有角色<br>
 			<table id="hasAttrDataGrid"></table>
 		</div>
 	</div>
-
 
 
 </body>
