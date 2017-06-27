@@ -83,3 +83,158 @@ project-demo项目，内置的登录，用户管理，角色管理，部门管�
 这些功能均使用groovy脚本实现，可以直接使用project-demo项目进行业务开发，也可以将nh-micro技术框架移植到开发人员自有项目中使用，使开发人员有更高的起点更关注业务实现，而不是重复进行基础功能实现。
 
 后续会添加封装好的业务功能groovy脚本，方便快速支撑业务。
+
+
+
+数据库创建
+以下是推荐使用mysql5.7版支持json的建表sql
+
+
+-- ----------------------------
+-- Table structure for nh_micro_dept
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_dept`;
+CREATE TABLE `nh_micro_dept` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='部门';
+
+-- ----------------------------
+-- Table structure for nh_micro_dict_items
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_dict_items`;
+CREATE TABLE `nh_micro_dict_items` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL,
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `meta_key` (`meta_key`,`meta_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='字典项';
+
+-- ----------------------------
+-- Table structure for nh_micro_dictionary
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_dictionary`;
+CREATE TABLE `nh_micro_dictionary` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL,
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `meta_key` (`meta_key`,`meta_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='字典';
+
+
+-- ----------------------------
+-- Table structure for nh_micro_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_menu`;
+CREATE TABLE `nh_micro_menu` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单管理';
+
+-- ----------------------------
+-- Table structure for nh_micro_ref_menu_role
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_ref_menu_role`;
+CREATE TABLE `nh_micro_ref_menu_role` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户菜单关联';
+
+-- ----------------------------
+-- Table structure for nh_micro_ref_user_dept
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_ref_user_dept`;
+CREATE TABLE `nh_micro_ref_user_dept` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户部门关联';
+
+-- ----------------------------
+-- Table structure for nh_micro_ref_user_role
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_ref_user_role`;
+CREATE TABLE `nh_micro_ref_user_role` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户角色关联';
+
+-- ----------------------------
+-- Table structure for nh_micro_role
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_role`;
+CREATE TABLE `nh_micro_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='角色管理';
+
+
+-- ----------------------------
+-- Table structure for nh_micro_user
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_user`;
+CREATE TABLE `nh_micro_user` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户管理';
+
