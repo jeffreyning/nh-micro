@@ -48,5 +48,20 @@ String path=request.getContextPath();
 	}	  
 	]
 }
+,
+{
+	"id":2,
+	"text":"产品中心管理",
+	"iconCls":"icon-channels",
+	"children":[{
+		"id":21,
+		"text":"产品列表",
+		"iconCls":"icon-nav",
+		"attributes":{
+		  "url":"/<%=path %>/nh-micro-jsp/product-center-page/listProductCenterInfo.jsp"
+		  }
+	}  
+	]
+}
 
 ]
