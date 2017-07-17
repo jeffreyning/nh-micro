@@ -63,6 +63,7 @@ class productAlgoRepayplan implements ProductAlgoConst {
 		String contractAmt=inMap.get(ProductAlgoConst.contractAmt);
 		String monthRate=inMap.get(ProductAlgoConst.monthRate);
 		String contractPeriods=inMap.get(ProductAlgoConst.contractPeriods);
+		String singleGeneralRate=inMap.get(ProductAlgoConst.singleGeneralRate);
 		
 
 		Integer firstPeriodDays=getFirstPeriodDays(payDate,repayDay);
@@ -80,15 +81,19 @@ class productAlgoRepayplan implements ProductAlgoConst {
 			String lixiAlgId=configMap.get(ProductAlgoConst.productLixiAlgId);
 			String benjinAlgId=configMap.get(ProductAlgoConst.productBenjinAlgId);
 			String fuwufeiAlgId=configMap.get(ProductAlgoConst.productFuwufeiAlgId);
-			monthRate=configMap.get(ProductAlgoConst.monthRate);
-			String singleGeneralRate=configMap.get(ProductAlgoConst.singleGeneralRate);
+			String stageMonthRate=configMap.get(ProductAlgoConst.monthRate);
+			//String singleGeneralRate=configMap.get(ProductAlgoConst.singleGeneralRate);
 			
 			Map paramMap=new HashMap();
 			paramMap.put(ProductAlgoConst.isNoMonth, isNoMonth);
 			paramMap.put(ProductAlgoConst.periodType, periodType);
 			paramMap.put(ProductAlgoConst.firstPeriodDays, firstPeriodDays);
 			paramMap.put(ProductAlgoConst.contractAmt, contractAmt);
-			paramMap.put(ProductAlgoConst.monthRate, monthRate);
+			if(stageMonthRate!=null && !"".equals(stageMonthRate)){
+				paramMap.put(ProductAlgoConst.monthRate, stageMonthRate);
+			}else{
+				paramMap.put(ProductAlgoConst.monthRate, monthRate);
+			}
 			paramMap.put(ProductAlgoConst.contractPeriods, contractPeriods);
 			paramMap.put(ProductAlgoConst.singleGeneralRate, singleGeneralRate);
 

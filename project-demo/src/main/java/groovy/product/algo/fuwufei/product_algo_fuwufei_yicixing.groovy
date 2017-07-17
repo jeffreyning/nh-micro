@@ -103,8 +103,8 @@ class ProductAlgoFuwufeiYicixing {
 		jep.addVariable("contractAmt", contractAmt);
 
 		// 一次性综合费率
-		//jep.addVariable("singleGeneralRate", singleGeneralRate);
-		jep.addVariable("singleGeneralRate", new BigDecimal("0.1"));
+		jep.addVariable("singleGeneralRate", singleGeneralRate);
+		//jep.addVariable("singleGeneralRate", new BigDecimal("0.1"));
 		// 月利率
 		jep.addVariable("monthRate", monthRate);
 

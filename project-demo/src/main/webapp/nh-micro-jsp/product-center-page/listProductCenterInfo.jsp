@@ -56,6 +56,16 @@ $(function(){
 						width : 50
 					},
 					{
+						field : 'dbcol_ext_monthRate',
+						title : '月利率',
+						width : 50
+					},
+					{
+						field : 'dbcol_ext_singleGeneralRate',
+						title : '一次性服务费率',
+						width : 50
+					},					
+					{
 						field : 'oper',
 						title : '操作',
 						width : 100,
@@ -243,11 +253,8 @@ $(function(){
 		<form id="searchForm">
 			<table id="searchTable">
 				<tr>
-					<td>id：</td>
-					<td><input type="text" id="id" name="id" /></td>
-					<td>页面id：</td>
-					<td><input type="text" id="dbcol_ext_page_id" name="dbcol_ext_page_id" /></td>					
-					
+					<td>产品标识：</td>
+					<td><input type="text" id="meta_key" name="meta_key" /></td>					
 					<td><a href="#" class="easyui-linkbutton "
 						iconCls="icon-search" onclick="ReQuery()">查询</a><a href="#"
 						class="easyui-linkbutton" iconCls="icon-redo"
@@ -271,42 +278,6 @@ $(function(){
 			<input type="hidden" id="showForm_temp" value="" />
 			<table id="updateTable"
 				style="margin-top: 10px; margin-left: -40px;">
-
-				<tr>
-					<td align="right">技术产品名称：</td>
-					<td><input type="text" id="meta_name" name="meta_name" value="" /></td>
-				</tr>
-				<tr>
-					<td align="right">技术产品Id：</td>
-					<td><input type="text" id="meta_key" name="meta_key" value="" /></td>
-				</tr>
-				<tr>
-					<td align="right">技术产品类型：</td>
-					<td>
-					<select id="meta_type" name="meta_type" >
-					<option value="page">new</option>
-					</select>
-					</td>
-				</tr>
-
-			</table>
-			<div id="buttons"
-				style="margin-top: 20px; margin-left: 40px; padding-bottom: 10px;">
-				<a class="easyui-linkbutton dPbtnDark70"
-					href="javascript:updateOne();">确认</a> <a
-					class="easyui-linkbutton dPbtnLight70"
-					href="javascript:updateCancel();">取消</a>
-			</div>
-		</form>
-	</div>
-
-	<div id="addOne" class="easyui-dialog" modal="true" align="center"
-		style="padding: 10px; border: 0px; margin: 0px; width: 540px;"
-		closed="true" resizable="true" inline="false">
-		<form id="addForm" novalidate method="post" action="">
-			<input type="hidden" id="addShowForm_temp" value="" />
-
-			<table id="addTable" style="margin-top: 10px; margin-left: -40px;">
 				<tr>
 					<td><input type="hidden" id="id" name="id" value="" /></td>
 				</tr>
@@ -326,7 +297,58 @@ $(function(){
 					</select>
 					</td>
 				</tr>
+				<tr>
+					<td align="right">月利率：</td>
+					<td><input type="text" id="dbcol_ext_monthRate" name="dbcol_ext_monthRate" value="" /></td>
+				</tr>
+				<tr>
+					<td align="right">一次性综合费率：</td>
+					<td><input type="text" id="dbcol_ext_singleGeneralRate" name="dbcol_ext_singleGeneralRate" value="" /></td>
+				</tr>				
 
+			</table>
+			<div id="buttons"
+				style="margin-top: 20px; margin-left: 40px; padding-bottom: 10px;">
+				<a class="easyui-linkbutton dPbtnDark70"
+					href="javascript:updateOne();">确认</a> <a
+					class="easyui-linkbutton dPbtnLight70"
+					href="javascript:updateCancel();">取消</a>
+			</div>
+		</form>
+	</div>
+
+	<div id="addOne" class="easyui-dialog" modal="true" align="center"
+		style="padding: 10px; border: 0px; margin: 0px; width: 540px;"
+		closed="true" resizable="true" inline="false">
+		<form id="addForm" novalidate method="post" action="">
+			<input type="hidden" id="addShowForm_temp" value="" />
+
+			<table id="addTable" style="margin-top: 10px; margin-left: -40px;">
+
+				<tr>
+					<td align="right">技术产品名称：</td>
+					<td><input type="text" id="meta_name" name="meta_name" value="" /></td>
+				</tr>
+				<tr>
+					<td align="right">技术产品Id：</td>
+					<td><input type="text" id="meta_key" name="meta_key" value="" /></td>
+				</tr>
+				<tr>
+					<td align="right">技术产品类型：</td>
+					<td>
+					<select id="meta_type" name="meta_type" >
+					<option value="page">new</option>
+					</select>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">月利率：</td>
+					<td><input type="text" id="dbcol_ext_monthRate" name="dbcol_ext_monthRate" value="" /></td>
+				</tr>
+				<tr>
+					<td align="right">一次性综合费率：</td>
+					<td><input type="text" id="dbcol_ext_singleGeneralRate" name="dbcol_ext_singleGeneralRate" value="" /></td>
+				</tr>	
 			</table>
 			<div id="buttons"
 				style="margin-top: 20px; margin-left: 40px; padding-bottom: 10px;">
