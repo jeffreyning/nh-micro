@@ -1,4 +1,4 @@
-# nh-micro
+﻿# nh-micro
 micro service and dynamic script
 
 MVC框架的缺点
@@ -84,6 +84,15 @@ project-demo项目，内置的登录，用户管理，角色管理，部门管�
 
 后续会添加封装好的业务功能groovy脚本，方便快速支撑业务。
 
+
+内置产品中心功能
+基于nhmicro框架封装了产品中心功能：包括产品信息增删改查、阶梯利率设置、本金利息服务费算法实现、还款计划试算。
+相关脚本有：
+Micro_product_center_list.groovy，现实产品列表和产品信息增删改查功能。
+Product_algo_repayplan.groovy，实现还款计划试算功能。
+Product_algo_fuwufei_yicixing.groovy,实现服务费（一次性服务费）计算功能。
+Product_algo_lixi_xxhb.groovy,实现利息(先息后本)计算功能。
+产品中心需要表nh_micro_product_center_list
 
 
 数据库创建
@@ -238,3 +247,18 @@ CREATE TABLE `nh_micro_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户管理';
 
+-- ----------------------------
+-- Table structure for nh_micro_product_center_list 
+-- ----------------------------
+DROP TABLE IF EXISTS `nh_micro_product_center_list`;
+CREATE TABLE `nh_micro_product_center_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识（预留字段）',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8
