@@ -83,7 +83,7 @@ public String tableName="contract_temp_list";
 			httpResponse.setHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
 		   
 			OutputStream out = httpResponse.getOutputStream();
-			Html2Pdf.convertHtmlToPdf(repedText,out);
+			Html2Pdf.expPdf(repedText,out);
 			httpRequest.setAttribute("forwardFlag", "true");
 		}catch (Exception e)
 		{
@@ -114,7 +114,7 @@ public String tableName="contract_temp_list";
 			httpResponse.setHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
 		   
 			OutputStream out = httpResponse.getOutputStream();
-			Html2Pdf.convertHtmlToPdf(repedText,out);
+			Html2Pdf.expPdf(repedText,out);
 			httpRequest.setAttribute("forwardFlag", "true");
 		}catch (Exception e)
 		{

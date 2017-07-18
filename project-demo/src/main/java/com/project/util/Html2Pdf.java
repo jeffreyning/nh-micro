@@ -1,91 +1,51 @@
 package com.project.util;
 
-
-
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringBufferInputStream;
+import java.nio.charset.Charset;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 
-import org.w3c.dom.Document;
-import org.xhtmlrenderer.pdf.ITextFontResolver;
-import org.xhtmlrenderer.pdf.ITextRenderer;
+public class Html2Pdf {
 
-import com.lowagie.text.pdf.BaseFont;
+	public static void expPdf(String htmlText, OutputStream os)
+			throws Exception {
+		PdfWriter pdfWriter = null;
+		InputStream in_withcode = new ByteArrayInputStream(
+				htmlText.getBytes("UTF-8"));
+		try {
+			com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+			pdfWriter = PdfWriter.getInstance(document, os);
+			document.open();
+			XMLWorkerHelper worker = XMLWorkerHelper.getInstance();
+			worker.parseXHtml(pdfWriter, document, in_withcode, null,
+					Charset.forName("UTF-8"), new AsianFontProvider());
 
-public class Html2Pdf {  
+			document.close();
 
-	public static String fontsRootPath=new File(Html2Pdf.class.getResource("/").getFile()).getAbsolutePath()+File.separator+"font";
-	
-	
-    public static String getFontsRootPath() {
-		return fontsRootPath;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (in_withcode != null) {
+				try {
+					in_withcode.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (pdfWriter != null) {
+				pdfWriter.close();
+				try {
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
-
-	public void setFontsRootPath(String fontsRootPath) {
-		Html2Pdf.fontsRootPath = fontsRootPath;
-	}
-
-
-	public static boolean convertHtmlToPdf(String htmlText, OutputStream os)  
-            throws Exception {  
-
-        ITextRenderer renderer = new ITextRenderer();  
-        renderer.setDocumentFromString(htmlText);
-       // BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
-        ITextFontResolver fontResolver = renderer.getFontResolver();  
-        System.out.println(fontsRootPath);
-        fontResolver.addFontDirectory(fontsRootPath, BaseFont.NOT_EMBEDDED);
-        //fontResolver.addFont("C:/Windows/Fonts/simsunb.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);  
-        //fontResolver.addFont("C:/Windows/Fonts/arialuni.ttf", BaseFont.CP1252, BaseFont.NOT_EMBEDDED);  
-        //fontResolver.addFont(fontsRootPath+"/simsun.ttc",BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);// 宋体字        
-        //fontResolver.addFont("C:/Windows/Fonts/BELLB.TTF", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-        //fontResolver.addFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED); 
-       // renderer.getSharedContext().setBaseURL("file:/D:/test");  
-        renderer.layout();  
-        renderer.createPDF(os);  
-        return true;  
-    }  
- 	
-	
-    public static boolean convertHtmlToPdf(String inputFile, String outputFile)  
-            throws Exception {  
-  
-        OutputStream os = new FileOutputStream(outputFile);  
-        ITextRenderer renderer = new ITextRenderer();  
-        String url = new File(inputFile).toURI().toURL().toString();  
-        renderer.setDocument(url);  
-
-        ITextFontResolver fontResolver = renderer.getFontResolver();  
-        //fontResolver.addFont("C:/Windows/Fonts/simsunb.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);  
-        
-        //fontResolver.addFont("C:/Windows/Fonts/arialuni.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);  
-        
-        fontResolver.addFont("C:/WINDOWS/Fonts/simsun.ttc",BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);// 宋体字        
-        //fontResolver.addFont("C:/Windows/Fonts/BELLB.TTF", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-        //���ͼƬ�����·������  
-       // renderer.getSharedContext().setBaseURL("file:/D:/test");  
-        renderer.layout();  
-        renderer.createPDF(os);  
-        os.flush();  
-        os.close();  
-        return true;  
-    }  
-  
-  
-     public   static  void  main(String [] args){  
-         Html2Pdf html2Pdf =new Html2Pdf();  
-         try {  
-        	 //String sourceFile=args[0];
-        	 //String targetFile=args[1];
-             //html2Pdf.convertHtmlToPdf(sourceFile,targetFile); 
-             html2Pdf.convertHtmlToPdf("d://2.html","d://index2.pdf");
-         } catch (Exception e) {  
-             e.printStackTrace();  
-         }  
-     }  
-}  
+}
