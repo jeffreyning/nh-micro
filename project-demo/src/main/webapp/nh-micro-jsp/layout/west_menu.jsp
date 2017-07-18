@@ -60,7 +60,15 @@ String path=request.getContextPath();
 		"attributes":{
 		  "url":"/<%=path %>/nh-micro-jsp/product-center-page/listProductCenterInfo.jsp"
 		  }
-	}  
+	},
+	  {
+		"id":22,
+		"text":"产品合同模板列表",
+		"iconCls":"icon-nav",
+		"attributes":{
+		  "url":"/<%=path %>/nh-micro-jsp/contract-page/listContractTempInfo.jsp"
+		  }
+	}
 	]
 }
 
