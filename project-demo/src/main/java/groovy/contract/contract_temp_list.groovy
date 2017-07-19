@@ -165,7 +165,7 @@ public String tableName="contract_temp_list";
 			String value=(String) entry.getValue();
 			context.put(key, value);
 		}
-		context.put("param", rowMap.get("root"));
+		//context.put("param", rowMap);
 		StringWriter writer = new StringWriter();
 		ve.evaluate(context, writer, "", template);
 		ret=writer.toString();

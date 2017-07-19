@@ -94,6 +94,11 @@ Product_algo_fuwufei_yicixing.groovy,实现服务费（一次性服务费）计�
 Product_algo_lixi_xxhb.groovy,实现利息(先息后本)计算功能。
 产品中心需要表nh_micro_product_center_list
 
+内置合同模板管理功能
+可以将word模板转为pdf合同
+在合同模板列表中创建记录，上传word（2003版）合同模板文件，点击编译后就可以下载pdf了。
+在编写word文件是可以使用${somekey}作为占位符，下载pdf时输入json对占位符进行替换。
+
 
 数据库创建
 以下是推荐使用mysql5.7版支持json的建表sql
@@ -262,3 +267,21 @@ CREATE TABLE `nh_micro_product_center_list` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8
+
+
+-- ----------------------------
+-- Table structure for 合同模板管理 
+-- ----------------------------
+DROP TABLE IF EXISTS `contract_temp_list`;
+CREATE TABLE `contract_temp_list` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识（预留字段）',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `html_text` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='产品管理 用户登录';
