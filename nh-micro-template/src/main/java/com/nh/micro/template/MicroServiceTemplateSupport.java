@@ -41,10 +41,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.google.gson.Gson;
+import groovy.json.JsonSlurper;
 
 /**
- * service��ģ���װ֧��
- * @author ninghao ���
+ * service
+ * @author ninghao
  *
  */
 public class MicroServiceTemplateSupport {
@@ -97,10 +98,10 @@ public class MicroServiceTemplateSupport {
 	}
 
 	/**
-	 * ��ȡ���ģ��
-	 * @param requestParamMap �ύ�������
-	 * @param tableName �����
-	 * @param modelName ģ�����
+	 * 
+	 * @param requestParamMap 
+	 * @param tableName 
+	 * @param modelName 
 	 * @return
 	 * @throws Exception
 	 */
@@ -126,9 +127,9 @@ public class MicroServiceTemplateSupport {
 	}
 	
 	/**
-	 * ��ݱ�ṹʵʱ��ȡ���ģ��
 	 * 
-	 * @param tableName �����
+	 * 
+	 * @param tableName 
 	 * @return
 	 * @throws Exception
 	 */
@@ -149,9 +150,9 @@ public class MicroServiceTemplateSupport {
 		return tableFieldList;
 	}	
 	/**
-	 * ���ģ�ͺ��ύ����where�ַ�
-	 * @param requestParamMap �ύ����
-	 * @param modelEntryMap ���ģ��
+	 * 
+	 * @param requestParamMap 
+	 * @param modelEntryMap 
 	 * @return
 	 * @throws Exception
 	 */
@@ -226,10 +227,10 @@ public class MicroServiceTemplateSupport {
 	}	
 	
 	/**
-	 * ���ģ�ͺ��ύ����update-set�ַ�
-	 * @param dbColMap �ύ����
-	 * @param modelEntryMap ���ģ��
-	 * @param placeList ռλ���滻ֵ
+	 * 
+	 * @param dbColMap 
+	 * @param modelEntryMap 
+	 * @param placeList
 	 * @return
 	 * @throws Exception
 	 */
@@ -388,9 +389,9 @@ public class MicroServiceTemplateSupport {
 
 	
 	/**
-	 * ��װ�������ַ�
-	 * @param dbColMap �ύ���
-	 * @param modelEntryMap ���ģ�� 
+	 * 
+	 * @param dbColMap 
+	 * @param modelEntryMap
 	 * @return
 	 * @throws Exception
 	 */	
@@ -428,9 +429,9 @@ public class MicroServiceTemplateSupport {
 	}
 	
 	/**
-	 * ��װ����value�ַ�
-	 * @param dbColMap �ύ���
-	 * @param modelEntryMap ���ģ�� 
+	 * 
+	 * @param dbColMap 
+	 * @param modelEntryMap 
 	 * @return
 	 * @throws Exception
 	 */	
@@ -599,7 +600,7 @@ public class MicroServiceTemplateSupport {
 		return crealValues.getStr();
 	}	
 	
-	//����joinʱ��ǰ׺��where����
+	//
 	public String createWhere4Join(Map requestParamMap,String joinName,String colsStr) throws Exception{
 
 		String[] colsArray=colsStr.split(",");
@@ -661,13 +662,13 @@ public class MicroServiceTemplateSupport {
 	}	
 	
 	/**
-	 * ��ҳ��ѯ
-	 * @param requestParamMap �ύ����
-	 * @param tableName �����
-	 * @param pageMap ��ҳ����
-	 * @param cusWhere ����where�ַ�
-	 * @param cusSelect ����select�ַ�
-	 * @param modelName ģ����� 
+	 * 
+	 * @param requestParamMap 
+	 * @param tableName 
+	 * @param pageMap 
+	 * @param cusWhere 
+	 * @param cusSelect 
+	 * @param modelName 
 	 * @return
 	 * @throws Exception
 	 */
@@ -915,12 +916,12 @@ public class MicroServiceTemplateSupport {
 	}
 	
 	/**
-	 * ������ݼ�¼
-	 * @param requestParamMap �ύ����
-	 * @param tableName �����
-	 * @param cusCol �����ֶ��ַ�
-	 * @param cusValue ����value�ַ�
-	 * @param modelName ģ����� 
+	 * 
+	 * @param requestParamMap 
+	 * @param tableName
+	 * @param cusCol
+	 * @param cusValue
+	 * @param modelName 
 	 * @return
 	 * @throws Exception
 	 */
@@ -983,12 +984,12 @@ public class MicroServiceTemplateSupport {
 
 	}
 	/**
-	 * ������ݼ�¼
-	 * @param requestParamMap �ύ����
-	 * @param tableName �����
-	 * @param cusCondition ���������ַ�
-	 * @param cusSetStr ����set�ַ�
-	 * @param modelName ģ����� 
+	 * 
+	 * @param requestParamMap 
+	 * @param tableName
+	 * @param cusCondition
+	 * @param cusSetStr 
+	 * @param modelName 
 	 * @return
 	 * @throws Exception
 	 */
@@ -1032,13 +1033,13 @@ public class MicroServiceTemplateSupport {
 	}
 	
 	/**
-	 * ���id������ݼ�¼
-	 * @param id ��������	  
-	 * @param requestParamMap �ύ����
-	 * @param tableName �����
-	 * @param cusCondition ���������ַ�
-	 * @param cusSetStr ����set�ַ�
-	 * @param modelName ģ����� 
+	 * 
+	 * @param id 	  
+	 * @param requestParamMap 
+	 * @param tableName 
+	 * @param cusCondition 
+	 * @param cusSetStr 
+	 * @param modelName 
 	 * @return
 	 * @throws Exception
 	 */
@@ -1057,14 +1058,14 @@ public class MicroServiceTemplateSupport {
 
 	
 	/**
-	 * ���ҵ��id������ݼ�¼
-	 * @param bizid ҵ������	
-	 * @param tableName �����
-	 * @param bizCol ҵ������� 
-	 * @param requestParamMap �ύ����
-	 * @param cusCondition ���������ַ�
-	 * @param cusSetStr ����set�ַ�
-	 * @param modelName ģ����� 
+	 * 
+	 * @param bizid 	
+	 * @param tableName 
+	 * @param bizCol  
+	 * @param requestParamMap 
+	 * @param cusCondition 
+	 * @param cusSetStr 
+	 * @param modelName  
 	 * @return
 	 * @throws Exception
 	 */	
@@ -1101,9 +1102,9 @@ public class MicroServiceTemplateSupport {
 	
 	
 	/**
-	 * ɾ����ݼ�¼
-	 * @param requestParamMap �ύ����
-	 * @param tableName ����� 
+	 * 
+	 * @param requestParamMap
+	 * @param tableName
 	 * @return
 	 * @throws Exception
 	 */		
@@ -1120,7 +1121,7 @@ public class MicroServiceTemplateSupport {
 		return retStatus;
 	}
 	
-	//���id�б�����ɾ��
+	//
 	public Integer delInfoByIdListService(List<String> idList,String tableName){
 		int status=0;
 		for(String id:idList){
@@ -1132,9 +1133,9 @@ public class MicroServiceTemplateSupport {
 	}	
 	
 	/**
-	 * ���ҵ��idɾ����ݼ�¼
-	 * @param requestParamMap �ύ����
-	 * @param tableName ����� 
+	 * 
+	 * @param requestParamMap 
+	 * @param tableName 
 	 * @return
 	 * @throws Exception
 	 */	
@@ -1144,7 +1145,7 @@ public class MicroServiceTemplateSupport {
 		Integer retStatus=(MicroMetaDao.getInstance(dbName)).delObjByBizId(tableName,bizId,bizCol);
 		return retStatus;
 	}
-	//���ҵ��id�б�����ɾ��
+	//
 	public Integer delInfoByBizIdListService(List<String> bizIdList,String tableName,String bizCol){
 		int status=0;
 		for(String bizId:bizIdList){
@@ -1156,9 +1157,9 @@ public class MicroServiceTemplateSupport {
 	}	
 	
 	/**
-	 * ���id��ȡ��ݼ�¼
-	 * @param requestParamMap �ύ����
-	 * @param tableName ����� 
+	 * 
+	 * @param requestParamMap 
+	 * @param tableName 
 	 * @return
 	 * @throws Exception
 	 */	
@@ -1186,10 +1187,10 @@ public class MicroServiceTemplateSupport {
 	}
 
 	/**
-	 * ���ҵ��id��ȡ��ݼ�¼
-	 * @param bizId ҵ��id
-	 * @param tableName ����� 
-	 * @param bizCol ҵ�������
+	 * 
+	 * @param bizId 
+	 * @param tableName 
+	 * @param bizCol 
 	 * @return
 	 * @throws Exception
 	 */	
@@ -1206,10 +1207,10 @@ public class MicroServiceTemplateSupport {
 		
 
 	/**
-	 * ��ȡ�Ƿ�ҳ��ݼ�¼
-	 * @param bizId ҵ��id
-	 * @param tableName ����� 
-	 * @param bizCol ҵ�������
+	 * 
+	 * @param bizId 
+	 * @param tableName
+	 * @param bizCol 
 	 * @return
 	 * @throws Exception
 	 */	
@@ -1555,6 +1556,319 @@ public class MicroServiceTemplateSupport {
 		Map retMap=getSingleInfoService(sql);
 		return retMap;
 	}
+
+	public void changeJsonMap(Map infoMap){
+		Set<String> keySet=infoMap.keySet();
+		for(String key:keySet){
+			if(key.endsWith("_json")){
+				String val=(String) infoMap.get(key);
+				Object obj=new JsonSlurper().parseText(val);
+				infoMap.put(key, obj);
+			}
+		}
+	}
 	
+	//
+	public String getNodeData(String nodePath,String formId,String tableName,String dataColName,String idColName){
+
+		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		String select=dataColName+"->>'$."+dianNode(nodePath)+"' as dyna_data";
+		String sql="select "+select+" from "+tableName+" where "+idColName+"=?";
+		Object[] paramArray=new Object[1];
+		paramArray[0]=formId;
+		Map retMap=microDao.querySingleObjJoinByCondition(sql,paramArray);
+		//
+		if(retMap!=null){
+			return (String) retMap.get("dyna_data");
+		}
+		
+		return null;
+	}
+
+	public void updateNodeData(String paramData,String nodePath,String formId,String tableName,String dataColName,String idColName){
+
+		Gson gson = new Gson();
+		Map paramMap=gson.fromJson(paramData,Map.class);
+		List placeList=new ArrayList();
+		Set<String> paramSet=paramMap.keySet();
+		String setStr="";
+		for(String key:paramSet){
+			setStr=setStr+",?,?";
+			String oneKey="$."+dianNode(nodePath)+"."+key;
+			placeList.add(oneKey);
+			placeList.add(paramMap.get(key));
+		}
+		checkAndCreateNodePathService(nodePath,formId,tableName,dataColName,idColName);
+		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		String sql="update nh_micro_dyna_form_list set dyna_content=JSON_SET(dyna_content"+setStr+") where "+idColName+"=?";
+		microDao.updateObjByCondition(sql, placeList.toArray());
+
+		return ;
+	}
+	
+	//
+	public void putNodeData(String paramData,String nodePath,String formId,String tableName,String dataColName,String idColName,String dataType){
+
+		checkAndCreateNodePathService(nodePath,formId,tableName,dataColName,idColName);
+		
+		String sql="update "+tableName+" set "+dataColName+"=JSON_SET("+dataColName+",?,";
+		String filter="$."+dianNode(nodePath);
+		List placeList=new ArrayList();
+		placeList.add(filter);
+		if(dataType==null || "".equals(dataType) || "string".equalsIgnoreCase(dataType)){
+			sql=sql+"?) where "+idColName+"=?";
+			placeList.add(paramData);
+			placeList.add(formId);
+		}else if("json".equals(dataType)){
+			sql=sql+"convert(?,JSON)) where "+idColName+"=?";
+			placeList.add(paramData);
+			placeList.add(formId);
+		}else{
+			sql=sql+paramData+") where "+idColName+"=?";
+			placeList.add(formId);
+		}
+		
+		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		microDao.updateObjByCondition(sql, placeList.toArray());
+		return ;
+	}
+
+	public void removeNodeData(String nodePath,String formId,String tableName,String dataColName,String idColName){
+
+		checkAndCreateNodePathService(nodePath,formId,tableName,dataColName,idColName);
+		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		String sql="update "+tableName+" set "+dataColName+"=JSON_REMOVE("+dataColName+",?) where "+idColName+"=?";
+		Object[] paramArray=new Object[2];
+		String filter="$."+dianNode(nodePath);
+		paramArray[0]=filter;
+		paramArray[1]=formId;
+		microDao.updateObjByCondition(sql, paramArray);
+		return ;
+	}
+	
+	public void appendNodeData4ListService(String paramData,String nodePath,String formId,String tableName,String dataColName,String idColName,String dataType){
+		String checkNodePath=nodePath;
+		if(!nodePath.endsWith("]")){
+			checkNodePath=nodePath+"[]";
+		}
+		checkAndCreateNodePathService(checkNodePath,formId,tableName,dataColName,idColName);
+		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		String sql="update "+tableName+" set "+dataColName+"=JSON_ARRAY_APPEND("+dataColName+",?,";
+		String filter="$."+dianNode(nodePath);
+		List placeList=new ArrayList();
+		placeList.add(filter);
+		if(dataType==null || "".equals(dataType) || "string".equalsIgnoreCase(dataType)){
+			sql=sql+"?) where "+idColName+"=?";
+			placeList.add(paramData);
+			placeList.add(formId);
+		}else if("json".equals(dataType)){
+			sql=sql+"convert(?,JSON)) where "+idColName+"=?";
+			placeList.add(paramData);
+			placeList.add(formId);
+		}else{
+			sql=sql+paramData+") where "+idColName+"=?";
+			placeList.add(formId);
+		}
+		microDao.updateObjByCondition(sql, placeList.toArray());
+		return ;
+	}
+
+	public void insertNodeData4ListService(String paramData,String nodePath,String formId,String tableName,String dataColName,String idColName,String dataType){
+		if(!nodePath.endsWith("]")){
+			nodePath=nodePath+"[]";
+		}
+		checkAndCreateNodePathService(nodePath,formId,tableName,dataColName,idColName);
+		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		String sql="update "+tableName+" set "+dataColName+"=JSON_ARRAY_INSERT("+dataColName+",?,";
+		String filter="$."+dianNode(nodePath);
+		List placeList=new ArrayList();
+		placeList.add(filter);
+		if(dataType==null || "".equals(dataType) || "string".equalsIgnoreCase(dataType)){
+			sql=sql+"?) where "+idColName+"=?";
+			placeList.add(paramData);
+			placeList.add(formId);
+		}else if("json".equals(dataType)){
+			sql=sql+"convert(?,JSON)) where "+idColName+"=?";
+			placeList.add(paramData);
+			placeList.add(formId);
+		}else{
+			sql=sql+"'"+paramData+"') where "+idColName+"=?";
+			placeList.add(formId);
+		}
+		microDao.updateObjByCondition(sql, placeList.toArray());
+		return ;
+	}
+	
+	private void checkAndCreateNodePathService(String node_path,String formId,String tableName,String dataColName,String idColName){
+		Integer flag=checkNodePathService(node_path,formId,tableName,dataColName,idColName);
+		if(flag==1){
+			return ;
+		}
+		String[] pathArray=node_path.split("\\.");
+		int size=pathArray.length;
+		for(int i=0;i<size;i++){
+			String oneNodePath=calNodePathService(pathArray,i);
+			Integer oneFlag=checkNodePathService(oneNodePath,formId,tableName,dataColName,idColName);
+			if(oneFlag==1){
+				continue;
+			}
+			String parentPath=calNodePathService(pathArray,i-1);
+			creatNodePathService(parentPath,pathArray[i],formId,tableName,dataColName,idColName);
+		}
+	}
+	
+	private Integer checkNodePathService(String node_path,String formId,String tableName,String dataColName,String idColName){
+		node_path=node_path.replace("[]", "");
+		String sql="select JSON_CONTAINS_PATH("+dataColName+",'all',?) as data_flag from "+tableName+" where "+idColName+"=?";
+		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		Object[] paramArray=new Object[2];
+		String filter="$."+dianNode(node_path);
+		paramArray[0]=filter;
+		paramArray[1]=formId;
+		Map retMap=microDao.querySingleObjJoinByCondition(sql, paramArray);
+		Integer retInt=((Long)retMap.get("data_flag")).intValue();
+		return retInt;
+	}
+	
+	private String calNodePathService(String[] pathArray,int pathDept){
+		String retStr="";
+		for(int i=0;i<=pathDept;i++){
+			if(retStr.length()==0){
+				retStr=pathArray[i];
+			}else{
+				retStr=retStr+"."+pathArray[i];
+			}
+		}
+		return retStr;
+	}
+	private void creatNodePathService(String parentPath,String curPath,String formId,String tableName,String dataColName,String idColName){
+		boolean listFlag=false;
+		if(curPath.indexOf("[")>0){
+			listFlag=true;
+		}
+
+		if(listFlag==false){
+			creatNodePath4MapService(parentPath+"."+curPath,formId,tableName,dataColName,idColName);
+			return;
+		}
+		
+
+		int index=curPath.indexOf("[");
+		int endIndex=curPath.indexOf("]");
+		String noneIndexStr=curPath.substring(0,index);
+		String indexStr=curPath.substring(index+1,endIndex);
+		if(indexStr==null ||"".equals(indexStr)){
+			indexStr="-1";
+		}
+		creatNodePath4ListService(parentPath+"."+noneIndexStr,Integer.valueOf(indexStr),formId,tableName,dataColName,idColName);
+	}
+	
+	private void creatNodePath4MapService(String nodePath,String formId,String tableName,String dataColName,String idColName){
+		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		String sql="update "+tableName+" set "+dataColName+"=JSON_SET("+dataColName+",?,convert(null,JSON)) where "+idColName+"=?";
+
+		List paramList=new ArrayList();
+		String filter="$."+dianNode(nodePath);
+		paramList.add(filter);
+		paramList.add(formId);
+		microDao.updateObjByCondition(sql, paramList.toArray());
+	}
+
+	private void creatNodePath4ListService(String noneIndexPath,int index,String formId,String tableName,String dataColName,String idColName){
+		
+		Integer flag=checkNodePathService(noneIndexPath,formId,tableName,dataColName,idColName);
+		if(flag==0){
+			creatNodePath4EmptyListService(noneIndexPath,formId,tableName,dataColName,idColName);
+		}
+		String nodeType="";
+		nodeType=checkNodeTypeService(noneIndexPath,formId,tableName,dataColName,idColName);
+		if(!"array".equalsIgnoreCase(nodeType)){
+			creatNodePath4EmptyListService(noneIndexPath,formId,tableName,dataColName,idColName);
+		}
+		if(index<0){
+			return ;
+		}
+		Integer nodeLength=0;
+		nodeLength=calNodeLengthService(noneIndexPath,formId,tableName,dataColName,idColName);
+		if(index<nodeLength){
+			return;
+		}
+		int size=index-nodeLength;
+		for(int i=0;i<=size;i++){
+			appendNodePath4EmptyListService(noneIndexPath,formId,tableName,dataColName,idColName);
+		}
+		
+	}
+	
+	private Integer calNodeLengthService(String nodePath,String formId,String tableName,String dataColName,String idColName){
+		String sql="select JSON_LENGTH("+dataColName+",?) as data_length from "+tableName+" where "+idColName+"=?";
+		Object[] paramArray=new Object[2];
+		String filter="$."+dianNode(nodePath);
+		paramArray[0]=filter;
+		paramArray[1]=formId;
+		Map retMap=MicroMetaDao.getInstance().querySingleObjJoinByCondition(sql, paramArray);
+		if(retMap==null){
+			return null;
+		}
+		return (Integer) retMap.get("data_length");
+	}
+	
+	private void creatNodePath4EmptyListService(String nodePath,String formId,String tableName,String dataColName,String idColName){
+		String sql="update "+tableName+" set "+dataColName+"=JSON_SET("+dataColName+",?,convert(?,JSON)) where "+idColName+"=?";
+		Object[] paramArray=new Object[3];
+		String filter="$."+dianNode(nodePath);
+		paramArray[0]=filter;
+		paramArray[1]="[]";
+		paramArray[2]=formId;
+		MicroMetaDao.getInstance().updateObjByCondition(sql, paramArray);
+	}
+	private void appendNodePath4EmptyListService(String nodePath,String formId,String tableName,String dataColName,String idColName){
+		String sql="update "+tableName+" set "+dataColName+"=JSON_ARRAY_APPEND("+dataColName+",?,convert(?,JSON)) where "+idColName+"=?";
+		Object[] paramArray=new Object[3];
+		String filter="$."+dianNode(nodePath);
+		paramArray[0]=filter;
+		paramArray[1]="null";
+		paramArray[2]=formId;
+		MicroMetaDao.getInstance().updateObjByCondition(sql, paramArray);
+	}
+	
+	private String checkNodeTypeService(String nodePath,String formId,String tableName,String dataColName,String idColName){
+		String sql="select JSON_TYPE(JSON_EXTRACT("+dataColName+",?)) as data_type from "+tableName+" where "+idColName+"=?";
+		Object[] paramArray=new Object[2];
+		String filter="$."+dianNode(nodePath);
+		paramArray[0]=filter;
+		paramArray[1]=formId;
+		Map retMap=MicroMetaDao.getInstance().querySingleObjJoinByCondition(sql, paramArray);
+		if(retMap==null){
+			return null;
+		}
+		return (String) retMap.get("data_type");
+	}
+	private String dianNode(String node){
+		if(node==null || "".equals(node)){
+			return node;
+		}
+		if(node.startsWith(".")){
+			return node.substring(1);
+		}
+		return node;
+	}	
+	
+	
+	
+	public Object execGroovyRetObjByDbReadOnly(String groovyName, String methodName,
+			Object... paramArray) throws Exception{
+		Boolean temp=MicroMetaDao.getIsThreadReadOnly();
+	    try
+	    {
+	    	MicroMetaDao.setIsThreadReadOnly(true);
+	    	return GroovyExecUtil.execGroovyRetObj(groovyName, methodName, paramArray);
+	    }
+	    finally
+	    {
+	    	MicroMetaDao.setIsThreadReadOnly(temp);
+	    }		
+		
+	}		
 	
 }

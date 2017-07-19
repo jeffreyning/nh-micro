@@ -71,5 +71,27 @@ String path=request.getContextPath();
 	}
 	]
 }
-
+,
+{
+	"id":3,
+	"text":"进件管理",
+	"iconCls":"icon-channels",
+	"children":[{
+		"id":31,
+		"text":"进件列表",
+		"iconCls":"icon-nav",
+		"attributes":{
+		  "url":"/<%=path %>/nh-micro-jsp/bizflow-page/intoPiece/listIntoPieceInfo.jsp"
+		  }
+	},
+	  {
+		"id":32,
+		"text":"营业部质检列表",
+		"iconCls":"icon-nav",
+		"attributes":{
+		  "url":"/<%=path %>/nh-micro-jsp/bizflow-page/intoPiece/listIntoPieceQaApprovalInfo.jsp"
+		  }
+	}
+	]
+}
 ]
