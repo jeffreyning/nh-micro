@@ -94,4 +94,38 @@ String path=request.getContextPath();
 	}
 	]
 }
+,
+	{
+		"id":61,
+		"text":"信审管理",
+		"iconCls":"icon-channels",
+		"children":[
+			{
+				"id":611,
+				"text":"信审列表",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/nh-micro-jsp/bizflow-page/creditAudit/listCreditAuditFormInfo.jsp"
+				  }
+			}	
+			,
+			{
+				"id":612,
+				"text":"信审初审列表",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/nh-micro-jsp/bizflow-page/creditAudit/listCreditAuditFirstApprovalInfo.jsp"
+				  }
+			}
+			,
+			{
+				"id":613,
+				"text":"信审终审列表",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/nh-micro-jsp/bizflow-page/creditAudit/listCreditAuditFinalApprovalInfo.jsp"
+				  }
+			}					
+		]
+	}
 ]
