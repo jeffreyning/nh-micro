@@ -102,6 +102,7 @@ Product_algo_lixi_xxhb.groovy,实现利息(先息后本)计算功能。
 内置贷款进件管理功能
 提交贷款进件、查看修改进件信息、上传附件、提交审批。
 
+内置信审审核管理功能
 
 nhmicro微服务框架开发技术说明
 框架描述
@@ -484,7 +485,7 @@ CREATE TABLE `contract_temp_list` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `html_text` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='产品管理 用户登录';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合同模板管理';
 
 -- ----------------------------
 -- Table structure for 进件管理 
@@ -500,4 +501,20 @@ CREATE TABLE `bizflow_intopiece_list` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='产品管理 用户登录';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='进件管理';
+
+
+-- ----------------------------
+-- Table structure for 信审管理 
+-- ----------------------------
+CREATE TABLE `bizflow_creditaudit_list` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识（预留字段）',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='信审管理';
