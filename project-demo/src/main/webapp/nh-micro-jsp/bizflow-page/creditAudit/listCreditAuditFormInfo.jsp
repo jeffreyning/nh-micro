@@ -184,8 +184,8 @@ $(function(){
 		<form id="searchForm">
 			<table id="searchTable">
 				<tr>
-					<td>id：</td>
-					<td><input type="text" id="id" name="id" /></td>
+					<td>表单号：</td>
+
 					<td><a href="#" class="easyui-linkbutton "
 						iconCls="icon-search" onclick="ReQuery()">查询</a><a href="#"
 						class="easyui-linkbutton" iconCls="icon-redo"
