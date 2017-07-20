@@ -102,6 +102,204 @@ Product_algo_lixi_xxhb.groovy,实现利息(先息后本)计算功能。
 内置贷款进件管理功能
 提交贷款进件、查看修改进件信息、上传附件、提交审批。
 
+
+nhmicro微服务框架开发技术说明
+框架描述
+封装统一的dao层（micro-db），业务逻辑在groovy中实现。
+groovy脚本放置在groovy路径下，启动时自动加载。修改时自动热部署提高调试效率。
+通过复用MicroMvcTemplate和MicroServiceTemplate，降低代码量提高开发效率。
+采用NhEsbServiceServlet作为controller的，调用MicroMvcTemplate子类groovy脚本。
+采用springmvc作为controller的，调用MicroServiceTemplate子类groovy脚本。
+Java调用groovy或groovy间调用，使用GroovyExecUtil.execGroovyRetObj(groovy文件名,方法名,…)
+
+1,
+MicroMvcTemplate封装方法有
+a,分页查询 getInfoList4Page
+b,插入新记录 createInfo
+c,更新记录updateInfo
+d，删除记录delInfo
+e，根据id查询记录getInfoById
+f,不分页查询记录getInfoListAll
+
+2,
+MicroServiceTemplate封装方法有
+a,分页查询getInfoList4PageService
+b,创建记录createInfoService
+c,更新记录updateInfoService
+e,删除记录delInfoService
+f，使用占位符拼装sql sqlTemplateService
+还有其他重载方法可直接根据sql进行增删改查，分页操作。
+
+3,通过MicroMvcTemplate和MicroServiceTemplate与数据库交互，输入输出map中的value都是string类型
+
+4、不使用封装好模板，直接执行查询sql的方法是，
+List infoList=(MicroMetaDao.getInstance()).queryObjJoinByCondition(sql);
+或调用？占位的sql
+public List<Map<String, Object>> queryObjJoinByCondition(String sql,Object[] paramArray)
+
+直接写sql进行更新操作  int status=(MicroMetaDao.getInstance()).updateObjByCondition(sql)
+或调用？占位的sql
+updateObjByCondition(sql,paramArray)
+
+MicroMetaDao()底层是jdbctemplate,有特别复杂的操作时可调用getMicroJdbcTemplate() 获取MicroMetaDao底层jdbctemplate
+
+5、根据物理uuid查一条记录的封装
+(microdb2.0以后版本支持表的id字段和bizid字段为数字)
+在service层可使用
+public Map getInfoByIdService(Map requestParamMap,String tableName)
+public Map getInfoByIdService(String id,String tableName)
+
+在dao层可使用queryObjJoinById
+Map retMap=(MicroMetaDao.getInstance()).queryObjJoinById(tableName, id);
+
+6、根据业务bizid查一条记录的封装
+在service层可使用
+public Map getInfoByBizIdService(String bizId,String tableName,String bizCol)
+
+在dao层可以使用
+Map rowMap=(MicroMetaDao.getInstance()).queryObjJoinByBizId("cms_template_list", bizid值,bizid在表中的列名称);
+
+7、使用groovy mvc和service模板时，传入的map参数和返回的结果map的value都是string类型的
+比如requestParamMap.put("update_time",DateTimeUtil.getNowStrTime());
+日期字段，insert或update时，可以用"now()"小写的。如requestParamMap.put("update_time","now()");
+
+8、groovy中获取springbean或全局变量
+在groovy中调用获取springbean,  MicroContextHolder.getContext().getBean("xxxx springbeanid");
+在groovy中获取配置的全局变量，MicroContextHolder.getContextMap().get("xxxx key");
+MicroContextHolder需要在xml中配置，map中可以配置其他的全局变量
+<bean class="com.minxin.micro.rule.engine.context.MicroContextHolder" lazy-init="false">
+<property name="contextMap">
+<map>
+
+</map>
+</property>
+</bean> 
+
+9、关于事务配置
+microdb内部使用jdbctemplate，也使用spring事务进行配置
+如果controller层使用springmvc，建议在controller层配置事务
+如果使用NhEsbServiceServlet作为controller层如下配置在WsGroovyCmdHandler中开启事务
+        <!--micro 声明式事物管理，配置事物管理advice-->
+    <tx:advice id="txAdviceMicro" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="execHandler" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--micro 配置事物管理advice作用范围与作用条件-->
+    <aop:config>
+        <aop:pointcut id="serviceLayerTransactionMicro" expression="execution( * com.project.frame.handler.*..*(..))"/>
+        <aop:advisor pointcut-ref="serviceLayerTransactionMicro" advice-ref="txAdviceMicro"/>
+    </aop:config>
+
+
+
+或使用MicroServiceTemplateSupport中的execGroovyRetObjByDbTran方法。
+
+groovy中遇到需要局部使用特殊事务控制时，使用显示编程事务实现。
+TransactionTemplate transactionTemplate = (TransactionTemplate) MicroDbHolder.getDbSource("default_transaction");
+transactionTemplate.execute(new TransactionCallback() {
+	@Override
+	public Object doInTransaction(TransactionStatus status) {
+		xxxx
+	}
+
+});
+
+10，支持like查询
+将key从requestParamMap删除，拼装自定义where条件，调用service模板的方法
+public Map getInfoList4PageService(Map requestParamMap,String tableName,Map pageMap,String cusWhere)
+例如：
+Map requestParamMap=getRequestParamMap(httpRequest);
+		String noticeNameValue=requestParamMap.get("dbcol_ext_notice_name");
+		requestParamMap.remove("dbcol_ext_notice_name");
+		String cusWhere="";
+		if(noticeNameValue!=null && !"".equals(noticeNameValue)){
+			cusWhere="meta_content->>'\$.dbcol_ext_notice_name' like '%"+noticeNameValue+"%'";
+		}
+		Map pageMap=new HashMap();
+		pageMap.put("page", page);
+		pageMap.put("rows", rows);
+		pageMap.put("sort", sort);
+		pageMap.put("order", order);
+		Map retMap=GroovyExecUtil.execGroovyRetObj("MicroServiceTemplate", "getInfoList4PageService",requestParamMap, tableName,pageMap,cusWhere);
+
+
+11、如果使用了NhEsbServiceServlet作为controller层，groovy中返回自定义httpResponse时，
+需要设置httpRequest.setAttribute("forwardFlag", "true");否则可能追加多余字段返回。
+		HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
+		httpResponse.getOutputStream().write(retStr.getBytes("UTF-8"));
+		
+		httpRequest.setAttribute("forwardFlag", "true");
+
+12、增改查时都可以输入部分自定义sql
+查询时（分页，不分页）
+tableName可输入join连接字符串连接多个表
+cusWhere可输入自定义的where条件sql串（可以和原功能叠加）
+cusSelect可输入自定义select字符串
+public  Map getInfoList4PageService(Map requestParamMap,String tableName,Map pageMap,String cusWhere,String cusSelect) 
+public List getInfoListAllService(Map requestParamMap,String tableName,Map sortMap,String cusWhere,String cusSelect)
+例如getInfoList4PageService(Map requestParamMap,"t_account a left join t_user u on a.user_code=u.user_code",Map pageMap,String cusWhere,"a.*,u.user_name")
+
+
+插入时
+cusCol可输入自定义的列字符串（可以和原功能叠加）
+cusValue可输入自定义value字符串（可以和原功能叠加）
+public Integer createInfoService(Map requestParamMap,String tableName,String cusCol,String cusValue) 
+例如插入时记录数据库时间createInfoService(requestParamMap, tableName,"create_time","now()") 
+
+更新时
+cusCondition可输入自定义where条件sql串（可以和原功能叠加）
+cusSetStr可输入自定义set字符串（可以和原功能叠加）
+public Integer updateInfoService(Map requestParamMap,String tableName,String cusCondition,String cusSetStr)
+例如更新时记录数据库时间updateInfoService(requestParamMap, tableName,cusCondition,"update_time=now()") 
+
+
+13,MicroServiceTemplate中添加sqlTemplateService方法，用于做sql替换
+替换的语法是velocity
+判断是否为null #if(\${param.p1})
+判断是否为"" #if(\${param.p1}!='')
+判断不为null且不为"" #if(\$!{param.p1}!='')
+例如以下的代码
+		Map paramMap=new HashMap();
+		paramMap.put("p1", "1");
+		paramMap.put("p2", "2");
+		paramMap.put("p3", "3");
+		paramMap.put("p4", "4");
+		paramMap.put("p5", "5");
+		String sql=
+			"select * from aaa where 1=1"+
+				"#if(\${param.p1})"+
+					" and c1='\${param.p2}'   "+
+				"#end"+
+				"#if(\${param.p2})"+
+					" and c2= #sqlreplace(\${param.p2}) "+
+				"#end"+
+				"#if(\${param.p3})"+
+					" and c3 like '%\${param.p3}%' "+
+				"#end"
+				;
+
+		List placeList=new ArrayList();
+		String retStr=sqlTemplateService(sql,paramMap,placeList);
+		System.out.println(retStr);
+		System.out.println(placeList);
+
+返回如下的sql替换结果
+select * from aaa where 1=1 and c1=1  true  and c2=? true and c3 like '%3%' true 
+[2]
+
+14，MicroServiceTemplate中生成序列号
+public Integer getSeqByMysql(String seqKey)
+
+
+15，MicroServiceTemplate中直接根据查询sql分页
+不必拼装count查询sql
+public Map getInfoList4PageServiceByMySql(String sql,Map pageMap) 
+
+
+
+
 数据库创建
 以下是推荐使用mysql5.7版支持json的建表sql
 
