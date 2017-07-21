@@ -1,4 +1,4 @@
-package groovy.front
+package groovy.front.backmanager
 
 import com.nh.micro.rule.engine.core.GInputParam;
 import com.nh.micro.rule.engine.core.GOutputParam;

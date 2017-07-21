@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="css/base.min.css">
     <link rel="stylesheet" href="css/financialList.min.css">
     <link rel="stylesheet" type="text/css" href="css/me.css">
+<script type="text/javascript" src="js/json2.js"></script> 
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
 function htmlTemplate(template, data, allowEmpty, chats) {
     var regExp;
@@ -29,23 +31,33 @@ function htmlTemplate(template, data, allowEmpty, chats) {
 }
 
 var product_tpl='<tr>'+
-    '<td><p class="xieyiLV">${lilv}<b>%</b></p></td>'+
-    '<td><p class="qixianData">${qixian}</p></td>  '+
+    '<td><p class="xieyiLV">${years_income}<b>%</b></p></td>'+
+    '<td><p class="qixianData">${periods}</p></td>  '+
     '<td>${product_name}</td>'+
-    '<td>${qitou}</td>'+
+    '<td>${start_invest_money}</td>'+
     '<td>${shengyu}</td>'+
     '<td class="red">'+
     '<a class="gary" href="javascript:;" data-color="red" disabledie="">已售罄</a>'+
     '</td>'+
 	'</tr>';
 
-function loadTable(data){
-	data = [{"lilv":"10","qixian":"6个月","product_name":"金宝宝102期","qitou":"1000","shengyu":"20000"},{"lilv":"10","qixian":"6个月","product_name":"金宝宝101期","qitou":"1000","shengyu":"20000"}];
-	var temp=[];
-	for(var i=0;i<data.length;i++){
-	temp.push( htmlTemplate(product_tpl,data[i]) );
-	}
-	document.getElementById("J_listCentent").innerHTML = temp.join("");	
+function loadTable(){
+	//data = [{"lilv":"10","qixian":"6个月","product_name":"金宝宝102期","qitou":"1000","shengyu":"20000"},{"lilv":"10","qixian":"6个月","product_name":"金宝宝101期","qitou":"1000","shengyu":"20000"}];
+	
+	$.ajax({
+		url:"/project-demo/NhEsbServiceServlet?cmdName=Groovy&subName=front_product_api&groovySubName=getInfoListAll",
+		type:"post",
+		dataType:"json",
+		success:function(data,status){
+			console.log(status);
+			var temp=[];
+			for(var i=0;i<data.length;i++){
+			temp.push( htmlTemplate(product_tpl,data[i]) );
+			}
+			$("#J_listCentent").html( temp.join(""));	
+		  }
+	});
+
 }
 
 </script>
@@ -181,6 +193,6 @@ function loadTable(data){
 </body>
 
 <script type="text/javascript">
-loadTable(null);
+loadTable();
 </script>
 </html>
