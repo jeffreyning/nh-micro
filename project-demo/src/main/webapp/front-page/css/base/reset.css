@@ -1,0 +1,105 @@
+@charset "utf-8";
+div,
+a,
+b,
+input,
+textarea,
+button,
+select,
+form,
+label,
+span,
+td,
+li,
+time,
+body,
+ul,
+ol,
+i,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+table,
+dd,
+dl,
+dt {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: Arial,Microsoft Yahei,微软雅黑,Hiragino Sans GB,宋体 !important;
+  -webkit-tap-highlight-color: transparent;
+}
+th,
+td {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+article,
+aside,
+footer,
+header,
+section,
+nav,
+fieldset {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+ul,
+ol,
+li {
+  list-style: none;
+}
+input,
+img,
+fieldset {
+  border: none;
+}
+img {
+  vertical-align: middle;
+}
+table,
+td {
+  cellpadding: 0;
+  cellspacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.clearfix {
+  display: block;
+  zoom: 1;
+}
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+a {
+  text-decoration: none;
+}
+a:focus,
+input {
+  outline: none;
+  /*for Firfox*/
+}
+body {
+  background: #fff;
+  line-height: 100%;
+}
+.phcolorStyleIe9 {
+  color: #999;
+}
+.none {
+  display: none;
+}
+.me-u-btn {
+  font-family: Arial,Microsoft Yahei,微软雅黑,Hiragino Sans GB,宋体 !important;
+}

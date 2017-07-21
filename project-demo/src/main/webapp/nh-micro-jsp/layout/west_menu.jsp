@@ -128,4 +128,21 @@ String path=request.getContextPath();
 			}					
 		]
 	}
+,
+	{
+		"id":71,
+		"text":"互联网管理",
+		"iconCls":"icon-channels",
+		"children":[
+			{
+				"id":711,
+				"text":"互联网产品列表",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/nh-micro-jsp/front-manager-page/listFrontProductInfo.jsp"
+				  }
+			}	
+				
+		]
+	}	
 ]
