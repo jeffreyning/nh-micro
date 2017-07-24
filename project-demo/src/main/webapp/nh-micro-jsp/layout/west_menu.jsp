@@ -149,7 +149,15 @@ String path=request.getContextPath();
 				"attributes":{
 				  "url":"/<%=path %>/nh-micro-jsp/front-manager-page/listFrontProductInfo.jsp"
 				  }
-			}	
+			},
+			{
+				"id":713,
+				"text":"互联网账户列表",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/nh-micro-jsp/front-manager-page/listFrontAccountInfo.jsp"
+				  }
+			}
 				
 		]
 	}	
