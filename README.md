@@ -104,6 +104,9 @@ Product_algo_lixi_xxhb.groovy,实现利息(先息后本)计算功能。
 
 内置信审审核管理功能
 
+内置互联网金融p2p理财功能和互联网页面
+
+
 nhmicro微服务框架开发技术说明
 框架描述
 封装统一的dao层（micro-db），业务逻辑在groovy中实现。
@@ -507,6 +510,7 @@ CREATE TABLE `bizflow_intopiece_list` (
 -- ----------------------------
 -- Table structure for 信审管理 
 -- ----------------------------
+DROP TABLE IF EXISTS `bizflow_creditaudit_list`;
 CREATE TABLE `bizflow_creditaudit_list` (
   `id` varchar(50) NOT NULL,
   `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识（预留字段）',
@@ -518,3 +522,146 @@ CREATE TABLE `bizflow_creditaudit_list` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='信审管理';
+
+
+-- ----------------------------
+-- Table structure for 账户管理 
+-- ----------------------------
+DROP TABLE IF EXISTS `t_front_account`;
+CREATE TABLE `t_front_account` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识（预留字段）',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间（注册日期）',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `user_code` varchar(36) DEFAULT NULL COMMENT '用户编码',
+  `accumulated_income` decimal(20,2) DEFAULT '0.00' COMMENT '累计收益',
+  `principal_received` decimal(20,2) DEFAULT '0.00' COMMENT '待收本金',
+  `interest_received` decimal(20,2) DEFAULT '0.00' COMMENT '待收利息',
+  `frozen_amount` decimal(20,2) DEFAULT '0.00' COMMENT '冻结金额',
+  `total_investment` decimal(20,2) DEFAULT '0.00' COMMENT '投资总额',
+  `available_balance` decimal(20,2) DEFAULT '0.00' COMMENT '可用余额',
+  `account_type` varchar(2) DEFAULT NULL COMMENT '账户类型1、个人2、公司',
+  `cumulative_rincipal` decimal(20,2) DEFAULT '0.00' COMMENT '累计收回本金',
+  `data_version` int(11) DEFAULT '0' COMMENT '数据版本',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='账户表';
+
+-- ----------------------------
+-- Table structure for 投资信息管理 
+-- ----------------------------
+DROP TABLE IF EXISTS `t_front_invest`;
+CREATE TABLE `t_front_invest` (
+  `id` varchar(50) NOT NULL,
+  `order_number` varchar(50) DEFAULT NULL COMMENT '订单号',
+  `user_code` varchar(50) DEFAULT NULL COMMENT '客户编码',
+  `user_name` varchar(50) DEFAULT NULL COMMENT '客户姓名',
+  `bid_name` varchar(18) DEFAULT NULL COMMENT '标的名称',
+  `bid_code` varchar(18) DEFAULT NULL COMMENT '标的id',
+  `product_name` varchar(50) DEFAULT NULL COMMENT '产品名称',
+  `product_code` varchar(20) DEFAULT NULL COMMENT '产品编号',
+  `invest_amount` decimal(20,2) DEFAULT NULL COMMENT '投资金额',
+  `invest_type` varchar(50) DEFAULT NULL COMMENT '投资类型:0.首次投资 1.追加投资 2.续投',
+  `trade_status` int(2) unsigned zerofill DEFAULT NULL COMMENT '交易状态:0.购买失败 1.购买成功  3.支付中 4.待支付，5持有中（收益中）,6回款成功',
+  `repay_progress` varchar(50) DEFAULT NULL COMMENT '还款进度',
+  `remark` varchar(1000) DEFAULT NULL COMMENT '备注',
+  `account_id` varchar(50) DEFAULT NULL COMMENT '账户信息id',
+  `expire_profit` decimal(20,2) DEFAULT NULL COMMENT '到期收益',
+  `create_time` varchar(19) DEFAULT NULL COMMENT '创建时间',
+  `interrest_date` varchar(19) DEFAULT NULL COMMENT '计息日',
+  `trade_end_date` varchar(19) DEFAULT NULL COMMENT '交易到期日',
+  `back_amount` decimal(20,2) DEFAULT NULL COMMENT '到期回款金额',
+  `payment_no` varchar(100) DEFAULT NULL COMMENT '支付交易流水号,还款给投资人时需要',
+  `source_id` varchar(20) DEFAULT NULL COMMENT '购买平台  1、pc  2、android  3、ios  4、h5',
+  `reback_date` varchar(19) DEFAULT NULL COMMENT '回款日',
+  `isgenerate_pack` varchar(5) DEFAULT NULL COMMENT '是否已经生成电子合同，‘0’ 否 ‘1’ 是',
+  `order_rate` double(8,6) DEFAULT NULL COMMENT '订单利率',
+  `freeze_status` int(2) DEFAULT NULL COMMENT '冻结状态：0-购买冻结 1-购买成功解冻 2-购买失败返还',
+  `success_date` varchar(19) DEFAULT NULL COMMENT '支付成功时间',
+  `periods` varchar(19) DEFAULT NULL COMMENT '期限',
+  `cycle_type` varchar(5) DEFAULT NULL COMMENT '''周期类型:0.月 1.天 2.固定到期日 3.年'',',
+  `account_pay` decimal(20,2) DEFAULT NULL COMMENT '账户余额支付金额',
+  `bank_pay` decimal(20,2) DEFAULT NULL COMMENT '银行支付金额',
+  `contract_url` varchar(300) DEFAULT NULL COMMENT '电子合同url地址',
+  `real_profit` decimal(20,2) DEFAULT '0.00' COMMENT '实际收益',
+  `real_back_amount` decimal(20,2) DEFAULT '0.00' COMMENT '实际回款金额',
+  `flag` varchar(2) DEFAULT '0' COMMENT '数据状态:0.未抓取 1.已抓取 2.已返回 3.已推送',
+  `increment_id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`increment_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=441 DEFAULT CHARSET=utf8 COMMENT='客户投资信息表';
+
+
+
+-- ----------------------------
+-- Table structure for 交易记录管理 
+-- ----------------------------
+DROP TABLE IF EXISTS `t_front_recharge`;
+CREATE TABLE `t_front_recharge` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL,
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `recharge_money` decimal(20,2) DEFAULT '0.00' COMMENT '交易金额',
+  `recharge_user_code` varchar(36) DEFAULT NULL COMMENT '客户编号',
+  `recharge_type` varchar(2) DEFAULT NULL COMMENT '交易类型（1充值2提现3投资4回款5手续费6红包）',
+  `recharge_status` varchar(2) DEFAULT NULL COMMENT '交易状态（1处理中2成功3失败）',
+  `account_balance` decimal(20,2) DEFAULT '0.00' COMMENT '账户余额',
+  `inner_recharge_number` varchar(50) DEFAULT NULL COMMENT '内部交易号',
+  `thirdparty_recharge_number` varchar(50) DEFAULT NULL COMMENT '第三方交易号',
+  `pay_way` varchar(2) DEFAULT NULL COMMENT '支付方式（1快捷支付2网银支付3账户余额）',
+  `approve_time` datetime DEFAULT NULL COMMENT '审核时间',
+  `success_back_time` datetime DEFAULT NULL COMMENT '成功返回时间',
+  `thirdparty_code_syn` varchar(10) DEFAULT NULL COMMENT '支付平台同步返回的消息状态码',
+  `thirdparty_msg__syn` varchar(200) DEFAULT NULL COMMENT '支付平台同步返回的状态信息',
+  `thirdparty_code_aysn` varchar(10) DEFAULT NULL COMMENT '支付平台异步回调返回的状态信息',
+  `thirdparty_msg_aysn` varchar(200) DEFAULT NULL COMMENT '支付平台异步调用返回的状态信息',
+  `source` char(1) DEFAULT NULL COMMENT '渠道 1、pc  2、android  3、ios  4、h5',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `meta_key` (`meta_key`,`meta_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='资金管理 交易记录表';
+
+-- ----------------------------
+-- Table structure for p2p产品管理 
+-- ----------------------------
+DROP TABLE IF EXISTS `t_front_product`;
+CREATE TABLE `t_front_product` (
+  `id` varchar(50) DEFAULT '',
+  `product_code` varchar(20) NOT NULL COMMENT '产品编码',
+  `product_type` varchar(2) DEFAULT '1' COMMENT '产品分类 1 保理 2 金所',
+  `product_name` varchar(50) DEFAULT NULL COMMENT '产品名称',
+  `periods` varchar(19) DEFAULT NULL COMMENT '期数',
+  `start_invest_money` decimal(20,2) DEFAULT NULL COMMENT '起投金额',
+  `years_income` varchar(20) DEFAULT NULL COMMENT '年化收益',
+  `product_url` varchar(2000) DEFAULT NULL COMMENT '产品详情url',
+  `stepping` decimal(20,2) DEFAULT NULL COMMENT '步进',
+  `cycle_type` varchar(5) DEFAULT NULL COMMENT '周期类型:0.月 1.天 2.固定到期日 3.年',
+  `create_time` varchar(19) DEFAULT NULL COMMENT '创建时间',
+  `create_name` varchar(50) DEFAULT NULL COMMENT '创建人名称',
+  `create_id` bigint(12) DEFAULT NULL COMMENT '创建人id',
+  `interrest_mode` varchar(10) DEFAULT NULL COMMENT '起息规则方式 INSU 投资成功计息 FSSU 满标计息',
+  `interrest_date` int(11) DEFAULT NULL COMMENT '起息规则 n 表示t+n',
+  `per_investment` decimal(20,2) unsigned zerofill DEFAULT NULL COMMENT '单笔最高金额',
+  `product_cycle` varchar(8) DEFAULT NULL COMMENT '封闭期',
+  `prod_alias` varchar(500) DEFAULT NULL COMMENT '产品别名',
+  `repayment_mode` varchar(10) DEFAULT NULL COMMENT '还款方式 DQBX：到期本息 XXHB：先息后本',
+  `product_state` varchar(3) DEFAULT NULL COMMENT '产品状态 1：正常 2：失败',
+  `page_code` varchar(50) DEFAULT NULL COMMENT '页面参数模板id',
+  `model_code` varchar(50) DEFAULT NULL COMMENT '模板编码id',
+  `model_name` varchar(50) DEFAULT NULL COMMENT '模板名称',
+  `product_amount` decimal(20,2) DEFAULT NULL COMMENT '项目金额',
+  `collect_start_time` varchar(19) DEFAULT NULL COMMENT '募集开始时间',
+  `collect_end_time` varchar(19) DEFAULT NULL COMMENT '募集结束时间',
+  `pay_type` varchar(10) DEFAULT NULL COMMENT '支付方式 OPAY 在线支付 OAPP 在线预约',
+  `pay_bus_id` varchar(20) DEFAULT NULL COMMENT '支付主体 JZGK:金置高科',
+  `is_stair_rate` varchar(2) DEFAULT 'N' COMMENT '是否使用阶梯利率  Y：使用 N：不使用',
+  `increment_id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`increment_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=160 DEFAULT CHARSET=utf8 COMMENT='产品信息表';
+
