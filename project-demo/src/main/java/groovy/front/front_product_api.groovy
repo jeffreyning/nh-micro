@@ -26,7 +26,7 @@ import com.nh.micro.db.MicroDbHolder;
 
 import org.springframework.jdbc.support.rowset.*;
 import groovy.template.MicroMvcTemplate;
-
+import javax.servlet.http.HttpSession;
 
 class FrontProduct extends MicroMvcTemplate{
 public String pageName="listDictionaryInfo";
@@ -77,5 +77,23 @@ public void productDetailGo(GInputParam gInputParam,GOutputParam gOutputParam,GC
 	httpRequest.setAttribute("forwardFlag", "true");
 	return;
 }
-			
+
+public void productPayGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+	
+	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+	HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+	HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+	String nhUserCode=httpSession.getAttribute("nhUserName");
+	Map requestParamMap=getRequestParamMap(httpRequest);
+	String productCode=httpRequest.getParameter("productCode");
+	String investAmount=httpRequest.getParameter("investAmount");
+	Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
+	//httpRequest.setAttribute("productInfo", productInfo);
+	String orderNumber=GroovyExecUtil.execGroovyRetObj("front_invest_api", "createInvestInfo", nhUserCode,productCode,investAmount);
+	Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
+	httpRequest.setAttribute("investInfo", investInfo);
+	httpRequest.getRequestDispatcher("/front-page/pay.jsp").forward(httpRequest, httpResponse);
+	httpRequest.setAttribute("forwardFlag", "true");
+	return;
+}
 }

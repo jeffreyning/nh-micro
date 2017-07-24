@@ -136,6 +136,14 @@ String path=request.getContextPath();
 		"children":[
 			{
 				"id":711,
+				"text":"互联网产品页面跳转",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/front-page/regularFinancialList.html"
+				  }
+			},		
+			{
+				"id":712,
 				"text":"互联网产品列表",
 				"iconCls":"icon-nav",
 				"attributes":{

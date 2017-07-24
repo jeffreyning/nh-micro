@@ -18,7 +18,14 @@ String path = request.getContextPath();
     <link rel="stylesheet" type="text/css" href="<%=path%>/front-page/css/me.css">
 <script type="text/javascript" src="<%=path%>/front-page/js/json2.js"></script> 
 <script type="text/javascript" src="<%=path%>/front-page/js/jquery-1.7.2.min.js"></script>    
-	
+<script type="text/javascript" >
+function toPay(){
+	var investAmount=$('#inputMoney').val();
+	var url="/project-demo/NhEsbServiceServlet?cmdName=Groovy&subName=front_product_api&groovySubName=productPayGo";
+	url=url+'&productCode=${productInfo.product_code }&investAmount='+investAmount;
+	window.location.href=url;	
+}
+</script>	
 </head>
 <body>
 <style>
@@ -141,7 +148,7 @@ String path = request.getContextPath();
                 </li>
                 <li class="lineH clearfix"><label>预期到期收益：</label><span><b class="red J_dailyReturn">0.00</b>元</span></li>
                 <li>
-                <button class="me-u-btn" data-color="red" data-size="block" id="J_submit">立即抢购</button> 
+                <button class="me-u-btn" data-color="red" data-size="block" id="J_submit" onclick="toPay()">立即抢购</button> 
                 </li>
                 <li class="clearfix last">
                 <div data-wrap="checkbox" data-orange="" id="checkbox" class="fl">

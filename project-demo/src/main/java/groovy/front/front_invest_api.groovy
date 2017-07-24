@@ -40,7 +40,28 @@ public String getTableName(HttpServletRequest httpRequest){
 	return tableName;
 }
 
-public void investProduct(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+public String createInvestInfo(String userCode,String productCode,String investAmount){
+	//生成投资记录
+	Map investMap=new HashMap();
+	SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
+	String orderNumber=sdf.format(new Date());
+	investMap.put("order_number", orderNumber);
+	investMap.put("user_code", userCode);
+	investMap.put("user_name", userCode);
+
+	investMap.put("bid_name", productCode);
+	investMap.put("bid_code", productCode);
+	investMap.put("product_name", productCode);
+	investMap.put("product_code", productCode);
+
+	investMap.put("invest_amount",investAmount);
+	String tradeStatus="4";
+	investMap.put("trade_status",tradeStatus);
+	createInfoService(investMap,"t_front_invest");
+	return orderNumber;
+}
+
+public void investProductGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 	
 	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 	HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
@@ -48,9 +69,12 @@ public void investProduct(GInputParam gInputParam,GOutputParam gOutputParam,GCon
 	String tableName=getTableName(httpRequest);
 	String pageName=getPageName(httpRequest);
 	Map requestParamMap=getRequestParamMap(httpRequest);
-
+	String orderNumber=httpRequest.getParameter("orderNumber");
+	
+	Map investMap=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
+	String investAmount=investMap.get("invest_amount");
 	//生成投资记录
-	Map investMap=new HashMap();
+/*	Map investMap=new HashMap();
 	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	String orderNumber=sdf.format(new Date());
 	investMap.put("order_number", orderNumber);
@@ -66,7 +90,7 @@ public void investProduct(GInputParam gInputParam,GOutputParam gOutputParam,GCon
 	investMap.put("invest_amount",investAmount);
 	String tradeStatus="4";
 	investMap.put("trade_status",tradeStatus);
-	createInfoService(investMap,"t_front_invest");
+	createInfoService(investMap,"t_front_invest");*/
 	
 	//扣除账户金额
 	String subAccountSql="update t_front_account set available_balance=available_balance-? where meta_key=?"
@@ -77,8 +101,8 @@ public void investProduct(GInputParam gInputParam,GOutputParam gOutputParam,GCon
 	
 	//生成投资记录
 	Map tranMap=new HashMap();
-	SimpleDateFormat sdf_tran=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	String tranId=sdf.format(new Date());
+	SimpleDateFormat sdf_tran=new SimpleDateFormat("yyyyMMddHHmmss");
+	String tranId=sdf_tran.format(new Date());
 	tranMap.put("inner_recharge_number", tranId);
 	tranMap.put("recharge_money",investAmount);
 	tranMap.put("recharge_user_code",nhUserName);
