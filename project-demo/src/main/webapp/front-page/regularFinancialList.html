@@ -15,6 +15,12 @@
 <script type="text/javascript" src="js/json2.js"></script> 
 <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
+function productDetail(productCode){
+	var url="/project-demo/NhEsbServiceServlet?cmdName=Groovy&subName=front_product_api&groovySubName=productDetailGo";
+	url=url+"&productCode="+productCode;
+	window.location.href=url;
+}
+
 function htmlTemplate(template, data, allowEmpty, chats) {
     var regExp;
     chats = chats || ['\\$\\{', '\\}'];
@@ -29,7 +35,22 @@ function htmlTemplate(template, data, allowEmpty, chats) {
             }
         });
 }
-
+function getProductTpl(data){
+	var ret="";
+	ret=ret+'<tr>'+
+    '<td><p class="xieyiLV">${years_income}<b>%</b></p></td>'+
+    '<td><p class="qixianData">${periods}</p></td>  '+
+    '<td>${product_name}</td>'+
+    '<td>${start_invest_money}</td>'+
+    '<td>${shengyu}</td>'+
+    '<td class="red">';
+    ret=ret+
+    '<a class="gary" href="javascript:productDetail(\'${product_code}\');" data-color="red" >立即抢购</a>';
+    ret=ret+
+    '</td>'+
+	'</tr>';
+	return ret;
+}
 var product_tpl='<tr>'+
     '<td><p class="xieyiLV">${years_income}<b>%</b></p></td>'+
     '<td><p class="qixianData">${periods}</p></td>  '+
@@ -52,6 +73,7 @@ function loadTable(){
 			console.log(status);
 			var temp=[];
 			for(var i=0;i<data.length;i++){
+				var product_tpl=getProductTpl(data);
 			temp.push( htmlTemplate(product_tpl,data[i]) );
 			}
 			$("#J_listCentent").html( temp.join(""));	

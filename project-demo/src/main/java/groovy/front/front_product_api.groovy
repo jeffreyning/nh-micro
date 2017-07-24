@@ -63,5 +63,19 @@ public void getInfoListAll(GInputParam gInputParam,GOutputParam gOutputParam,GCo
 	httpRequest.setAttribute("forwardFlag", "true");
 	return;
 }
+
+public void productDetailGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+	
+	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+	HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+	Map requestParamMap=getRequestParamMap(httpRequest);
+	String productCode=httpRequest.getParameter("productCode");
+	Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
+	httpRequest.setAttribute("productInfo", productInfo);
+
+	httpRequest.getRequestDispatcher("/front-page/regularProductDetail.jsp").forward(httpRequest, httpResponse);
+	httpRequest.setAttribute("forwardFlag", "true");
+	return;
+}
 			
 }
