@@ -108,7 +108,7 @@ $(function(){
 </div>
 <ul class="menuList">
     <li class="choosen">
-        <a href="<%=path%>/front-page/account.html">
+        <a href="<%=path%>/front-page/account.jsp">
                         账户总览
                         <i class="me-ion-chevron-right"></i>
                     </a>

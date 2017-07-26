@@ -140,7 +140,7 @@ $(function(){
 </div>
 <ul class="menuList">
     <li>
-        <a href="account.html">
+        <a href="account.jsp">
                         账户总览
                         <i class="me-ion-chevron-right"></i>
                     </a>
@@ -165,7 +165,7 @@ $(function(){
                     </a>
     </li>
     <li class="choosen">
-        <a href="myregular_finance.html">
+        <a href="myregular_finance.jsp">
                         定期理财
                         <i class="me-ion-chevron-right"></i>
                     </a>

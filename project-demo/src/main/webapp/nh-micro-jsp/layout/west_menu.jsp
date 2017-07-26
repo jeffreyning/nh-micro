@@ -141,7 +141,15 @@ String path=request.getContextPath();
 				"attributes":{
 				  "url":"/<%=path %>/front-page/regularFinancialList.html"
 				  }
-			},		
+			},	
+			{
+				"id":711,
+				"text":"互联网账户页面跳转",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/front-page/account.jsp"
+				  }
+			},	
 			{
 				"id":712,
 				"text":"互联网产品列表",
