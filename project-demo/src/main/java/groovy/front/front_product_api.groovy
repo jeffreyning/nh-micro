@@ -29,71 +29,74 @@ import groovy.template.MicroMvcTemplate;
 import javax.servlet.http.HttpSession;
 
 class FrontProduct extends MicroMvcTemplate{
-public String pageName="listDictionaryInfo";
-public String tableName="t_front_product";
+	public String pageName="listDictionaryInfo";
+	public String tableName="t_front_product";
 
 
-public String getPageName(HttpServletRequest httpRequest){
-	return pageName;
-}
-public String getTableName(HttpServletRequest httpRequest){
-	return tableName;
-}
+	public String getPageName(HttpServletRequest httpRequest){
+		return pageName;
+	}
+	public String getTableName(HttpServletRequest httpRequest){
+		return tableName;
+	}
 
-public void getInfoListAll(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+	public void getInfoListAll(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+
+		String sort=httpRequest.getParameter("sort");
+		String order=httpRequest.getParameter("order");
+		String tableName=getTableName(httpRequest);
+		String pageName=getPageName(httpRequest);
+		Map requestParamMap=getRequestParamMap(httpRequest);
+		Map sortMap=new HashMap();
+		sortMap.put("sort", sort);
+		sortMap.put("order", order);
+		List retList=GroovyExecUtil.execGroovyRetObj("MicroServiceTemplate", "getInfoListAllService",requestParamMap, tableName,sortMap);
+
+		JsonBuilder jsonBuilder=new JsonBuilder(retList);
+		String retStr=jsonBuilder.toString();
+
+		HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
+		httpResponse.getOutputStream().write(retStr.getBytes("UTF-8"));
+
+		httpRequest.setAttribute("forwardFlag", "true");
+		return;
+	}
+
+	public void productDetailGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		Map requestParamMap=getRequestParamMap(httpRequest);
+		String productCode=httpRequest.getParameter("productCode");
+		Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
+		httpRequest.setAttribute("productInfo", productInfo);
+
+		httpRequest.getRequestDispatcher("/front-page/regularProductDetail.jsp").forward(httpRequest, httpResponse);
+		httpRequest.setAttribute("forwardFlag", "true");
+		return;
+	}
+
+	public void productPayGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+		String nhUserCode=httpSession.getAttribute("nhUserName");
+		Map requestParamMap=getRequestParamMap(httpRequest);
+		String productCode=httpRequest.getParameter("productCode");
+		String investAmount=httpRequest.getParameter("investAmount");
+		Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
+		//httpRequest.setAttribute("productInfo", productInfo);
+		String orderNumber=GroovyExecUtil.execGroovyRetObj("front_invest_api", "createInvestInfo", nhUserCode,productCode,investAmount);
+		Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
+		httpRequest.setAttribute("investInfo", investInfo);
+		httpRequest.getRequestDispatcher("/front-page/pay.jsp").forward(httpRequest, httpResponse);
+		httpRequest.setAttribute("forwardFlag", "true");
+		return;
+	}
 	
-	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 
-	String sort=httpRequest.getParameter("sort");
-	String order=httpRequest.getParameter("order");
-	String tableName=getTableName(httpRequest);
-	String pageName=getPageName(httpRequest);
-	Map requestParamMap=getRequestParamMap(httpRequest);
-	Map sortMap=new HashMap();
-	sortMap.put("sort", sort);
-	sortMap.put("order", order);
-	List retList=GroovyExecUtil.execGroovyRetObj("MicroServiceTemplate", "getInfoListAllService",requestParamMap, tableName,sortMap);
-
-	JsonBuilder jsonBuilder=new JsonBuilder(retList);
-	String retStr=jsonBuilder.toString();
-
-	HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
-	httpResponse.getOutputStream().write(retStr.getBytes("UTF-8"));
 	
-	httpRequest.setAttribute("forwardFlag", "true");
-	return;
-}
-
-public void productDetailGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
-	
-	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
-	HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
-	Map requestParamMap=getRequestParamMap(httpRequest);
-	String productCode=httpRequest.getParameter("productCode");
-	Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
-	httpRequest.setAttribute("productInfo", productInfo);
-
-	httpRequest.getRequestDispatcher("/front-page/regularProductDetail.jsp").forward(httpRequest, httpResponse);
-	httpRequest.setAttribute("forwardFlag", "true");
-	return;
-}
-
-public void productPayGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
-	
-	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
-	HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
-	HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
-	String nhUserCode=httpSession.getAttribute("nhUserName");
-	Map requestParamMap=getRequestParamMap(httpRequest);
-	String productCode=httpRequest.getParameter("productCode");
-	String investAmount=httpRequest.getParameter("investAmount");
-	Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
-	//httpRequest.setAttribute("productInfo", productInfo);
-	String orderNumber=GroovyExecUtil.execGroovyRetObj("front_invest_api", "createInvestInfo", nhUserCode,productCode,investAmount);
-	Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
-	httpRequest.setAttribute("investInfo", investInfo);
-	httpRequest.getRequestDispatcher("/front-page/pay.jsp").forward(httpRequest, httpResponse);
-	httpRequest.setAttribute("forwardFlag", "true");
-	return;
-}
 }

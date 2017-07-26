@@ -133,7 +133,7 @@ $(function(){
                     </a>
     </li>
     <li>
-        <a href="<%=path%>/front-page/myregular_finance.html">
+        <a href="<%=path%>/front-page/myregular_finance.jsp">
                         定期理财
                         <i class="me-ion-chevron-right"></i>
                     </a>
