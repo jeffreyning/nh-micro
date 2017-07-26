@@ -127,7 +127,7 @@ $(function(){
                     </a>
     </li>
     <li>
-        <a href="<%=path%>/front-page/transaction_record.html">
+        <a href="<%=path%>/front-page/transaction_record.jsp">
                         交易记录
                         <i class="me-ion-chevron-right"></i>
                     </a>

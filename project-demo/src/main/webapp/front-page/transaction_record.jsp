@@ -12,48 +12,28 @@ String path = request.getContextPath();
     <meta http-equiv="cleartype" content="on">
     <meta name="keywords" content="">
 	<meta name="description" content="">
-    <title>金宝宝</title>
+    <title>交易记录</title>
     <link rel="stylesheet" href="<%=path%>/front-page/css/base.min.css">
     <link rel="stylesheet" href="<%=path%>/front-page/css/myregular_finance.min.css">
     <link rel="stylesheet" type="text/css" href="<%=path%>/front-page/css/me.css">
 <script type="text/javascript" src="<%=path%>/front-page/js/json2.js"></script> 
-<script type="text/javascript" src="<%=path%>/front-page/js/jquery-1.7.2.min.js"></script>  
-  <script type="text/javascript" src="<%=path%>/front-page/js/template-web.js"></script> 
-        <script id="mr_f_view_tpl" type="text/html">
-          <table class="listTable">
-            <thead class="listTitle">
-              <tr>
-                <th>项目名称</th>
-                <th>投资金额(元)</th>
-                <th>预期收益率</th>
-                <th>项目期限</th>
-                <th>预期收益(元)</th>
-                <th>起息日/到期日</th>
-                <th>状态</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody class="listTitle listCentent2">
-				{{each rowsData as value i}}
+<script type="text/javascript" src="<%=path%>/front-page/js/jquery-1.7.2.min.js"></script>   
+<script type="text/javascript" src="<%=path%>/front-page/js/template-web.js"></script> 
+        <script id="t_r_table_tpl" type="text/html">
+{{each rowsData as value i}}
+          <tr>
+            <td>{{value.create_time}}</td>
+            <td>{{value.recharge_type_txt}}</td>
+            <td>{{{value.recharge_status_txt}}}</td>
+            <td>{{value.recharge_money}}</td>
+            <td>{{value.account_balance}}</td>
+          </tr>
+{{/each}}
 
-              <tr>
-                <td>{{value.product_name}}</td>
-                <td>{{value.invest_amount}}</td>
-                <td>{{value.order_rate}}%</td>
-                <td>{{value.periods}}</td>
-                <td>{{value.expire_profit}}</td>
-
-              </tr>
-				{{/each}}
-
-
-            </tbody>
-          </table>
-
-        </script>  
+        </script> 
 <script type="text/javascript" >
-function renderProductTable(){
-	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_invest_api&groovySubName=getMyInvestListAll";
+function renderRechargeTable(){
+	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_recharge_api&groovySubName=getMyRechargeListAll";
 
 	$.ajax({
 		url:url,
@@ -62,20 +42,19 @@ function renderProductTable(){
 		success:function(data,status){
 			var templateData=new Object();
 			templateData.rowsData=data;
-			var html = template('mr_f_view_tpl', templateData);
-			console.log(html);
-			$("#mr_f_view").html(html);			
+			var html = template('t_r_table_tpl', templateData);
+
+			$("#t_r_tbody").html(html);			
 		}
 	});
 
 }
 $(function(){
-	renderProductTable();
+	renderRechargeTable();
 });
 </script>	
 </head>
-<body>
-<style>
+  <body><style>
     header .header li.header_none {
         display: none;
     }
@@ -92,8 +71,8 @@ $(function(){
         <div data-wrap="layout" class="pos">
             <a class="key-btn me-ion-navicon"></a>
             <h1 class="logo" data-item="col-2">
-                <a href="<%=path%>/front-page/index.html">
-                    <img src="<%=path%>/front-page/images/logo.png" class="img-responsive">
+                <a href="index.html">
+                    <img src="images/logo.png" class="img-responsive">
                 </a>
             </h1>
             <ul class="nav" data-item="col-10" data-flag="1" id="J_headerNav">
@@ -101,7 +80,6 @@ $(function(){
             </ul>
         </div>
     </div>
-
 </header>
     <div class="accountMain">
       <div id="J_accountMenu"><!--账户中心通用菜单-->
@@ -140,7 +118,7 @@ $(function(){
 </div>
 <ul class="menuList">
     <li>
-        <a href=""<%=path%>/front-page/account.jsp"">
+        <a href="<%=path%>/front-page/account.jsp">
                         账户总览
                         <i class="me-ion-chevron-right"></i>
                     </a>
@@ -215,64 +193,77 @@ $(function(){
 </script></div>
       <div class="accountRight">
         <div class="acTitle">
-          <h2>定期理财</h2>
+          <h2>交易记录</h2>
         </div>
-        <div class="mr_f_cont">
-          <div id="mr_f_finance" data-wrap="layout" class="mr_f_finance">
-            <div data-item="col-6">
-              <h3>定期总资产 (元)</h3>
-              <p><strong>0.00</strong></p>
-              <p>待收本金： 0.00</p>
-              <p>待收收益： 0.00</p>
-            </div>
-            <div data-item="col-6">
-              <h3>定期总收益 (元)</h3>
-              <p><strong>0.00</strong></p>
-              <p>待收收益： 0.00</p>
-              <p>已收收益： 0.00</p>
-            </div>
-          </div>
+        <div class="t_r_cont">
           <div class="selecttool">
             <div data-wrap="layout">
-              <div data-item="col-1" class="selectname">项目类型：</div>
+              <div data-item="col-1" class="selectname">交易日期：</div>
+              <div data-item="col-11">
+                <label for="alltime">
+                  <input id="alltime" type="radio" name="transactiontime" value="" num="all" checked><span>全部</span><i></i>
+                </label>
+                <label for="oneweek">
+                  <input id="oneweek" type="radio" name="transactiontime" value="1" num="7"><span>最近一周</span><i></i>
+                </label>
+                <label for="onemonth">
+                  <input id="onemonth" type="radio" name="transactiontime" value="2" num="30"><span>最近一个月</span><i></i>
+                </label>
+                <label for="threemonth">
+                  <input id="threemonth" type="radio" name="transactiontime" value="3" num="90"><span>最近三个月</span><i></i>
+                </label>
+                <label for="sixmonth">
+                  <input id="sixmonth" type="radio" name="transactiontime" value="6" num="180"><span>最近六个月</span><i></i>
+                </label>
+                <label for="oneyearover">
+                  <input id="oneyearover" type="radio" name="transactiontime" value="12" num="360"><span>最近一年</span><i></i>
+                </label>
+              </div>
+            </div>
+            <div data-wrap="layout">
+              <div data-item="col-1" class="selectname">交易类型：</div>
               <div data-item="col-11">
                 <label for="alltype">
-                  <input id="alltype" type="radio" name="projecttype" value="" checked><span>全部</span><i></i>
+                  <input id="alltype" type="radio" name="transactiontype" value="" checked><span>全部</span><i></i>
                 </label>
-
-                <div style="width:60%" class="choosedate"><span>投资时间：</span>
-                  <div data-type="norm">
-                    <input id="startDate" type="text" placeholder="选择开始日期" class="laydate-icon">
-                  </div><span>-</span>
-                  <div data-type="norm">
-                    <input id="endDate" type="text" placeholder="选择结束日期" class="laydate-icon">
-                  </div>
-                  <button id="datebtn" type="button" data-color="red" class="me-u-btn">查询</button>
-                </div>
-              </div>
+                <label for="rechargemode">
+                  <input id="rechargemode" type="radio" name="transactiontype" value="1"><span>充值</span><i></i>
+                </label>
+                <label for="withdrawcash">
+                  <input id="withdrawcash" type="radio" name="transactiontype" value="2"><span>提现</span><i></i>
+                </label>
+                <label for="investment">
+                  <input id="investment" type="radio" name="transactiontype" value="3"><span>投资</span><i></i>
+                </label>
+                <label for="payment">
+                  <input id="payment" type="radio" name="transactiontype" value="4"><span>回款</span><i></i>
+                </label>
+                <label for="fee">
+                  <input id="fee" type="radio" name="transactiontype" value="5"><span>手续费</span><i></i>
+                </label>
+				<label for="redenv">
+                  <input id="redenv" type="radio" name="transactiontype" value="6"><span>红包</span><i></i>
+                </label>              
+			   </div>
             </div>
           </div>
           <div class="recordList">
-            <div id="mr_f_view">
-                              
-            </div>
+            <table class="listTable">
+              <thead class="listTitle">
+                <tr>
+                  <th>时间</th>
+                  <th>交易类型</th>
+                  <th>交易详情</th>
+                  <th>交易金额（元）</th>
+                  <th>账户余额（元）</th>
+                </tr>
+              </thead>
+              <tbody id="t_r_tbody" class="listTitle listCentent2"></tbody>
+            </table>
+
             <ul class="m_fanye"></ul>
           </div>
         </div>
-        <script id="mr_f_finance_tpl" type="text/tpl">
-          <div data-item="col-6">
-            <h3>定期总资产 (元)</h3>
-            <p><strong>{{totalAmount}}</strong></p>
-            <p>待收本金： {{principal_received}}</p>
-            <p>待收收益： {{interest_received}}</p>
-          </div>
-          <div data-item="col-6">
-            <h3>定期总收益 (元)</h3>
-            <p><strong>{{accumulated_income}}</strong></p>
-            <p>待收收益： {{interest_received}}</p>
-            <p>已收收益： {{incomeReceived}}</p>
-          </div>
-        </script>
 
 
       </div>
@@ -315,6 +306,7 @@ $(function(){
        版权所有 © 2012-2017   北京信息技术股份有限公司   京ICP备150号-2
     </p>  
 </footer>
+
 
   </body>
 </html>
