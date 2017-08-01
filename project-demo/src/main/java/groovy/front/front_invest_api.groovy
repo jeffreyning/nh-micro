@@ -64,6 +64,7 @@ class FrontProduct extends MicroMvcTemplate{
 	public void investProductGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 
 		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
 		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
 		String nhUserName=httpSession.getAttribute("nhUserName");
 		String tableName=getTableName(httpRequest);
@@ -93,7 +94,7 @@ class FrontProduct extends MicroMvcTemplate{
 		 createInfoService(investMap,"t_front_invest");*/
 
 		//扣除账户金额
-		String subAccountSql="update t_front_account set available_balance=available_balance-? where meta_key=?"
+		String subAccountSql="update t_front_account set available_balance=available_balance-? where user_code=?"
 		List placeList=new ArrayList();
 		placeList.add(investAmount);
 		placeList.add(nhUserName);
@@ -109,10 +110,44 @@ class FrontProduct extends MicroMvcTemplate{
 		tranMap.put("recharge_type","3");
 		tranMap.put("recharge_status","1");
 		createInfoService(tranMap,"t_front_recharge");
+		
+		httpRequest.getRequestDispatcher("/front-page/paymentSuccess.jsp").forward(httpRequest, httpResponse);
+		httpRequest.setAttribute("forwardFlag", "true");
+		return;
+	}
+
+	public void investProductBank(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+		String nhUserName=httpSession.getAttribute("nhUserName");
+		String tableName=getTableName(httpRequest);
+		String pageName=getPageName(httpRequest);
+		Map requestParamMap=getRequestParamMap(httpRequest);
+		String orderNumber=httpRequest.getParameter("orderNumber");
+		String accountPay=httpRequest.getParameter("account_pay");
+		String bankPay=httpRequest.getParameter("bank_pay");
+
+
+		Map investMap=new HashMap();
+		//String investAmount=investMap.get("invest_amount");
+		investMap.put("account_pay",accountPay);
+		investMap.put("bank_pay",bankPay);
+		investMap.put("trade_status","4");
+		 
+		updateInfoByBizIdService(orderNumber,"t_front_invest","order_number",investMap);
+
+		//扣除账户金额
+/*		String subAccountSql="update t_front_account set available_balance=available_balance-?,frozen_amount=frozen_amount+? where user_code=?"
+		List placeList=new ArrayList();
+		placeList.add(accountPay);
+		placeList.add(accountPay);
+		placeList.add(nhUserName);
+		updateInfoServiceBySql(subAccountSql,placeList);*/
+
 
 		return;
 	}
-	
 	
 	public void getMyInvestListAll(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 		

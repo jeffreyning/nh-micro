@@ -92,6 +92,10 @@ class FrontProduct extends MicroMvcTemplate{
 		String orderNumber=GroovyExecUtil.execGroovyRetObj("front_invest_api", "createInvestInfo", nhUserCode,productCode,investAmount);
 		Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
 		httpRequest.setAttribute("investInfo", investInfo);
+		
+		Map accountInfo=getInfoByBizIdService(nhUserCode,"t_front_account","user_code");
+		httpRequest.setAttribute("accountInfo", accountInfo);
+		
 		httpRequest.getRequestDispatcher("/front-page/pay.jsp").forward(httpRequest, httpResponse);
 		httpRequest.setAttribute("forwardFlag", "true");
 		return;
