@@ -20,18 +20,21 @@ String path = request.getContextPath();
 <script type="text/javascript" src="<%=path%>/front-page/js/jquery-1.7.2.min.js"></script>  
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>  
 <script type="text/javascript">
+function X(){
+	return false;
+}
 function payNow(){
 	if($("#mr0").prop("checked") && !$("#mr1").prop("checked") && !$("#mr2").prop("checked")){
-		var investAmount=$('#J_investAmount').val();
+		var investAmount=$('#J_investAmount').html();
 		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_invest_api&groovySubName=investProductGo";
 		url=url+"&orderNumber=${investInfo.order_number}";
 		window.location.href=url;			
 	}else if($("#mr1").prop("checked")){
-		var investAmount=$('#J_investAmount').val();
-		var accountPay=$('#J_balance').val();
-		var bankPay=$('#J_kuaijieMoney').val();
+		var investAmount=$('#J_investAmount').html();
+		var accountPay=$('#J_balance').html();
+		var bankPay=$('#J_kuaijieMoney').html();
+		alert(bankPay);
 		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_invest_api&groovySubName=investProductBank";
-		url=url+"&orderNumber=${investInfo.order_number}";	
 		var data=new Object();
 		data.orderNumber='${investInfo.order_number}';
 		data.investAmount=investAmount;
@@ -69,9 +72,11 @@ $(function() {
 });
 
 function submitQuickConfirm(){
+
 	var investAmount=$('#J_investAmount').val();
 	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_pay_api&groovySubName=confirmQuickPayGo";
 	url=url+"&orderNumber=${investInfo.order_number}";
+	alert(url);
 	window.location.href=url;
 }
 </script>	
@@ -243,7 +248,7 @@ function submitQuickConfirm(){
     </div>
 <!--快捷充值弹窗-->
 <div id="RechargeSendPaySmsDialog">
-  <form id="r_m_send_form" class="r_m_state_form" onsumbit="return false;">
+  <div id="r_m_send_form" class="r_m_state_form" >
     <a class="closed" href="javascript:;"><i class="me-ion-close-round"></i></a>
     <h3>系统已发送手机验证码到您的银行预留手机</h3>
     <strong id="bankPhone">&nbsp;</strong>
@@ -253,8 +258,8 @@ function submitQuickConfirm(){
       </div>
       <button type="button" id="sendcode" class="me-u-btn" name="sendcode" data-type="minor">60秒后重试</button>
     </div>
-    <button id="quickTopUpBtn" class="me-u-btn" type="submit" data-color="red" onclick="submitQuickConfirm()">确定</button>
-  </form>
+    <button id="quickTopUpBtn1" class="me-u-btn" type="submit" data-color="red" onclick="submitQuickConfirm()">确定</button>
+  </div>
 </div>
 <!---->   
     <footer>

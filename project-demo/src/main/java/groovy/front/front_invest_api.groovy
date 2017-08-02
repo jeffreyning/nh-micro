@@ -125,8 +125,8 @@ class FrontProduct extends MicroMvcTemplate{
 		String pageName=getPageName(httpRequest);
 		Map requestParamMap=getRequestParamMap(httpRequest);
 		String orderNumber=httpRequest.getParameter("orderNumber");
-		String accountPay=httpRequest.getParameter("account_pay");
-		String bankPay=httpRequest.getParameter("bank_pay");
+		String accountPay=httpRequest.getParameter("accountPay");
+		String bankPay=httpRequest.getParameter("bankPay");
 
 
 		Map investMap=new HashMap();
@@ -136,14 +136,7 @@ class FrontProduct extends MicroMvcTemplate{
 		investMap.put("trade_status","4");
 		 
 		updateInfoByBizIdService(orderNumber,"t_front_invest","order_number",investMap);
-
-		//扣除账户金额
-/*		String subAccountSql="update t_front_account set available_balance=available_balance-?,frozen_amount=frozen_amount+? where user_code=?"
-		List placeList=new ArrayList();
-		placeList.add(accountPay);
-		placeList.add(accountPay);
-		placeList.add(nhUserName);
-		updateInfoServiceBySql(subAccountSql,placeList);*/
+		GroovyExecUtil.execGroovyRetObj("front_pay_api", "startQuickPay", gInputParam, gOutputParam, gContextParam);
 
 
 		return;

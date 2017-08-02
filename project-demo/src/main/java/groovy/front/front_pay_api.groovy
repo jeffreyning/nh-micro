@@ -28,7 +28,7 @@ import org.springframework.jdbc.support.rowset.*;
 import groovy.template.MicroMvcTemplate;
 import javax.servlet.http.HttpSession;
 
-class FrontProduct extends MicroMvcTemplate{
+class FrontPayApi extends MicroMvcTemplate{
 	public String pageName="listDictionaryInfo";
 	public String tableName="t_front_invest";
 
@@ -39,7 +39,22 @@ class FrontProduct extends MicroMvcTemplate{
 		return tableName;
 	}
 
+	public void startQuickPay(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		
+	}
+	
 	public void confirmQuickPayGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+		String userCode=httpSession.getAttribute("nhUserName");
+		String orderNumber=httpRequest.getParameter("orderNumber");
+		
+		Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
+		String bankPay=investInfo.get("bank_pay");
+				
+		GroovyExecUtil.execGroovyRetObj("front_account_api", "addBalance", userCode, bankPay);
+		
 		GroovyExecUtil.execGroovyRetObj("front_invest_api", "investProductGo", gInputParam, gOutputParam, gContextParam);
 	}
 

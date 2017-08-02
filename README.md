@@ -665,3 +665,78 @@ CREATE TABLE `t_front_product` (
   PRIMARY KEY (`increment_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=160 DEFAULT CHARSET=utf8 COMMENT='产品信息表';
 
+-- ----------------------------
+-- Table structure for 互联网用户表 
+-- ----------------------------
+DROP TABLE IF EXISTS `t_front_user`;
+CREATE TABLE `t_front_user` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识（预留字段）',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间（注册日期）',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `user_code` varchar(36) DEFAULT NULL COMMENT '用户编码',
+  `user_phone` varchar(11) DEFAULT NULL COMMENT '手机号',
+  `user_name` varchar(30) DEFAULT NULL COMMENT '用户名',
+  `real_name` varchar(10) DEFAULT NULL COMMENT '真实姓名',
+  `card_type` varchar(2) DEFAULT '1' COMMENT '证件类型1：身份证2：户口簿3：军官证4：士兵证5：护照6：台胞证',
+  `card_no` varchar(18) DEFAULT NULL COMMENT '身份证号',
+  `sex` varchar(2) DEFAULT NULL COMMENT '性别0：男 1：女',
+  `is_authentication` varchar(2) DEFAULT NULL COMMENT '是否实名1：是 0：否',
+  `is_investment` varchar(2) DEFAULT NULL COMMENT '是否投资1：是 0：否',
+  `source` varchar(2) DEFAULT NULL COMMENT '客户来源1:pc 2:安卓 3：ios',
+  `user_status` varchar(2) DEFAULT NULL COMMENT '冻结状态0：正常 1：冻结',
+  `reg_behavior` varchar(2) DEFAULT NULL COMMENT '注册方式：0：自然1:邀请2：其他3，授权注册',
+  `inviter_phone` varchar(11) DEFAULT NULL COMMENT '邀请人手机号',
+  `password` varchar(100) DEFAULT NULL COMMENT '密码',
+  `email` varchar(50) DEFAULT NULL COMMENT '邮箱',
+  `is_verify_mail` varchar(2) DEFAULT '0' COMMENT '是否验证邮箱1：是 0：否',
+  `is_bindcard` varchar(2) DEFAULT '0' COMMENT '是否绑卡',
+  `login_fail_count` int(2) DEFAULT '0' COMMENT '连续登录失败次数',
+  `investment_property` varchar(30) DEFAULT NULL COMMENT '问卷调查结果',
+  `is_authorized` int(2) DEFAULT '0' COMMENT '是否授权认证过（0否 1是）',
+  `user_type` varchar(2) DEFAULT '0' COMMENT '客户类型:0.普通客户 1.理财经理 2:团队经理 3:销售总监 4:部门经理 5:城市经理 6:大区经理 7.职能端',
+  `flag` varchar(2) DEFAULT '0' COMMENT '数据状态:0.未抓取 1.已抓取 2.已返回 3.已推送',
+  `subordinate_center` varchar(500) DEFAULT NULL COMMENT '所属中心',
+  `user_ownership` varchar(2) DEFAULT NULL COMMENT '普通客户归属:1归属业务部  2归属  3归属电销事业中心',
+  `dept_name` varchar(50) DEFAULT NULL COMMENT '所属部门',
+  `cus_manager` varchar(50) DEFAULT NULL COMMENT '客户经理',
+  `team_manager` varchar(50) DEFAULT NULL COMMENT '团队经理',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
+
+
+-- ----------------------------
+-- Table structure for 用户银行卡绑定表 
+-- ----------------------------
+DROP TABLE IF EXISTS `t_front_user_bankcard`;
+CREATE TABLE `t_front_user_bankcard` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识（预留字段）',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间（注册日期）',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `user_code` varchar(36) DEFAULT NULL COMMENT '用户编码',
+  `bank_name` varchar(50) DEFAULT NULL COMMENT '银行编码',
+  `bank_card_no` varchar(30) DEFAULT NULL COMMENT '银行卡号',
+  `card_last` varchar(4) DEFAULT NULL COMMENT '卡号后4位',
+  `bank_account_code` varchar(10) DEFAULT NULL COMMENT '开户行编码',
+  `bank_card_type` varchar(2) DEFAULT NULL COMMENT '银行卡类型：0储蓄卡，1信用卡',
+  `bank_phone` varchar(11) DEFAULT NULL COMMENT '预留手机号',
+  `status` varchar(18) DEFAULT NULL COMMENT '是否可用1：是0：否',
+  `is_default` varchar(2) DEFAULT NULL COMMENT '是否默认银行卡1：是0：否',
+  `bank_province_code` varchar(50) DEFAULT NULL COMMENT '开户行所在省code',
+  `bank_city_code` varchar(50) DEFAULT NULL COMMENT '开户行所在市/县code',
+  `bank_branch` varchar(100) DEFAULT NULL COMMENT '开户行所属分行',
+  `bind_id` varchar(50) DEFAULT NULL COMMENT '绑卡id',
+  `bank_subbranch` varchar(100) DEFAULT NULL COMMENT '开户行所属支行',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户银行卡绑定表';
+
+

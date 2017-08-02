@@ -36,7 +36,7 @@ String path = request.getContextPath();
     </div>
 
         <div class="paySuccessTitle">
-            <img src="images/paySuccess.png" />
+            <img src="<%=path%>/front-page/images/paySuccess.png" />
         </div>
         <p class="payText">恭喜您，订单支付成功。</p>
         <table class="firstTable">

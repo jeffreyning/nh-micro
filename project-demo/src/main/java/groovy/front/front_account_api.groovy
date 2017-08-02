@@ -57,6 +57,13 @@ public void queryMyAccount(GInputParam gInputParam,GOutputParam gOutputParam,GCo
 
 }
 
+public void addBalance(String userCode,String amount){
+	String sql="update t_front_account set available_balance=available_balance+? where user_code=?";
+	List paramList=new ArrayList();
+	paramList.add(amount);
+	paramList.add(userCode);
+	updateInfoServiceBySql(sql,paramList);
+}
 
 			
 }
