@@ -739,4 +739,36 @@ CREATE TABLE `t_front_user_bankcard` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户银行卡绑定表';
 
+-- ----------------------------
+-- Table structure for 用户提现记录表 
+-- ----------------------------
+DROP TABLE IF EXISTS `t_front_withdraw`;
+CREATE TABLE `t_front_withdraw` (
+  `id` varchar(50) NOT NULL,
+  `meta_key` varchar(50) DEFAULT NULL,
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `withdraw_money` decimal(20,2) DEFAULT NULL COMMENT '提现金额',
+  `apply_user_code` varchar(36) DEFAULT NULL COMMENT '提现申请用户编码',
+  `approve_user_name` varchar(100) DEFAULT NULL COMMENT '提现审核用户姓名',
+  `approve_status` varchar(2) DEFAULT NULL COMMENT '审核状态（0待审核1审核成功2审核拒绝）',
+  `refuse_reason` varchar(200) DEFAULT NULL COMMENT '审核拒绝原因',
+  `approve_time` datetime DEFAULT NULL COMMENT '审核时间',
+  `withdraw_number` varchar(50) DEFAULT NULL COMMENT '提现流水号',
+  `withdraw_toaccount_money` decimal(20,2) DEFAULT NULL COMMENT '提现到账金额',
+  `withdraw_fee` decimal(20,2) DEFAULT NULL COMMENT '提现手续费',
+  `withdraw_status` varchar(2) DEFAULT NULL COMMENT '提现状态（1处理中2提现成功3提现失败）',
+  `examine_status` varchar(100) DEFAULT NULL COMMENT '结算审核状态',
+  `examine_time` datetime DEFAULT NULL COMMENT '结算审核时间',
+  `examine_remark` varchar(200) DEFAULT NULL COMMENT '结算审核备注',
+  `withdraw_fail_reason` varchar(200) DEFAULT NULL COMMENT '提现失败原因',
+  `back_flag` varchar(2) DEFAULT NULL COMMENT '回调标识',
+  `fee_number` varchar(50) DEFAULT NULL COMMENT '手续费流水号',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `meta_key` (`meta_key`,`meta_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='提现管理 提现记录表';
 
