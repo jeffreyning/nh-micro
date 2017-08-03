@@ -11,7 +11,7 @@ import com.nh.micro.rule.engine.core.GInputParam;
 import com.nh.micro.rule.engine.core.GOutputParam;
 
 import net.sf.json.JSONObject
-
+import com.nh.micro.rule.engine.core.GroovyExecUtil;
 
 
 class front_realname_api extends MicroMvcTemplate{
@@ -32,7 +32,8 @@ class front_realname_api extends MicroMvcTemplate{
 		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 		HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
 		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
-		String nhUserName=httpSession.getAttribute("nhUserName");
+		String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
+		gInputParam,gOutputParam,gContextParam);
 		Map paramMap=new HashMap();
 		paramMap.put("is_authentication", "1");
 		updateInfoByBizIdService(nhUserName,"t_front_user","user_code",paramMap);

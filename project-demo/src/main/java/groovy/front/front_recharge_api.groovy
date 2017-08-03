@@ -45,7 +45,8 @@ class FrontProduct extends MicroMvcTemplate{
 		
 		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
-		String nhUserName=httpSession.getAttribute("nhUserName");
+		String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
+			gInputParam,gOutputParam,gContextParam);
 		String tableName=getTableName(httpRequest);
 		String pageName=getPageName(httpRequest);
 		Map requestParamMap=getRequestParamMap(httpRequest);

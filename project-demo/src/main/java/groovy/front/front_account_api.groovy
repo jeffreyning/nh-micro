@@ -42,7 +42,8 @@ public String getTableName(HttpServletRequest httpRequest){
 
 public void queryMyAccount(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 	HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
-	String nhUserName=httpSession.getAttribute("nhUserName");
+	String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
+		gInputParam,gOutputParam,gContextParam);
 	Map infoMap=getInfoByBizIdService(nhUserName,"t_front_account","user_code");
 	Map retMap=new HashMap();
 	retMap.put("available_balance", infoMap.get("available_balance"));

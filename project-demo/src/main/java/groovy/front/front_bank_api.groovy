@@ -33,7 +33,8 @@ class BankService extends MicroMvcTemplate {
 		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 		HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
 		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
-		String nhUserName=httpSession.getAttribute("nhUserName");
+	String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
+		gInputParam,gOutputParam,gContextParam);
 
 		String cardNo=httpRequest.getParameter("cardNo");
 		String phone=httpRequest.getParameter("mobile");
@@ -104,7 +105,8 @@ class BankService extends MicroMvcTemplate {
 		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 		HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
 		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
-		String nhUserName=httpSession.getAttribute("nhUserName");
+	String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
+		gInputParam,gOutputParam,gContextParam);
 
 			Map<String ,String> paramMap=new HashMap();
 			paramMap.put("user_code",nhUserName);

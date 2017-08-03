@@ -36,7 +36,8 @@ class nrule extends MicroMvcTemplate{
 		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 		HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
 		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
-		String nhUserName=httpSession.getAttribute("nhUserName");
+		String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
+			gInputParam,gOutputParam,gContextParam);
 		
 		String withdrawMoney=httpRequest.getParameter("withdraw_money");
 		String firstWithdraw=httpRequest.getParameter("first_withdraw");
@@ -128,7 +129,7 @@ class nrule extends MicroMvcTemplate{
 		rechargeMap.put("account_balance",map4.get("available_balance"));
 		rechargeMap.put("recharge_money",fee);
 		rechargeMap.put("recharge_type","5");
-		String feeNumber=
+		//String feeNumber=
 		rechargeMap.put("inner_recharge_number",withdrawNumber);
 		rechargeMap.remove("id");
 		GroovyExecUtil.execGroovyRetObj("MicroServiceTemplate", "createInfoService",rechargeMap, "t_front_recharge");

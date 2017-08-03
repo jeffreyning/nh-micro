@@ -1,0 +1,697 @@
+html {
+  min-height: 100%;
+}
+body {
+  width: 100%;
+  background: url(../images/login/login_bg.png) no-repeat;
+  -webkit-background-size: cover;
+          background-size: cover;
+}
+.contentBox {
+  width: 1024px;
+  height: 405px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.4);
+  /*鎻愮ず璇�鎸夐挳*/
+}
+.contentBox .userForm {
+  width: 475px;
+  height: 475px;
+  background: #fff;
+  position: absolute;
+  top: -35px;
+  left: 50px;
+  padding: 30px;
+  -webkit-box-shadow: 0 0 10px rgba(15, 30, 59, 0.6);
+          box-shadow: 0 0 10px rgba(15, 30, 59, 0.6);
+  border-radius: 3px;
+  color: #333333;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  /*鐧诲綍 form*/
+  /*娉ㄥ唽 form*/
+}
+.contentBox .userForm h2 {
+  position: relative;
+  height: 32px;
+  line-height: 32px;
+  font-weight: normal;
+  text-align: center;
+  font-size: 1.6rem;
+}
+.contentBox .userForm h2 a {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.contentBox .userForm > div {
+  position: relative;
+}
+.contentBox .userForm > div a.target_channel {
+  color: #333;
+  position: absolute;
+  font-size: 1.2rem;
+}
+.contentBox .userForm > img {
+  display: block;
+  margin: 0 auto;
+}
+.contentBox .userForm input::-webkit-outer-spin-button,
+.contentBox .userForm input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0;
+}
+.contentBox .userForm input[type="number"] {
+  -moz-appearance: textfield;
+}
+.contentBox .userForm input[type='text'],
+.contentBox .userForm input[type='password'],
+.contentBox .userForm input[type="number"],
+.contentBox .userForm input[type="tel"] {
+  display: inline-block;
+  width: 100%;
+  height: 42px;
+  line-height: 42px;
+  border-radius: 3px;
+  outline: none;
+  font-size: 1.6rem;
+  border: 1px solid #c6c6c6;
+  padding-left: 17px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  background-color: #fff;
+}
+.contentBox .userForm input[type='text']:focus,
+.contentBox .userForm input[type='password']:focus,
+.contentBox .userForm input[type="number"]:focus,
+.contentBox .userForm input[type="tel"]:focus {
+  outline-style: none;
+  outline-color: invert;
+  border: 1px solid #2e9fe2;
+  background-color: transparent!important;
+  -webkit-box-shadow: 0px 0px 0px 2px rgba(37, 127, 181, 0.3);
+  -moz-box-shadow: 0px 0px 0px 2px rgba(37, 127, 181, 0.3);
+}
+.contentBox .userForm input[type='button'] {
+  display: block;
+  border-radius: 3px;
+  background-color: #f89702;
+  border: 1px solid #f88102;
+  color: #fff;
+  font-size: 1.6rem;
+  padding: 11px 0;
+  text-align: center;
+}
+.contentBox .userForm .login {
+  display: none;
+  padding-top: 60px;
+}
+.contentBox .userForm .login input:nth-of-type(1) {
+  margin-bottom: 30px;
+}
+.contentBox .userForm .login input:nth-of-type(2) {
+  margin-bottom: 20px;
+}
+.contentBox .userForm .form_submit_wrap {
+  font-size: 1.2rem;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.contentBox .userForm .form_submit_wrap > div {
+  float: left;
+  padding-left: 5px;
+}
+.contentBox .userForm .form_submit_wrap > a {
+  float: right;
+  display: inline-block;
+  color: #333;
+  padding-top: 3px;
+}
+.contentBox .userForm .form_submit_wrap .register_checkbox {
+  padding-top: 10px;
+}
+.contentBox .userForm .jump2me {
+  display: block;
+  margin: 22px auto 0;
+  width: 295px;
+  border-radius: 3px;
+  border: 1px solid #f88102;
+  color: #f89702;
+  font-size: 1.6rem;
+  padding: 11px 0;
+  text-align: center;
+}
+.contentBox .userForm input[type='button']#login_submit {
+  width: 295px;
+  margin: 0 auto;
+}
+.contentBox .userForm input[type='button']#register_submit {
+  width: 149px;
+  float: right;
+}
+.contentBox .userForm input[type='button'][disabled='disabled'] {
+  cursor: not-allowed;
+  opacity: .5;
+  filter: alpha(opacity=50);
+}
+.contentBox .userForm .register {
+  /* display: none; */
+}
+.contentBox .userForm .register input[type='text'],
+.contentBox .userForm .register input[type='password'],
+.contentBox .userForm .register input[type='number'],
+.contentBox .userForm .register input[type='tel'],
+.contentBox .userForm .register .slide_wrap {
+  margin-bottom: 25px;
+}
+.contentBox .userForm .register .code_wrap {
+  height: 44px;
+  margin-bottom: 25px;
+  outline: none;
+  border: none;
+}
+.contentBox .userForm .register .code_wrap input {
+  float: left;
+  width: 308px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.contentBox .userForm .register .code_wrap button {
+  float: right;
+  width: 100px;
+  height: 42px;
+  line-height: 42px;
+  font-size: 1.4rem;
+  border-radius: 3px;
+  border: 1px solid #c6c6c6;
+  background: #fff;
+  color: #333;
+  outline: none;
+}
+.contentBox .userForm .register .code_wrap button:hover {
+  background-color: #fb5145;
+  border: none;
+  color: #fff;
+}
+.contentBox .userForm .register .code_wrap button.disabled {
+  background-color: #fff;
+  color: #333;
+}
+.contentBox .userForm .register .relation_tip {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-75%);
+      -ms-transform: translateY(-75%);
+          transform: translateY(-75%);
+  padding: 1rem 4%;
+  z-index: 2;
+  font-size: 1.2rem;
+  line-height: 25px;
+  border-radius: 5px;
+  color: #fff;
+  background-color: #2e9fe2;
+  -webkit-box-shadow: 0 3px 6px #c0e2f6;
+          box-shadow: 0 3px 6px #c0e2f6;
+  display: none;
+}
+.contentBox .userForm .register .slide_wrap {
+  clear: both;
+  height: 35px;
+  line-height: 35px;
+}
+.contentBox .userForm .register .slide_wrap > span {
+  float: left;
+  font-size: 1.2rem;
+  color: #999999;
+  display: block;
+  height: 28px;
+  line-height: 28px;
+  margin-right: 15px;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 275px;
+  height: 6px;
+  margin-top: -12px;
+  border-radius: 6px;
+  background: #e4e4e4;
+  line-height: 6px;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .slide_block {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+  border: 3px solid #2e9fe2;
+  background-color: #ffffff;
+  cursor: move;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .process_bar {
+  background-color: #2e9fe2;
+  width: 0;
+  height: 100%;
+  border-radius: 6px 0 0 6px;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box {
+  width: 300px;
+  height: 187px;
+  position: absolute;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  right: -8px;
+  top: -198px;
+  display: none;
+  overflow: hidden;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .arrow_container {
+  width: 300px;
+  position: absolute;
+  bottom: 0;
+  left: 15px;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .arrow_container .puzz_arrow {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 999;
+  background: url(../images/login/trangle.png) 0 4px no-repeat;
+  -webkit-background-size: 100% 100%;
+          background-size: 100%;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .puzz_title {
+  font-size: 1.6rem;
+  text-align: center;
+  margin-top: 17px;
+  margin-bottom: 25px;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .question_container {
+  width: 325px;
+  padding-left: 30px;
+  height: 40px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .question_pic {
+  width: 164px;
+  height: 40px;
+  background: #f3f3f3;
+  border-radius: 10px;
+  float: left;
+  overflow: hidden;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .question_container .question_pic img {
+  width: 100%;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .question_container .change_puzz {
+  display: block;
+  width: 60px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 1.2rem;
+  color: #ccc;
+  float: left;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .puzz_intro {
+  font-size: 12px;
+  color: #000;
+  text-align: center;
+  margin: 20px 0;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .answer_puzz {
+  width: 270px;
+  height: 47px;
+  background: #ddd;
+  margin: 0 auto;
+  border-radius: 10px;
+  position: relative;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .answer_puzz img {
+  width: 100%;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .answer_puzz dl {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .answer_puzz dl dt {
+  float: left;
+  width: 45px;
+  height: 45px;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 0;
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .puzz_picture_box .answer_puzz dl dt.isMoved {
+  background: rgba(191, 191, 191, 0.6);
+}
+.contentBox .userForm .register .slide_wrap .slide_bg .err_slide {
+  display: none;
+  position: absolute;
+  top: 18px;
+  color: #ef3d3d;
+}
+.contentBox .userForm .register .slide_wrap .slide_isPass {
+  float: right;
+  width: 10px;
+  height: 14px;
+  line-height: 14px;
+  font-size: 18px;
+  background-position: -24px 0;
+  margin-right: 5px;
+  color: #e4e4e4;
+}
+.contentBox .userForm .register .slide_wrap .slide_isPass.open {
+  color: #4dae26;
+}
+.contentBox .userForm .register .slide_wrap .slide_isPass.error {
+  color: #ff4c4c;
+}
+.contentBox .userForm .register .invite_wrap {
+  position: relative;
+  height: 44px;
+  margin-bottom: 25px;
+}
+.contentBox .userForm .register .invite_wrap > span {
+  display: block;
+  position: absolute;
+  right: 17px;
+  top: 13px;
+  width: 14px;
+  height: 16px;
+  background: url(../images/login/icon.png) no-repeat right center;
+  background-position: 0 0;
+}
+.contentBox .loginBtn,
+.contentBox .regBtn {
+  width: 300px;
+  position: absolute;
+  top: 150px;
+  text-align: center;
+  color: #fff;
+}
+.contentBox .loginBtn a,
+.contentBox .regBtn a {
+  width: 120px;
+  height: 35px;
+  line-height: 35px;
+  font-size: 1.2rem;
+  margin-top: 50px;
+  outline: none;
+  background: transparent;
+  display: block;
+  border: none;
+  border: 1px solid #fff;
+  color: #fff;
+  text-align: center;
+  border-radius: 1px;
+}
+.contentBox .regBtn {
+  right: 15%;
+}
+.contentBox .regBtn .tagline {
+  position: relative;
+}
+.contentBox .regBtn .tagline span {
+  position: absolute;
+  color: #fff;
+}
+.contentBox .regBtn .tagline span:nth-of-type(1) {
+  left: 32px;
+  top: -5px;
+  font-size: 2.5rem;
+}
+.contentBox .regBtn .tagline span:nth-of-type(2) {
+  display: block;
+  width: 265px;
+  height: 30px;
+  line-height: 30px;
+  left: 20px;
+  bottom: -13px;
+  background-color: #8c9698;
+  border-radius: 30px;
+  text-align: center;
+  font-size: 1.4rem;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.contentBox .regBtn a {
+  margin-left: auto;
+  margin-right: auto;
+}
+.contentBox .loginBtn {
+  left: 55px;
+  text-align: left;
+}
+.contentBox .loginBtn h3 {
+  margin-bottom: 25px;
+  font-size: 3.5rem;
+  font-weight: normal;
+}
+.contentBox .loginBtn h3 img {
+  margin-top: -5px;
+  margin-right: .5rem;
+}
+.contentBox .loginBtn p {
+  font-size: 1.8rem;
+  opacity: .6;
+  filter: alpha(opacity=60);
+}
+.contentBox .loginBtn a {
+  text-decoration: none;
+}
+.contentBox .loginBtn a:active {
+  opacity: .8;
+  filter: alpha(opacity=80);
+  text-decoration: none;
+}
+div:target {
+  display: block !important;
+}
+@media (max-width: 1200px) {
+  .contentBox {
+    width: 100%;
+  }
+}
+@media (max-width: 992px) {
+  .about_intro {
+    display: none;
+  }
+  .contentBox {
+    width: 100%;
+  }
+  .contentBox .userForm {
+    width: 388px;
+  }
+  .contentBox .userForm .register .slide_wrap,
+  .contentBox .userForm .register input[type=password],
+  .contentBox .userForm .register input[type=text] {
+    margin-bottom: 18px!important;
+  }
+  .contentBox .userForm .register input[type=button] {
+    margin-top: 10px;
+  }
+  .contentBox .userForm .register .register_checkbox {
+    padding-top: 0;
+  }
+  .contentBox .userForm .register .relation_tip {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-80%);
+        -ms-transform: translateY(-80%);
+            transform: translateY(-80%);
+  }
+  .contentBox .userForm .register .slide_wrap {
+    height: 18px;
+    line-height: 18px;
+  }
+  .contentBox .userForm .register .slide_wrap span {
+    display: none;
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    font-size: 1rem;
+  }
+  .contentBox .userForm .register .slide_wrap .slide_isPass {
+    margin-top: 0;
+  }
+  .contentBox .userForm .register .code_wrap input[type="text"] {
+    width: 220px!important;
+  }
+  .contentBox .userForm .register .code_wrap button:hover {
+    background: #fff;
+    color: #333;
+    border: 1px solid #c6c6c6;
+  }
+  .contentBox .userForm .register .relation_tip {
+    color: #fff;
+    background-color: #2e9fe2;
+    -webkit-box-shadow: 0 3px 6px #c0e2f6;
+            box-shadow: 0 3px 6px #c0e2f6;
+  }
+  .contentBox .regBtn {
+    width: 220px;
+  }
+  .contentBox .regBtn .tagline span:first-of-type {
+    left: 39px;
+    top: -5px;
+    font-size: 2rem;
+  }
+  .contentBox .regBtn .tagline span:nth-of-type(2) {
+    width: 192px;
+    font-size: 1rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+@media (max-width: 767px) {
+  .about_intro {
+    display: none;
+  }
+  .contentBox {
+    width: 100%;
+    background: none;
+  }
+  .contentBox .tabBtn {
+    display: none;
+  }
+  .contentBox .userForm {
+    width: 350px;
+    padding: 30px 20px;
+    position: static;
+    margin: 0 auto;
+    margin-top: -25px;
+  }
+  .contentBox .userForm .register_checkbox {
+    float: none;
+    margin-bottom: 1rem;
+  }
+  .contentBox .userForm input[type=button]#register_submit {
+    display: block;
+    clear: both;
+    float: none;
+    width: 295px;
+    margin: 1rem auto;
+  }
+  .contentBox .userForm .register .code_wrap input[type=text] {
+    width: 200px!important;
+  }
+  .contentBox .userForm .register .invite_wrap,
+  .contentBox .userForm .register .code_wrap,
+  .contentBox .userForm .register .slide_wrap {
+    margin-bottom: 1rem!important;
+  }
+  .contentBox .userForm .register .invite_wrap > span {
+    top: 17px;
+  }
+  .contentBox .userForm > div a.target_channel {
+    position: absolute;
+    width: 100px;
+    color: #333;
+    display: block;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+            transform: translateX(-50%);
+    text-decoration: underline;
+  }
+  .contentBox .userForm > div.register a.target_channel {
+    bottom: -16px;
+  }
+  .contentBox .userForm > div.login a.target_channel {
+    bottom: -60px;
+  }
+}
+@media (max-width: 330px) {
+  .about_intro {
+    display: none;
+  }
+  .contentBox {
+    width: 100%;
+  }
+  .contentBox .userForm {
+    width: 305px;
+    height: 455px;
+    margin-top: -25px;
+  }
+  .contentBox .userForm input[type=button]#login_submit,
+  .contentBox .userForm input[type=button]#register_submit {
+    width: 265px;
+    margin: 0 auto;
+  }
+  .contentBox .userForm input[type=button]#register_submit {
+    display: block;
+    clear: both;
+    float: none;
+    width: 265px;
+    margin: 1rem auto;
+  }
+  .contentBox .userForm > div a.target_channel {
+    position: absolute;
+    width: 100px;
+    color: #333;
+    display: block;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+            transform: translateX(-50%);
+    text-decoration: underline;
+  }
+  .contentBox .userForm > div.register a.target_channel {
+    bottom: -7px;
+  }
+  .contentBox .userForm > div.register .relation_tip {
+    -webkit-transform: translateY(-60%);
+        -ms-transform: translateY(-60%);
+            transform: translateY(-60%);
+  }
+  .contentBox .userForm > div.login a.target_channel {
+    bottom: -21px;
+  }
+  .contentBox .userForm > div.login .jump2me {
+    margin: 14px auto 0;
+    width: 265px;
+  }
+  .contentBox .userForm .register .code_wrap input[type="text"] {
+    width: 165px!important;
+  }
+  .contentBox .userForm .register .code_wrap button {
+    width: 85px!important;
+  }
+  .contentBox .userForm .register .invite_wrap > span {
+    top: 16px;
+  }
+  .contentBox .userForm .register .slide_isPass {
+    display: none;
+  }
+}
+.about_intro {
+  position: fixed;
+  left: 0;
+  bottom: 36px;
+  width: 100%;
+  line-height: 25px;
+  font-size: 1.2rem;
+  color: #fff;
+  text-align: center;
+}
