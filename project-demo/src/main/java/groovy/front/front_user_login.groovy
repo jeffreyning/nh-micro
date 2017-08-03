@@ -103,6 +103,10 @@ public void regUser(GInputParam gInputParam,GOutputParam gOutputParam,GContextPa
 	paramMap.put("password",password);
 	createInfoService(paramMap,"t_front_user");
 	
+	Map accountMap=new HashMap();
+	accountMap.put("user_code",regTel);
+	createInfoService(accountMap,"t_front_account");
+	
 	
 
 }

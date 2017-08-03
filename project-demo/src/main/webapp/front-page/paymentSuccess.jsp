@@ -30,8 +30,8 @@ String path = request.getContextPath();
 
         </div>
         <div class="paySuccessBtn">
-            <a class="me-u-btn" href="account.html" data-type="minor">查看账户</a>
-            <a class="me-u-btn" href="regularFinancialList.html" data-color="red">继续投资</a>
+            <a class="me-u-btn" href="<%=path%>/front-page/account.jsp" data-type="minor">查看账户</a>
+            <a class="me-u-btn" href="<%=path%>/front-page/regularFinancialList.jsp" data-color="red">继续投资</a>
         </div>
     </div>
 

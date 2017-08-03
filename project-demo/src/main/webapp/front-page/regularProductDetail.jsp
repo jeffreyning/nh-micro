@@ -37,7 +37,9 @@ function toPay(){
     <div data-wrap="layout" class="bg-grey">
         <div class="wrapper">
             <ul class="header" data-item="col-12">
-
+                 <a href="<%=path%>/front-page/login.jsp">注册</a>/<a href="<%=path%>/front-page/fundLogin.jsp">登录</a>
+                 <a href="javascript:;" id="login_out">退出</a>
+                 <a href="<%=path%>/front-page/regularFinancialList.jsp">定期理财列表</a>
             </ul>
         </div>
     </div>
