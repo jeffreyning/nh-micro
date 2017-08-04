@@ -139,7 +139,7 @@ String path=request.getContextPath();
 				"text":"互联网产品页面跳转",
 				"iconCls":"icon-nav",
 				"attributes":{
-				  "url":"/<%=path %>/front-page/regularFinancialList.html"
+				  "url":"/<%=path %>/front-page/regularFinancialList.jsp"
 				  }
 			},	
 			{

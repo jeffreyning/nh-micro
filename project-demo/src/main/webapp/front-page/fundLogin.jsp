@@ -35,7 +35,7 @@ function login(){
 		success:function(data,status){
 			var resultData=JSON.parse(data.resultData);
 			if(resultData.resultStatus==0){
-			var gourl="<%=path%>/front-page/regularFinancialList.html";
+			var gourl="<%=path%>/front-page/regularFinancialList.jsp";
 			window.location.href=gourl;
 			}else{
 				alert("登陆失败 "+resultData.resultMsg);

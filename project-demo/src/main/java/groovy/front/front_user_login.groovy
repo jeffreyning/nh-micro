@@ -73,7 +73,7 @@ public void login(GInputParam gInputParam,GOutputParam gOutputParam,GContextPara
 }
 
 
-public void logout(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam) throws Exception{
+public void logoutGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam) throws Exception{
 	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 	HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
 	HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
@@ -81,6 +81,8 @@ public void logout(GInputParam gInputParam,GOutputParam gOutputParam,GContextPar
 	String source=httpRequest.getParameter("source");
 	deletetokenId("",tokenId,source);
 	httpSession.removeAttribute("tokenId");
+	httpRequest.getRequestDispatcher("/front-page/regularFinancialList.jsp").forward(httpRequest, httpResponse);
+	httpRequest.setAttribute("forwardFlag", "true");
 }
 
 

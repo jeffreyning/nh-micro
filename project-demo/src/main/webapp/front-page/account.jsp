@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 String path = request.getContextPath();
 %>
@@ -51,8 +52,12 @@ $(function(){
     <div data-wrap="layout" class="bg-grey">
         <div class="wrapper">
             <ul class="header" data-item="col-12">
-                    <a href="<%=path%>/front-page/login.jsp">注册</a>/<a href="<%=path%>/front-page/fundLogin.jsp">登录</a>
-                    <a href="javascript:;" id="login_out">退出</a>
+            <c:if test="${empty sessionScope.tokenId}">
+                <a href="<%=path%>/front-page/login.jsp">注册</a>/<a href="<%=path%>/front-page/fundLogin.jsp">登录</a>
+            </c:if>
+                <c:if test="${sessionScope.tokenId!=null}">
+                <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_login&groovySubName=logoutGo" id="login_out">退出</a>
+                 </c:if>
                     <a href="<%=path%>/front-page/regularFinancialList.jsp">定期理财列表</a>
             </ul>
         </div>
@@ -140,7 +145,12 @@ $(function(){
                         <i class="me-ion-chevron-right"></i>
                     </a>
     </li>
-    
+    <li>
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_api&groovySubName=queryInfoByCodeGo">
+                        个人设置
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>    
 </ul>
 <div class="mobileIcon menuHide">
     <!--<img src="images/icon-l.svg" alt="">-->

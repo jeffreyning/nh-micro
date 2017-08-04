@@ -74,8 +74,12 @@ $(function(){
     <div data-wrap="layout" class="bg-grey">
         <div class="wrapper">
             <ul class="header" data-item="col-12">
+            <c:if test="${empty sessionScope.tokenId}">
                 <a href="<%=path%>/front-page/login.jsp">注册</a>/<a href="<%=path%>/front-page/fundLogin.jsp">登录</a>
-                <a href="javascript:;" id="login_out">退出</a>
+            </c:if>
+                <c:if test="${sessionScope.tokenId!=null}">
+                <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_login&groovySubName=logoutGo" id="login_out">退出</a>
+                 </c:if>
                 <a href="<%=path%>/front-page/regularFinancialList.jsp">定期理财列表</a>
             </ul>
         </div>
@@ -89,9 +93,12 @@ $(function(){
                 </a>
             </h1>
             <ul class="nav" data-item="col-10" data-flag="1" id="J_headerNav">
-                <li class="se"><a href="index.html">首 页</a></li>
+
                 <li><a href="<%=path%>/front-page/regularFinancialList.jsp">定期理财</a></li>
+                
+                <c:if test="${sessionScope.tokenId!=null}">
                 <li><a href="<%=path%>/front-page/account.jsp">个人中心</a></li>
+                </c:if>
                 
             </ul>
         </div>
