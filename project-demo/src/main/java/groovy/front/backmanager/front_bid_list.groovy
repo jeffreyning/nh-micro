@@ -30,7 +30,7 @@ import groovy.template.MicroMvcTemplate;
 
 class FrontProduct extends MicroMvcTemplate{
 public String pageName="listDictionaryInfo";
-public String tableName="t_front_product";
+public String tableName="t_front_bid";
 
 
 public String getPageName(HttpServletRequest httpRequest){
@@ -40,33 +40,24 @@ public String getTableName(HttpServletRequest httpRequest){
 	return tableName;
 }
 
-public void toEditProductGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+public void toEditBidGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 	HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
 	String id=httpRequest.getParameter("id");
 	if(id!=null && !"".equals(id)){
-		Map infoMap=getInfoByIdService(id,"t_front_product");
+		Map infoMap=getInfoByIdService(id,"t_front_bid");
 		httpRequest.setAttribute("formdata", infoMap);
 	}
+	
+	List productList=getInfoListAllService(new HashMap(),"t_front_product",new HashMap());
+	
+	httpRequest.setAttribute("productList", productList);
+	
 	String operFlag=httpRequest.getParameter("operFlag");
 	httpRequest.setAttribute("operFlag", operFlag);
-	httpRequest.getRequestDispatcher("/nh-micro-jsp/front-manager-page/creditFrontFormInfo.jsp").forward(httpRequest, httpResponse);
+	httpRequest.getRequestDispatcher("/nh-micro-jsp/front-manager-page/creditFrontBidFormInfo.jsp").forward(httpRequest, httpResponse);
 	httpRequest.setAttribute("forwardFlag", "true");
 	return;
 }
-
-public void getInfoByCode(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
-	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
-	HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
-	String productCode=httpRequest.getParameter("productCode");
-	Map infoMap=getInfoByBizIdService(productCode,"t_front_product","product_code");
-	
-	JsonBuilder jsonBuilder=new JsonBuilder(infoMap);
-	String retStr=jsonBuilder.toString();
-	httpResponse.getOutputStream().write(retStr.getBytes("UTF-8"));
-
-	httpRequest.setAttribute("forwardFlag", "true");
-	return;
-}
-
+			
 }

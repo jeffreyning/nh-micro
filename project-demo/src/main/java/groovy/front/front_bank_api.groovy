@@ -173,9 +173,9 @@ class BankService extends MicroMvcTemplate {
 		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
 		Map requestParamMap=getRequestParamMap(httpRequest);
-		String productCode=httpRequest.getParameter("productCode");
+/*		String productCode=httpRequest.getParameter("productCode");
 		Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
-		httpRequest.setAttribute("productInfo", productInfo);
+		httpRequest.setAttribute("productInfo", productInfo);*/
 
 		httpRequest.getRequestDispatcher("/front-page/bankcard_set.jsp").forward(httpRequest, httpResponse);
 		httpRequest.setAttribute("forwardFlag", "true");

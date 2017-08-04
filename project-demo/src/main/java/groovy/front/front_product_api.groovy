@@ -30,7 +30,7 @@ import javax.servlet.http.HttpSession;
 
 class FrontProduct extends MicroMvcTemplate{
 	public String pageName="listDictionaryInfo";
-	public String tableName="t_front_product";
+	public String tableName="t_front_bid";
 
 
 	public String getPageName(HttpServletRequest httpRequest){
@@ -70,7 +70,7 @@ class FrontProduct extends MicroMvcTemplate{
 		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
 		Map requestParamMap=getRequestParamMap(httpRequest);
 		String productCode=httpRequest.getParameter("productCode");
-		Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
+		Map productInfo=getInfoByBizIdService(productCode,"t_front_bid","bid_code");
 		httpRequest.setAttribute("productInfo", productInfo);
 
 		httpRequest.getRequestDispatcher("/front-page/regularProductDetail.jsp").forward(httpRequest, httpResponse);
@@ -88,7 +88,7 @@ class FrontProduct extends MicroMvcTemplate{
 		Map requestParamMap=getRequestParamMap(httpRequest);
 		String productCode=httpRequest.getParameter("productCode");
 		String investAmount=httpRequest.getParameter("investAmount");
-		Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
+		Map productInfo=getInfoByBizIdService(productCode,"t_front_bid","bid_code");
 		//httpRequest.setAttribute("productInfo", productInfo);
 		String orderNumber=GroovyExecUtil.execGroovyRetObj("front_invest_api", "createInvestInfo", nhUserCode,productCode,investAmount);
 		Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");

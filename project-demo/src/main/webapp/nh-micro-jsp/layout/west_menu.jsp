@@ -159,6 +159,14 @@ String path=request.getContextPath();
 				  }
 			},
 			{
+				"id":712,
+				"text":"互联网产品标的列表",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/nh-micro-jsp/front-manager-page/listFrontBidInfo.jsp"
+				  }
+			},			
+			{
 				"id":713,
 				"text":"互联网账户列表",
 				"iconCls":"icon-nav",
