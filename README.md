@@ -772,3 +772,63 @@ CREATE TABLE `t_front_withdraw` (
   UNIQUE KEY `meta_key` (`meta_key`,`meta_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='提现管理 提现记录表';
 
+
+-- ----------------------------
+-- Table structure for 标的管理表 
+-- ----------------------------
+DROP TABLE IF EXISTS `t_front_bid`;
+CREATE TABLE `t_front_bid` (
+  `id` varchar(50) DEFAULT NULL,
+  `bid_code` varchar(20) NOT NULL COMMENT '标的编码',
+  `bid_name` varchar(50) DEFAULT NULL COMMENT '标的名称',
+  `product_code` varchar(20) NOT NULL COMMENT '产品类型',
+  `product_name` varchar(50) DEFAULT NULL COMMENT '产品类型名称',
+  `product_type` varchar(30) DEFAULT NULL COMMENT '产品分类 1：保理  2：金',
+  `product_type_name` varchar(50) DEFAULT NULL COMMENT '产品分类的名称',
+  `periods` varchar(19) DEFAULT NULL COMMENT '期数',
+  `start_invest_money` decimal(20,2) DEFAULT NULL COMMENT '起投金额',
+  `years_income` varchar(20) DEFAULT NULL COMMENT '年化收益',
+  `product_url` varchar(2000) DEFAULT NULL COMMENT '标的详情url',
+  `stepping` decimal(20,2) DEFAULT NULL COMMENT '步进',
+  `cycle_type` varchar(5) DEFAULT NULL COMMENT '周期类型:0.月 1.天 2.固定到期日 3.年',
+  `create_time` varchar(19) DEFAULT NULL COMMENT '创建时间',
+  `create_name` varchar(50) DEFAULT NULL COMMENT '创建人名称',
+  `create_id` varchar(20) DEFAULT NULL COMMENT '创建人id',
+  `interrest_mode` varchar(10) DEFAULT NULL COMMENT '起息规则方式 INSU 投资成功计息 FSSU 满标计息',
+  `interrest_date` int(11) DEFAULT NULL COMMENT '起息规则 n 表示t+n',
+  `per_investment` decimal(20,2) unsigned zerofill DEFAULT NULL COMMENT '单笔最高金额',
+  `repayment_mode` varchar(10) DEFAULT NULL COMMENT '还款方式 DQBX：到期本息 XXHB：先息后本',
+  `bid_state` varchar(3) DEFAULT NULL COMMENT '标的状态 0 待发布 1已发布待审核 2 未上架 3审核拒绝 4  募集中 5 已下架 6 已满标 7流标  8募集中变更待审核 9初始导入 10已废弃',
+  `page_code` varchar(50) DEFAULT NULL COMMENT '页面参数模板id',
+  `model_code` varchar(50) DEFAULT NULL COMMENT '模板编码id',
+  `model_name` varchar(50) DEFAULT NULL COMMENT '模板名称',
+  `product_amount` decimal(20,2) DEFAULT NULL COMMENT '项目金额',
+  `collect_start_time` varchar(19) DEFAULT NULL COMMENT '募集开始时间',
+  `collect_end_time` varchar(19) DEFAULT NULL COMMENT '募集结束时间',
+  `pay_type` varchar(10) DEFAULT NULL COMMENT '支付方式 opay 在线支付 oapp 在线预约',
+  `pay_bus_id` varchar(20) DEFAULT NULL COMMENT '支付主体 :',
+  `is_stair_rate` varchar(2) DEFAULT NULL COMMENT '是否使用阶梯利率  y：使用 n：不使用',
+  `have_money` decimal(18,2) DEFAULT NULL COMMENT '已投金额',
+  `surplus_invest_money` decimal(18,2) DEFAULT NULL COMMENT '剩余可投',
+  `full_time` varchar(19) DEFAULT NULL COMMENT '满售时间',
+  `verifier` varchar(50) DEFAULT NULL COMMENT '审核人',
+  `verifier_opin` varchar(1000) DEFAULT NULL COMMENT '审核意见',
+  `verifier_id` varchar(20) DEFAULT NULL COMMENT '审核人id',
+  `verifi_date` varchar(19) DEFAULT NULL COMMENT '审核时间',
+  `create_date` varchar(19) DEFAULT NULL COMMENT '创建时间',
+  `issue_name` varchar(50) DEFAULT NULL COMMENT '发布人',
+  `issue_date` varchar(19) DEFAULT NULL COMMENT '发布时间',
+  `issue_id` varchar(20) DEFAULT NULL COMMENT '发布人id',
+  `bid_description` varchar(2000) DEFAULT NULL COMMENT '标的描述',
+  `sel_position` int(2) DEFAULT '0' COMMENT '精选位置1\\2\\3',
+  `up_shelf_time` datetime DEFAULT NULL COMMENT '上架时间',
+  `down_shelf_time` datetime DEFAULT NULL COMMENT '下架时间',
+  `data_version` int(11) DEFAULT '0' COMMENT '数据版本',
+  `down_shelf_id` varchar(20) DEFAULT NULL COMMENT '下架操作id',
+  `down_shelf_name` varchar(50) DEFAULT NULL COMMENT '下架操作人名称',
+  `party_b` varchar(200) DEFAULT NULL COMMENT '认购协议乙方',
+  `is_bid_change` varchar(2) DEFAULT '0' COMMENT '项目是否变更 1变更 0未变更',
+  `is_bid_change_verifier` varchar(2) DEFAULT '0' COMMENT '募集中变更待审核的 审核状态 1 审核拒绝 2审核通过',
+  PRIMARY KEY (`bid_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='标的信息表';
+
