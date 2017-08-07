@@ -570,7 +570,7 @@ CREATE TABLE `t_front_invest` (
   `remark` varchar(1000) DEFAULT NULL COMMENT '备注',
   `account_id` varchar(50) DEFAULT NULL COMMENT '账户信息id',
   `expire_profit` decimal(20,2) DEFAULT NULL COMMENT '到期收益',
-  `create_time` varchar(19) DEFAULT NULL COMMENT '创建时间',
+`create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `interrest_date` varchar(19) DEFAULT NULL COMMENT '计息日',
   `trade_end_date` varchar(19) DEFAULT NULL COMMENT '交易到期日',
   `back_amount` decimal(20,2) DEFAULT NULL COMMENT '到期回款金额',

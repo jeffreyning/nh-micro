@@ -55,6 +55,7 @@ class FrontProduct extends MicroMvcTemplate{
 		investMap.put("product_code", productCode);
 
 		investMap.put("invest_amount",investAmount);
+		investMap.put("create_time", "now()");
 		String tradeStatus="4";
 		investMap.put("trade_status",tradeStatus);
 		createInfoService(investMap,"t_front_invest");
@@ -77,6 +78,13 @@ class FrontProduct extends MicroMvcTemplate{
 		String investAmount=investMap.get("invest_amount");
 
 
+		//添加投资总额
+		String subAccountSql0="update t_front_account set total_investment=total_investment+? where user_code=?"
+		List placeList0=new ArrayList();
+		placeList0.add(investAmount);
+		placeList0.add(nhUserName);
+		updateInfoServiceBySql(subAccountSql0,placeList0);
+		
 		//扣除账户金额
 		String subAccountSql="update t_front_account set available_balance=available_balance-? where user_code=?"
 		List placeList=new ArrayList();
@@ -187,6 +195,13 @@ class FrontProduct extends MicroMvcTemplate{
 		tranMap.put("recharge_type","3");
 		tranMap.put("recharge_status","1");
 		createInfoService(tranMap,"t_front_recharge");
+		
+		//添加投资总额
+		String subAccountSql0="update t_front_account set total_investment=total_investment+? where user_code=?"
+		List placeList0=new ArrayList();
+		placeList0.add(investAmount);
+		placeList0.add(userCode);
+		updateInfoServiceBySql(subAccountSql0,placeList0);
 		
 		httpRequest.getRequestDispatcher("/front-page/paymentSuccess.jsp").forward(httpRequest, httpResponse);
 		httpRequest.setAttribute("forwardFlag", "true");

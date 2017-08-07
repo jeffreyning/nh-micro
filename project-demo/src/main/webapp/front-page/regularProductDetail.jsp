@@ -17,8 +17,11 @@ String path = request.getContextPath();
     <link rel="stylesheet" href="<%=path%>/front-page/css/base.min.css">
     <link rel="stylesheet" href="<%=path%>/front-page/css/product_details.min.css">
     <link rel="stylesheet" type="text/css" href="<%=path%>/front-page/css/me.css">
+
+    
 <script type="text/javascript" src="<%=path%>/front-page/js/json2.js"></script> 
-<script type="text/javascript" src="<%=path%>/front-page/js/jquery-1.7.2.min.js"></script>    
+<script type="text/javascript" src="<%=path%>/front-page/js/jquery-1.7.2.min.js"></script>   
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>   
 <script type="text/javascript" >
 function toPay(){
 	var investAmount=$('#inputMoney').val();
@@ -26,6 +29,11 @@ function toPay(){
 	url=url+'&productCode=${productInfo.product_code }&investAmount='+investAmount;
 	window.location.href=url;	
 }
+$(function(){
+	var par=${productInfo.have_money}/${productInfo.product_amount}*100;
+	$("#progressbar").progressbar({ value: par });
+	$("#progressbar_val").html(parseInt(par)+"%");
+});
 </script>	
 </head>
 <body>
@@ -33,6 +41,18 @@ function toPay(){
     header .header li.header_none {
         display: none;
     }
+    
+.ui-progressbar {
+  height: 0.5em;
+  text-align: left;
+  overflow: hidden;
+    background-color: #666;
+}
+.ui-progressbar .ui-progressbar-value {
+  margin: -1px;
+  height: 100%;
+  background-color: #ccc;
+}    
 </style>
 <header>
     <div data-wrap="layout" class="bg-grey">
@@ -84,7 +104,7 @@ function toPay(){
                 </li>
                 <li class="three">
                     <p class="c_33">
-                        <span class="font32 J_surplus_money"></span><b class="font22">元</b>
+                        <span class="font32 J_surplus_money">${productInfo.surplus_invest_money }</span><b class="font22">元</b>
                     </p> 
                     <label class="c_66">
                         剩余可投金额
@@ -93,12 +113,12 @@ function toPay(){
             </ul>
             <div class="progress">
                 <div class="progressBar clearfix">
-                    <span class="fl"><em class="J_progressBar"></em></span>
-                    <label class="red fr J_progressBar_val">0%</label>
+                    <span class="fl"><div id="progressbar" class="J_progressBar"></div></span>
+                    <label id="progressbar_val" class="red fr J_progressBar_val">%</label>
                 </div>
                 <p class="clearfix">
                     <label class="fl">项目金额：</label>
-                    <span class="fl"><b class="red J_product_amount">1,500,000.00</b> 元
+                    <span class="fl"><b class="red J_product_amount">${productInfo.product_amount}</b> 元
                 </span></p>
             </div>    
         </div>
@@ -116,33 +136,16 @@ function toPay(){
                         <span class="font32 periods">${productInfo.periods }</span><b class="font22">个月</b>
                     </p>           
                 </li>
-                <li class="clearfix">
-                    <label class="c_66">剩余可投金额：</label>
-                    <p class="c_33">
-                        <span class="font32 J_surplus_money"></span>
-                        <b class="font22">元</b>
-                    </p>                          
-                </li>
+
             </ul>
-            <div class="progress">
-               <div class="progressBar clearfix">
-                    <span class="fl">
-                        <em class="J_progressBar"></em>
-                    </span>
-                    <label class="red fr J_progressBar_val" >0%</label>
-                </div>
-                <p class="clearfix">
-                    <label class="fl">项目金额：</label>
-                    <span class="fl"><b class="red J_product_amount">1,500,000.00</b> 元
-                </span></p>
-            </div>
+
         </div>    
         <div class="banner-right">
             <ul class="banner_infor">
                 <li class="clearfix">
                     <label class="fl">账户余额：</label>
                     <div id="sign_In" class="fl">
-                        <span><b class="red" id="balanceMoney" data-money="balanceMoney">****</b>元</span>
+                        <span><b class="red" id="balanceMoney" data-money="balanceMoney">${accountInfo.available_balance }</b>元</span>
                         <strong class="eyesIcon hide"></strong>
                     </div>
                 </li>
@@ -153,7 +156,7 @@ function toPay(){
                     <em>元</em> 
                     <p class="error"></p>                 
                 </li>
-                <li class="lineH clearfix"><label>预期到期收益：</label><span><b class="red J_dailyReturn">0.00</b>元</span></li>
+               <!--  <li class="lineH clearfix"><label>预期到期收益：</label><span><b class="red J_dailyReturn">0.00</b>元</span></li> -->
                 <li>
                 <button class="me-u-btn" data-color="red" data-size="block" id="J_submit" onclick="toPay()">立即抢购</button> 
                 </li>
@@ -188,7 +191,7 @@ function toPay(){
                 <span class="p_icon fl"></span>          
                 <dl class="fl">
                     <dd>项目名称</dd>
-                    <dt>${product_name}</dt>
+                    <dt>${productInfo.bid_name}</dt>
                 </dl>
             </div>
             <div class="p_details_list clearfix" data-show="2">

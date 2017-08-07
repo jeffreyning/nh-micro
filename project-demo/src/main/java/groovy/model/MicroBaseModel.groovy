@@ -14,7 +14,7 @@ public class MicroBaseModel extends IMicroDbModel {
 	public static final MicroDbModelEntry meta_type=new MicroDbModelEntry("meta_type","父编号","meta_content","父编号",String.class,false);
 	public static final MicroDbModelEntry meta_content=new MicroDbModelEntry("meta_content","内容","meta_content","内容",String.class,false);
 	public static final MicroDbModelEntry remark=new MicroDbModelEntry("remark","remark","meta_content","备注",String.class,false);
-	public static final MicroDbModelEntry update_time=new MicroDbModelEntry("update_time","更新时间","meta_content","更新时间",String.class,false);
-	public static final MicroDbModelEntry create_time=new MicroDbModelEntry("create_time","创建时间","meta_content","创建时间",String.class,false);
+	public static final MicroDbModelEntry update_time=new MicroDbModelEntry("update_time","更新时间","meta_content","更新时间",Date.class,false);
+	public static final MicroDbModelEntry create_time=new MicroDbModelEntry("create_time","创建时间","meta_content","创建时间",Date.class,false);
 
 }

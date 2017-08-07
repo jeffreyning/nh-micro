@@ -39,26 +39,6 @@ String path = request.getContextPath();
             <img src="<%=path%>/front-page/images/paySuccess.png" />
         </div>
         <p class="payText">恭喜您，订单支付成功。</p>
-        <table class="firstTable">
-            <tr>
-                <td>项目名称：<span>{{bid_name}}</span></td>
-            </tr>
-            <tr>
-                <td>到期待收总金额：<span>{{back_amount}}元</span></td>
-            </tr>
-            <tr>
-                <td>投资到期日：<span>{{trade_end_date}}</span></td>
-            </tr>     
-        </table>
-        <table>
-            <tr>
-                <td>投资金额：<span>{{invest_amount}}元</span></td>
-            </tr>
-            <tr>
-                <td>到期收益：<span>{{expire_profit}}元</span></td>
-            </tr>
-        </table>
-
   
     <footer>
   <div class="footer_inner wrap">

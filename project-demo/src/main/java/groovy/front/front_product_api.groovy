@@ -72,7 +72,13 @@ class FrontProduct extends MicroMvcTemplate{
 		String productCode=httpRequest.getParameter("productCode");
 		Map productInfo=getInfoByBizIdService(productCode,"t_front_bid","bid_code");
 		httpRequest.setAttribute("productInfo", productInfo);
-
+		
+		
+		String nhUserCode=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
+			gInputParam,gOutputParam,gContextParam);
+		Map accountInfo=getInfoByBizIdService(nhUserCode,"t_front_account","user_code");
+		httpRequest.setAttribute("accountInfo", accountInfo);
+		
 		httpRequest.getRequestDispatcher("/front-page/regularProductDetail.jsp").forward(httpRequest, httpResponse);
 		httpRequest.setAttribute("forwardFlag", "true");
 		return;

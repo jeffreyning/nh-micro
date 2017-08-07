@@ -26,11 +26,11 @@ String path = request.getContextPath();
     <tr>
     <td><p class="xieyiLV">{{value.years_income}}<b>%</b></p></td>
     <td><p class="qixianData">{{value.periods}}</p></td>
-    <td>{{value.product_name}}</td>
+    <td>{{value.bid_name}}</td>
     <td>{{value.start_invest_money}}</td>
-    <td>{{value.shengyu}}</td>
+    <td>{{value.surplus_invest_money}}</td>
     <td class="red">
-    <a class="gary" href="javascript:productDetail('{{value.product_code}}');" data-color="red" >立即抢购</a>
+    <a class="gary" href="javascript:productDetail('{{value.bid_code}}');" data-color="red" >立即抢购</a>
     </td>
 	</tr>
     {{/each}}

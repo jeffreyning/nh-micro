@@ -24,8 +24,20 @@ String path = request.getContextPath();
 {{each rowsData as value i}}
           <tr>
             <td>{{value.create_time}}</td>
-            <td>{{value.recharge_type}}</td>
-            <td>{{value.recharge_status}}</td>
+            <td>
+{{if(value.recharge_type==1)}}充值{{/if}}
+{{if(value.recharge_type==2)}}提现{{/if}}
+{{if(value.recharge_type==3)}}投资{{/if}}
+{{if(value.recharge_type==4)}}回款{{/if}}
+{{if(value.recharge_type==5)}}手续费{{/if}}
+{{if(value.recharge_type==6)}}红包{{/if}}
+
+</td>
+            <td>
+		{{if(value.recharge_status==1)}}处理中{{/if}}
+		{{if(value.recharge_status==2)}}成功{{/if}}
+		{{if(value.recharge_status==3)}}失败{{/if}}
+			</td>
             <td>{{value.recharge_money}}</td>
             <td>{{value.account_balance}}</td>
           </tr>

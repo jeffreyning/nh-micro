@@ -32,6 +32,7 @@ function getMyAccount(){
 			$('#regularFinancing').html(data.total_investment);
 			$('#frozen_amount').html(data.frozen_amount);
 			$('#J_balance').html(data.available_balance);
+			$('#J_weath').html(Number(data.total_investment)+Number(data.frozen_amount)+Number(data.available_balance));
 		}
 	});
 }
