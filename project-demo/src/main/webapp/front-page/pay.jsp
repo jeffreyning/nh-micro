@@ -73,11 +73,9 @@ $(function() {
 });
 
 function submitQuickConfirm(){
-
 	var investAmount=$('#J_investAmount').val();
 	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_invest_api&groovySubName=confirmQuickPayGo";
 	url=url+"&orderNumber=${investInfo.order_number}";
-	alert(url);
 	window.location.href=url;
 }
 </script>	

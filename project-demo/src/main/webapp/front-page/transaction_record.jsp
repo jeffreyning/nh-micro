@@ -24,8 +24,8 @@ String path = request.getContextPath();
 {{each rowsData as value i}}
           <tr>
             <td>{{value.create_time}}</td>
-            <td>{{value.recharge_type_txt}}</td>
-            <td>{{{value.recharge_status_txt}}}</td>
+            <td>{{value.recharge_type}}</td>
+            <td>{{value.recharge_status}}</td>
             <td>{{value.recharge_money}}</td>
             <td>{{value.account_balance}}</td>
           </tr>
@@ -44,7 +44,6 @@ function renderRechargeTable(){
 			var templateData=new Object();
 			templateData.rowsData=data;
 			var html = template('t_r_table_tpl', templateData);
-
 			$("#t_r_tbody").html(html);			
 		}
 	});
