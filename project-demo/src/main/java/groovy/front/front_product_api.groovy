@@ -92,11 +92,35 @@ class FrontProduct extends MicroMvcTemplate{
 		String nhUserCode=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
 		gInputParam,gOutputParam,gContextParam);
 		Map requestParamMap=getRequestParamMap(httpRequest);
-		String productCode=httpRequest.getParameter("productCode");
+		String bidCode=httpRequest.getParameter("bidCode");
 		String investAmount=httpRequest.getParameter("investAmount");
-		Map productInfo=getInfoByBizIdService(productCode,"t_front_bid","bid_code");
+		Map productInfo=getInfoByBizIdService(bidCode,"t_front_bid","bid_code");
+		String productCode=productInfo.get("product_code");
+		String productName=productInfo.get("product_name");
+		String bidName=productInfo.get("bid_name");
 		//httpRequest.setAttribute("productInfo", productInfo);
-		String orderNumber=GroovyExecUtil.execGroovyRetObj("front_invest_api", "createInvestInfo", nhUserCode,productCode,investAmount);
+		//String orderNumber=GroovyExecUtil.execGroovyRetObj("front_invest_api", "createInvestInfo", nhUserCode,productCode,investAmount);
+		//生成投资记录
+		Map investMap=new HashMap();
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
+		String orderNumber=sdf.format(new Date());
+		investMap.put("order_number", orderNumber);
+		investMap.put("user_code", nhUserCode);
+		investMap.put("user_name", nhUserCode);
+
+		investMap.put("bid_name", bidName);
+		investMap.put("bid_code", bidCode);
+		investMap.put("product_name", productName);
+		investMap.put("product_code", productCode);
+
+		investMap.put("invest_amount",investAmount);
+		investMap.put("create_time", "now()");
+		String tradeStatus="4";
+		investMap.put("trade_status",tradeStatus);
+		createInfoService(investMap,"t_front_invest");
+
+		
+		
 		Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
 		httpRequest.setAttribute("investInfo", investInfo);
 		

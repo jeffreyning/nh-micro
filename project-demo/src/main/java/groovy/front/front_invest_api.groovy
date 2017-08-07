@@ -40,7 +40,7 @@ class FrontProduct extends MicroMvcTemplate{
 		return tableName;
 	}
 
-	public String createInvestInfo(String userCode,String productCode,String investAmount){
+/*	public String createInvestInfo(String userCode,String productCode,String investAmount){
 		//生成投资记录
 		Map investMap=new HashMap();
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
@@ -60,7 +60,7 @@ class FrontProduct extends MicroMvcTemplate{
 		investMap.put("trade_status",tradeStatus);
 		createInfoService(investMap,"t_front_invest");
 		return orderNumber;
-	}
+	}*/
 
 	public void investProductGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 
@@ -76,6 +76,7 @@ class FrontProduct extends MicroMvcTemplate{
 
 		Map investMap=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
 		String investAmount=investMap.get("invest_amount");
+		String bidCode=investMap.get("bid_code");
 
 
 		//添加投资总额
@@ -86,11 +87,20 @@ class FrontProduct extends MicroMvcTemplate{
 		updateInfoServiceBySql(subAccountSql0,placeList0);
 		
 		//扣除账户金额
-		String subAccountSql="update t_front_account set available_balance=available_balance-? where user_code=?"
+		String subAccountSql="update t_front_account set available_balance=available_balance-?  where user_code=?"
 		List placeList=new ArrayList();
 		placeList.add(investAmount);
 		placeList.add(nhUserName);
 		updateInfoServiceBySql(subAccountSql,placeList);
+		
+		//修改标的金额
+		String subAccountSql2="update t_front_bid set surplus_invest_money=surplus_invest_money-? , have_money=have_money+?  where bid_code=?"
+		List placeList2=new ArrayList();
+		placeList2.add(investAmount);
+		placeList2.add(investAmount);
+		placeList2.add(bidCode);
+		updateInfoServiceBySql(subAccountSql2,placeList2);
+		
 
 		//生成资金流水记录
 		Map tranMap=new HashMap();
@@ -101,6 +111,7 @@ class FrontProduct extends MicroMvcTemplate{
 		tranMap.put("recharge_user_code",nhUserName);
 		tranMap.put("recharge_type","3");
 		tranMap.put("recharge_status","1");
+		tranMap.put("create_time", "now()");
 		createInfoService(tranMap,"t_front_recharge");
 		
 		httpRequest.getRequestDispatcher("/front-page/paymentSuccess.jsp").forward(httpRequest, httpResponse);
@@ -194,6 +205,7 @@ class FrontProduct extends MicroMvcTemplate{
 		tranMap.put("recharge_user_code",userCode);
 		tranMap.put("recharge_type","3");
 		tranMap.put("recharge_status","1");
+		tranMap.put("create_time", "now()");
 		createInfoService(tranMap,"t_front_recharge");
 		
 		//添加投资总额

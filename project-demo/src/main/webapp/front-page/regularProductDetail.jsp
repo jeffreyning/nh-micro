@@ -26,7 +26,7 @@ String path = request.getContextPath();
 function toPay(){
 	var investAmount=$('#inputMoney').val();
 	var url="/project-demo/NhEsbServiceServlet?cmdName=Groovy&subName=front_product_api&groovySubName=productPayGo";
-	url=url+'&productCode=${productInfo.product_code }&investAmount='+investAmount;
+	url=url+'&bidCode=${productInfo.bid_code }&investAmount='+investAmount;
 	window.location.href=url;	
 }
 $(function(){
