@@ -75,24 +75,7 @@ class FrontProduct extends MicroMvcTemplate{
 
 		Map investMap=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
 		String investAmount=investMap.get("invest_amount");
-		//生成投资记录
-		/*	Map investMap=new HashMap();
-		 SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		 String orderNumber=sdf.format(new Date());
-		 investMap.put("order_number", orderNumber);
-		 investMap.put("user_code", nhUserName);
-		 investMap.put("user_name", nhUserName);
-		 String productCode=requestParamMap.get("productCode");
-		 String productName=requestParamMap.get("productName");
-		 investMap.put("bid_name", productName);
-		 investMap.put("bid_code", productCode);
-		 investMap.put("product_name", productName);
-		 investMap.put("product_code", productCode);
-		 String investAmount=requestParamMap.get("investAmount");
-		 investMap.put("invest_amount",investAmount);
-		 String tradeStatus="4";
-		 investMap.put("trade_status",tradeStatus);
-		 createInfoService(investMap,"t_front_invest");*/
+
 
 		//扣除账户金额
 		String subAccountSql="update t_front_account set available_balance=available_balance-? where user_code=?"
@@ -101,7 +84,7 @@ class FrontProduct extends MicroMvcTemplate{
 		placeList.add(nhUserName);
 		updateInfoServiceBySql(subAccountSql,placeList);
 
-		//生成投资记录
+		//生成资金流水记录
 		Map tranMap=new HashMap();
 		SimpleDateFormat sdf_tran=new SimpleDateFormat("yyyyMMddHHmmss");
 		String tranId=sdf_tran.format(new Date());
@@ -169,4 +152,46 @@ class FrontProduct extends MicroMvcTemplate{
 		return;
 	}
 	
+	public void confirmQuickPayGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+			String userCode=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
+		gInputParam,gOutputParam,gContextParam);
+		String orderNumber=httpRequest.getParameter("orderNumber");
+		
+		Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
+		String bankPay=investInfo.get("bank_pay");
+		String investAmount=investInfo.get("invest_amount");
+		
+		//调用三方支付确认接口
+		GroovyExecUtil.execGroovyRetObj("front_pay_api", "confirmQuickPay", gInputParam, gOutputParam, gContextParam);
+		
+		//增加充值金额
+		GroovyExecUtil.execGroovyRetObj("front_account_api", "addBalance", userCode, bankPay);
+	
+		//扣除账户金额
+		String subAccountSql="update t_front_account set available_balance=available_balance-? where user_code=?"
+		List placeList=new ArrayList();
+		placeList.add(investAmount);
+		placeList.add(userCode);
+		updateInfoServiceBySql(subAccountSql,placeList);
+				
+		//生成资金流水记录
+		Map tranMap=new HashMap();
+		SimpleDateFormat sdf_tran=new SimpleDateFormat("yyyyMMddHHmmss");
+		String tranId=sdf_tran.format(new Date());
+		tranMap.put("inner_recharge_number", tranId);
+		tranMap.put("recharge_money",investAmount);
+		tranMap.put("recharge_user_code",userCode);
+		tranMap.put("recharge_type","3");
+		tranMap.put("recharge_status","1");
+		createInfoService(tranMap,"t_front_recharge");
+		
+		httpRequest.getRequestDispatcher("/front-page/paymentSuccess.jsp").forward(httpRequest, httpResponse);
+		httpRequest.setAttribute("forwardFlag", "true");
+		return;
+		
+		
+		}
 }

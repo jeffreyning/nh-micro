@@ -34,7 +34,7 @@ function payNow(){
 		var investAmount=$('#J_investAmount').html();
 		var accountPay=$('#J_balance').html();
 		var bankPay=$('#J_kuaijieMoney').html();
-		alert(bankPay);
+
 		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_invest_api&groovySubName=investProductBank";
 		var data=new Object();
 		data.orderNumber='${investInfo.order_number}';
@@ -75,7 +75,7 @@ $(function() {
 function submitQuickConfirm(){
 
 	var investAmount=$('#J_investAmount').val();
-	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_pay_api&groovySubName=confirmQuickPayGo";
+	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_invest_api&groovySubName=confirmQuickPayGo";
 	url=url+"&orderNumber=${investInfo.order_number}";
 	alert(url);
 	window.location.href=url;

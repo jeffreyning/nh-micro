@@ -221,8 +221,8 @@ $(function(){
                         <p class="balanceTitle">可用余额 (元)</p>
                         <p id="J_balance" class="balanceAmount hideAmount" data-money="available_balance">****</p>
                         <p class="banlaceTxt">充值后可购买定期理财产品。</p>
-                        <div class="charge wBtn"><a href="<%=path%>/front-page/recharge_mode.html" id="J_accountIndexCharge">充 值</a></div>
-                        <div class="withdraw wBtn"><a href="<%=path%>/front-page/withdraw.html" id="J_accountIndexWithdraw">提 现</a></div>
+                        <div class="charge wBtn"><a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_recharge_api&groovySubName=openRechargeGo" id="J_accountIndexCharge">充 值</a></div>
+                        <div class="withdraw wBtn"><a href="<%=path%>/front-page/withdraw.jsp" id="J_accountIndexWithdraw">提 现</a></div>
                     </div>
                 </div>
 

@@ -41,6 +41,32 @@ class FrontProduct extends MicroMvcTemplate{
 	}
 
 
+	public void rechargeBank(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
+			gInputParam,gOutputParam,gContextParam);
+		String bankPay=httpRequest.getParameter("bankPay");
+		
+		//调用三方支付接口
+		GroovyExecUtil.execGroovyRetObj("front_pay_api", "startQuickPay", gInputParam, gOutputParam, gContextParam);
+
+		
+		//创建充值流水
+		Map tranMap=new HashMap();
+		SimpleDateFormat sdf_tran=new SimpleDateFormat("yyyyMMddHHmmss");
+		String rechargeNumber=sdf_tran.format(new Date());
+		tranMap.put("inner_recharge_number", rechargeNumber);
+		tranMap.put("recharge_money",bankPay);
+		tranMap.put("recharge_user_code",nhUserName);
+		tranMap.put("recharge_type","3");
+		tranMap.put("recharge_status","1");
+		createInfoService(tranMap,"t_front_recharge");
+		
+		//返回流水id
+		gOutputParam.setResultObj(rechargeNumber);
+	}
+	
 	public void getMyRechargeListAll(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 		
 		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
@@ -64,6 +90,50 @@ class FrontProduct extends MicroMvcTemplate{
 		
 		httpRequest.setAttribute("forwardFlag", "true");
 		return;
+	}
+	
+	public void openRechargeGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
+			gInputParam,gOutputParam,gContextParam);
+		
+		Map accountInfo=getInfoByBizIdService(nhUserName,"t_front_account","user_code");
+		httpRequest.setAttribute("accountInfo", accountInfo);
+		
+		Map cardInfo=getInfoByBizIdService(nhUserName,"t_front_user_bankcard","user_code");
+		httpRequest.setAttribute("cardInfo", cardInfo);
+		
+		Map userInfo=getInfoByBizIdService(nhUserName,"t_front_user","user_code");
+		httpRequest.setAttribute("userInfo", userInfo);
+		
+		httpRequest.getRequestDispatcher("/front-page/recharge_mode.jsp").forward(httpRequest, httpResponse);
+		httpRequest.setAttribute("forwardFlag", "true");
+	}
+	
+	public void confirmQuickPayGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+		String userCode=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
+			gInputParam,gOutputParam,gContextParam);
+		String rechargeNumber=httpRequest.getParameter("rechargeNumber");
+
+		Map dataMap=getInfoByBizIdService(rechargeNumber,"t_front_recharge","inner_recharge_number");
+		String bankPay=dataMap.get("recharge_money");
+		
+		//调用三方支付确认接口
+		GroovyExecUtil.execGroovyRetObj("front_pay_api", "confirmQuickPay", gInputParam, gOutputParam, gContextParam);		
+		
+		//账务处理
+		GroovyExecUtil.execGroovyRetObj("front_account_api", "addBalance", userCode, bankPay);
+		
+		//修改充值流水状态
+		Map rechargeMap=new HashMap();
+		rechargeMap.put("recharge_status","1");
+		updateInfoByBizIdService(rechargeNumber,"t_front_recharge","inner_recharge_number",rechargeMap);
+		httpRequest.getRequestDispatcher("/front-page/rechargeSuccess.jsp").forward(httpRequest, httpResponse);
+		httpRequest.setAttribute("forwardFlag", "true");
 	}
 	
 }

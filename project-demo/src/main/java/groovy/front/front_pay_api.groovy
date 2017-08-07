@@ -43,20 +43,7 @@ class FrontPayApi extends MicroMvcTemplate{
 		
 	}
 	
-	public void confirmQuickPayGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
-		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
-		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
-		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
-			String userCode=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
-		gInputParam,gOutputParam,gContextParam);
-		String orderNumber=httpRequest.getParameter("orderNumber");
-		
-		Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
-		String bankPay=investInfo.get("bank_pay");
-				
-		GroovyExecUtil.execGroovyRetObj("front_account_api", "addBalance", userCode, bankPay);
-		
-		GroovyExecUtil.execGroovyRetObj("front_invest_api", "investProductGo", gInputParam, gOutputParam, gContextParam);
+	public void confirmQuickPay(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 	}
 
 	
