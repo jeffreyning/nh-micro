@@ -40,10 +40,116 @@ function submitWithdraw(){
 
 <body>
 
-    <div class="accountMain">
-        <div id="J_accountMenu">
-
+    <style>
+    header .header li.header_none {
+       /*  display: true; */
+    }
+</style>
+<header>
+    <div data-wrap="layout" class="bg-grey">
+        <div class="wrapper">
+            <ul class="header" data-item="col-12">
+            <c:if test="${empty sessionScope.tokenId}">
+                <a href="<%=path%>/front-page/login.jsp">注册</a>/<a href="<%=path%>/front-page/fundLogin.jsp">登录</a>
+            </c:if>
+                <c:if test="${sessionScope.tokenId!=null}">
+                <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_login&groovySubName=logoutGo" id="login_out">退出</a>
+                 </c:if>
+                    <a href="<%=path%>/front-page/regularFinancialList.jsp">定期理财列表</a>
+            </ul>
         </div>
+    </div>
+    <div class="wrap">
+        <div data-wrap="layout" class="pos">
+            <a class="key-btn me-ion-navicon"></a>
+            <h1 class="logo" data-item="col-2">
+                <a href="<%=path%>/front-page/index.html">
+                    <img src="<%=path%>/front-page/images/logo.png" class="img-responsive">
+                </a>
+            </h1>
+            <ul class="nav" data-item="col-10" data-flag="1" id="J_headerNav">
+
+                
+            </ul>
+        </div>
+    </div>
+</header>  
+    <div class="accountMain">
+    <div id="J_accountMenu">
+                <!--账户中心通用菜单-->
+<div class="userInfo">
+    <div class="headImg">
+        <img src="<%=path%>/front-page/images/headImg.png">
+    </div>
+    <p class="loginTel" id="J_loginTel">
+        ----***----
+    </p>
+    <p class="saftyLevel">
+        <span>安全等级</span>
+        <span class="levelPercent">
+                        <span></span>
+        </span>
+        <a id="J_goUp" href="<%=path%>/front-page/personal_center.html">
+                        提升
+                    </a>
+    </p>
+    <p class="investType">
+        <span class="investTag">投资属性:</span>
+        <span id="J_userType">
+            <span class="pc">未评测
+                <!--<a href="questionnaire.html?f=account"> 前去评测</a>-->
+            </span>
+            <span class="mobile">未评测
+                <!--<a href="questionnaire.html?f=account"> 未评测</a>-->
+            </span>
+        </span>
+    </p>
+    <div class="imgInfo clearfix">
+        <div class="mouseTips--bottom" data-label="实名认证"></div>
+        <div class="mouseTips--bottom" data-label="绑卡认证"></div>
+        <div class="mouseTips--bottom" data-label="邮箱认证"></div>
+    </div>
+</div>
+<ul class="menuList">
+    <li >
+        <a href="<%=path%>/front-page/account.jsp">
+                        账户总览
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+
+    </li>
+    <li >
+        <a href="<%=path%>/front-page/recharge_mode.jsp" id="J_goCharge">
+                        账户充值
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>
+    <li class="choosen">
+        <a href="<%=path%>/front-page/withdraw.jsp" id="J_goWithdraw">
+                        账户提现
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>
+    <li>
+        <a href="<%=path%>/front-page/transaction_record.jsp">
+                        交易记录
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>
+    <li>
+        <a href="<%=path%>/front-page/myregular_finance.jsp">
+                        定期理财
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>
+    <li>
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_api&groovySubName=queryInfoByCodeGo">
+                        个人设置
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>    
+</ul>
+</div>
         <div class="accountRight">
             <div class="acTitle">
                 <h2>提现</h2>

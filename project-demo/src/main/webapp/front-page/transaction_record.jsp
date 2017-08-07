@@ -123,7 +123,7 @@ $(function(){
     </div>
 </div>
 <ul class="menuList">
-    <li class="choosen">
+    <li >
         <a href="<%=path%>/front-page/account.jsp">
                         账户总览
                         <i class="me-ion-chevron-right"></i>
@@ -142,7 +142,7 @@ $(function(){
                         <i class="me-ion-chevron-right"></i>
                     </a>
     </li>
-    <li>
+    <li class="choosen">
         <a href="<%=path%>/front-page/transaction_record.jsp">
                         交易记录
                         <i class="me-ion-chevron-right"></i>

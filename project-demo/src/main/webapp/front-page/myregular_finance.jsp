@@ -84,11 +84,17 @@ $(function(){
 <header>
     <div data-wrap="layout" class="bg-grey">
         <div class="wrapper">
+            
             <ul class="header" data-item="col-12">
-                    <a href="<%=path%>/front-page/login.jsp">注册</a>/<a href="<%=path%>/front-page/fundLogin.jsp">登录</a>
-                    <a href="javascript:;" id="login_out">退出</a>
+            <c:if test="${empty sessionScope.tokenId}">
+                <a href="<%=path%>/front-page/login.jsp">注册</a>/<a href="<%=path%>/front-page/fundLogin.jsp">登录</a>
+            </c:if>
+                <c:if test="${sessionScope.tokenId!=null}">
+                <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_login&groovySubName=logoutGo" id="login_out">退出</a>
+                 </c:if>
                     <a href="<%=path%>/front-page/regularFinancialList.jsp">定期理财列表</a>
             </ul>
+          
         </div>
     </div>
     <div class="wrap">
@@ -142,7 +148,7 @@ $(function(){
     </div>
 </div>
 <ul class="menuList">
-    <li class="choosen">
+    <li >
         <a href="<%=path%>/front-page/account.jsp">
                         账户总览
                         <i class="me-ion-chevron-right"></i>
@@ -166,7 +172,7 @@ $(function(){
                         <i class="me-ion-chevron-right"></i>
                     </a>
     </li>
-    <li>
+    <li class="choosen">
         <a href="<%=path%>/front-page/myregular_finance.jsp">
                         定期理财
                         <i class="me-ion-chevron-right"></i>
