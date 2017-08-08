@@ -163,7 +163,7 @@ String path = request.getContextPath();
           </div>
           <div data-wrap="layout">
             <div data-item="col-2"><i class="me-ion-checkmark-circled"></i><strong>登录密码</strong></div>
-            <div data-offset="10"><a href="update_loginpwd.html" class="update">修改</a></div>
+            <div data-offset="10"><a href="<%=path%>/front-page/update_loginpwd.jsp" class="update">修改</a></div>
           </div>
           <div data-wrap="layout">
             <div data-item="col-2"><c:if test="${userInfo.is_authentication==1}"><i class="me-ion-checkmark-circled"></i></c:if>

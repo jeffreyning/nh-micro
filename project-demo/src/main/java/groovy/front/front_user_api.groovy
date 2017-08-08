@@ -57,7 +57,26 @@ public void queryInfoByCodeGo(GInputParam gInputParam,GOutputParam gOutputParam,
 
 }
 
+public void modifyPassword(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+	HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+	HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
+	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+	String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
+		gInputParam,gOutputParam,gContextParam);
+	String oldpwd=httpRequest.getParameter("oldpwd");
+	String newpwd=httpRequest.getParameter("newpwd");
+	Map userInfo=getInfoByBizIdService(nhUserName,"t_front_user","user_code");
+	String password=userInfo.get("password");
+	if(!oldpwd.equals(password)){
+		gOutputParam.setResultStatus(1);
+		return;
+	}
+	Map paramMap=new HashMap();
+	paramMap.put("password", newpwd);
+	updateInfoByBizIdService(nhUserName,"t_front_user","user_code",paramMap);
+	
 
+}
 
 			
 }
