@@ -46,5 +46,9 @@ class FrontPayApi extends MicroMvcTemplate{
 	public void confirmQuickPay(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 	}
 
+	public int bindCard(Map inMap,Map outMap){
+		//Map returnMap=PayUtils.send(json,PayEnum.IDENTIFYPORTAL);
+		return 0;
+	}
 	
 }

@@ -34,8 +34,12 @@ class front_realname_api extends MicroMvcTemplate{
 		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
 		String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
 		gInputParam,gOutputParam,gContextParam);
+		String realName=httpRequest.getParameter("realname");
+		String idCard=httpRequest.getParameter("idcard");
 		Map paramMap=new HashMap();
 		paramMap.put("is_authentication", "1");
+		paramMap.put("real_name", realName);
+		paramMap.put("card_no", idCard);
 		updateInfoByBizIdService(nhUserName,"t_front_user","user_code",paramMap);
 		
 

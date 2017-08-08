@@ -48,12 +48,113 @@ String path = request.getContextPath();
 
 </header>  
     <div class="accountMain">
-      <div id="J_accountMenu"></div>
+        <div id="J_accountMenu">
+            <!--账户中心通用菜单-->
+<div class="userInfo">
+    <div class="headImg">
+        <img src="<%=path%>/front-page/images/headImg.png">
+    </div>
+    <p class="loginTel" id="J_loginTel">
+        ----***----
+    </p>
+    <p class="saftyLevel">
+        <span>安全等级</span>
+        <span class="levelPercent">
+                        <span></span>
+        </span>
+        <a id="J_goUp" href="<%=path%>/front-page/personal_center.html">
+                        提升
+                    </a>
+    </p>
+    <p class="investType">
+        <span class="investTag">投资属性:</span>
+        <span id="J_userType">
+            <span class="pc">未评测
+                <!--<a href="questionnaire.html?f=account"> 前去评测</a>-->
+            </span>
+            <span class="mobile">未评测
+                <!--<a href="questionnaire.html?f=account"> 未评测</a>-->
+            </span>
+        </span>
+    </p>
+    <div class="imgInfo clearfix">
+        <div class="mouseTips--bottom" data-label="实名认证"></div>
+        <div class="mouseTips--bottom" data-label="绑卡认证"></div>
+        <div class="mouseTips--bottom" data-label="邮箱认证"></div>
+    </div>
+</div>
+<ul class="menuList">
+    <li >
+        <a href="<%=path%>/front-page/account.jsp">
+                        账户总览
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+
+    </li>
+    <li>
+        <a href="<%=path%>/front-page/recharge_mode.jsp" id="J_goCharge">
+                        账户充值
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>
+    <li>
+        <a href="<%=path%>/front-page/withdraw.jsp" id="J_goWithdraw">
+                        账户提现
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>
+    <li>
+        <a href="<%=path%>/front-page/transaction_record.jsp">
+                        交易记录
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>
+    <li>
+        <a href="<%=path%>/front-page/myregular_finance.jsp">
+                        定期理财
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>
+    <li class="choosen">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_api&groovySubName=queryInfoByCodeGo">
+                        个人设置
+                        <i class="me-ion-chevron-right"></i>
+                    </a>
+    </li>    
+</ul>
+<div class="mobileIcon menuHide">
+    <!--<img src="images/icon-l.svg" alt="">-->
+    <i class="me-ion-chevron-right"></i>
+</div>
+
+<script>
+    $(".mobileIcon").click(function () {
+        if ($(this).hasClass("menuHide")) {
+            $("#J_accountMenu").animate({
+                left: 0
+            })
+            $('.mobileIcon').animate({
+                left: '30%'
+            })
+            $(this).removeClass("menuHide");
+        } else {
+            $("#J_accountMenu").animate({
+                left: '-30%'
+            })
+            $('.mobileIcon').animate({
+                left: '0'
+            })
+            $(this).addClass("menuHide");
+        }
+    })
+
+</script>
+        </div>
       <div class="accountRight">
         <div class="acTitle">
           <h2>个人设置</h2>
         </div>
-        <div id="p_c_cont" class="p_c_cont"></div>
+        <div id="p_c_cont" class="p_c_cont">
 
           <div data-wrap="layout">
             <div data-item="col-2"><i class="me-ion-checkmark-circled"></i><strong>手机认证</strong></div>
@@ -65,27 +166,29 @@ String path = request.getContextPath();
             <div data-offset="10"><a href="update_loginpwd.html" class="update">修改</a></div>
           </div>
           <div data-wrap="layout">
-            <div data-item="col-2"><c:if test="${userInfo.is_authentication_boolean}"><i class="me-ion-checkmark-circled"></i></c:if>
-              <c:if test="${!userInfo.is_authentication_boolean}"><i class="me-ion-a-alert"></i></c:if><strong>实名认证</strong>
+            <div data-item="col-2"><c:if test="${userInfo.is_authentication==1}"><i class="me-ion-checkmark-circled"></i></c:if>
+              <c:if test="${userInfo.is_authentication!=1}"><i class="me-ion-a-alert"></i></c:if><strong>实名认证</strong>
             </div>
-            <div data-item="col-8"><span><c:if test="${userInfo.is_authentication_boolean}">${userInfo.realName}</c:if></span></div>
-            <div data-item="col-2"><c:if test="${userInfo.is_authentication_boolean}"><span class="certified">已认证</span></c:if>
-              <c:if test="${!userInfo.is_authentication_boolean}"><a href="realname_centification.html" class="update">认证</a></c:if>
+            <div data-item="col-8"><span><c:if test="${userInfo.is_authentication==1}">${userInfo.real_name}</c:if></span></div>
+            <div data-item="col-2"><c:if test="${userInfo.is_authentication==1}"><span class="certified">已认证</span></c:if>
+              <c:if test="${userInfo.is_authentication!=1}"><a href="<%=path%>/front-page/realname_certification.jsp" class="update">认证</a></c:if>
             </div>
           </div>
 
           <div data-wrap="layout">
-            <div data-item="col-2"><c:if test="${userInfo.is_bindcard_boolean }"><i class="me-ion-checkmark-circled"></i></c:if>
-              <c:if test="${!userInfo.is_bindcard_boolean }"><i class="me-ion-a-alert"></i></c:if><strong>银行卡设置</strong>
+            <div data-item="col-2"><c:if test="${userInfo.is_bindcard==1 }"><i class="me-ion-checkmark-circled"></i></c:if>
+              <c:if test="${userInfo.is_bindcard!=1 }"><i class="me-ion-a-alert"></i></c:if><strong>银行卡设置</strong>
             </div>
-            <div data-item="col-8"><span><c:if test="${userInfo.is_bindcard_boolean }">**** ${userInfo.cardLast}</c:if></span></div>
-            <div data-item="col-2">${userInfo.is_bindcard_txt}</div>
+            <div data-item="col-8"><span><c:if test="${userInfo.is_bindcard==1 }">**** ${cardInfo.card_last}</c:if></span></div>
+            <div data-item="col-2"><c:if test="${userInfo.is_bindcard==1}"><span class="certified">已绑卡</span></c:if>
+              <c:if test="${userInfo.is_bindcard!=1}"><a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_bank_api&groovySubName=bankCardSetGo" class="update">绑卡</a></c:if>
+            </div>           
           </div>
           <div class="reminder">
             <h5><span class="spanheart"><i class="me-ion-heart"></i></span><em>温馨提示：</em></h5>
             <p>银行卡解绑请致电客服：<span class="certifi">400-111-110</span></p>
           </div>
-
+		</div>
       </div>
     </div>
     <footer>

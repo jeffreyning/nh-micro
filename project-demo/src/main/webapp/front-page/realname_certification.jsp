@@ -21,18 +21,21 @@ String path = request.getContextPath();
 <script type="text/javascript" src="<%=path%>/front-page/js/jquery-1.7.2.min.js"></script>    
 <script type="text/javascript" >
 function submit_real(){
-	var data=$('#r_c_form').serialize();
+	var data0=$('#r_c_form').serialize();
 	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_realname_api&groovySubName=realName";
 
 	$.ajax({
 		url:url,
 		type:'post',
 		dataType:'json',
-		success:function(data,status){
-			
-		}
-		
+		data:data0,
+		complete: function(msg) { 
+			var go="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_api&groovySubName=queryInfoByCodeGo";
+			alert(go);
+			window.location.href=go;			
+		}		
 	});
+
 }
 </script>	
 </head>
@@ -45,9 +48,13 @@ function submit_real(){
     <div data-wrap="layout" class="bg-grey">
         <div class="wrapper">
             <ul class="header" data-item="col-12">
-                    <a href="<%=path%>/front-page/login.jsp">注册</a>/<a href="<%=path%>/front-page/fundLogin.jsp">登录</a>
-                    <a href="javascript:;" id="login_out">退出</a>
-                    <a href="<%=path%>/front-page/regularFinancialList.jsp">定期理财列表</a>
+            <c:if test="${empty sessionScope.tokenId}">
+                <a href="<%=path%>/front-page/login.jsp">注册</a>/<a href="<%=path%>/front-page/fundLogin.jsp">登录</a>
+            </c:if>
+                <c:if test="${sessionScope.tokenId!=null}">
+                <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_login&groovySubName=logoutGo" id="login_out">退出</a>
+                 </c:if>
+                <a href="<%=path%>/front-page/regularFinancialList.jsp">定期理财列表</a>
             </ul>
         </div>
     </div>
@@ -102,37 +109,7 @@ function submit_real(){
 </div>
 
 <ul class="menuList">
-    <li class="choosen">
-        <a href="<%=path%>/front-page/account.jsp">
-                        账户总览
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
 
-    </li>
-    <li>
-        <a href="<%=path%>/front-page/recharge_mode.jsp" id="J_goCharge">
-                        账户充值
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
-    </li>
-    <li>
-        <a href="<%=path%>/front-page/withdraw.jsp" id="J_goWithdraw">
-                        账户提现
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
-    </li>
-    <li>
-        <a href="<%=path%>/front-page/transaction_record.jsp">
-                        交易记录
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
-    </li>
-    <li>
-        <a href="<%=path%>/front-page/myregular_finance.jsp">
-                        定期理财
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
-    </li>
 </ul>
 
 
@@ -168,7 +145,7 @@ function submit_real(){
           <h2>实名认证</h2>
         </div>
         <div class="warndiv r_c_warndiv"><i class="me-ion-a-alert"></i>实名认证由公安局系统统一验证，请确保输入匹配的身份信息！</div>
-        <form id="r_c_form" class="r_c_form p_c_style">
+        <form id="r_c_form" class="r_c_form p_c_style"  onsubmit="return false;">
           <div data-wrap="layout">
             <div data-item="col-2" class="r_c_label">
               <label>真实姓名</label>
@@ -195,7 +172,7 @@ function submit_real(){
               <button id="reset" type="reset" data-type="minor" class="me-u-btn">重置</button>
             </div>
           </div>
-          <div id="backset"><a href="<%=path%>/front-page/personal_center.html">返回个人设置&gt;&gt;</a></div>
+          <div id="backset"><a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_api&groovySubName=queryInfoByCodeGo">返回个人设置&gt;&gt;</a></div>
         </form>
       </div>
     </div>

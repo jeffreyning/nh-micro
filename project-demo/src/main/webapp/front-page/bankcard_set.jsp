@@ -29,9 +29,11 @@ function submitBindCard(){
 		data:data,
 		dataType:'json',
 		success:function(data,status){
-			
+			var go="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_api&groovySubName=queryInfoByCodeGo";
+			window.location.href=go;			
 		}
 	});
+	return false;
 }
 </script>	
 </head>
@@ -99,49 +101,7 @@ function submitBindCard(){
         <div class="mouseTips--bottom" data-label="邮箱认证"></div>
     </div>
 </div>
-<ul class="menuList">
-    <li>
-        <a href="account.html">
-                        账户总览
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
 
-    </li>
-    <li>
-        <a href="recharge_mode.html" id="J_goCharge">
-                        账户充值
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
-    </li>
-    <li>
-        <a href="withdraw.html" id="J_goWithdraw">
-                        账户提现
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
-    </li>
-    <li>
-        <a href="transaction_record.html">
-                        交易记录
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
-    </li>
-    <li>
-        <a href="myregular_finance.html">
-                        定期理财
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
-    </li>
-
-
-    <li class="choosen">
-        <a href="personal_center.html">
-                        个人设置
-                        <i class="me-ion-chevron-right"></i>
-                    </a>
-    </li>
-
-    
-</ul>
 <div class="mobileIcon menuHide">
     <!--<img src="images/icon-l.svg" alt="">-->
     <i class="me-ion-chevron-right"></i>
@@ -175,18 +135,18 @@ function submitBindCard(){
         </div>
         <div id="b_s_form_view">
         <c:choose>
-        <c:when test="${is_authentication_boolean==false}">  
-          <div class="r_c_warndiv warndiv"><i class="me-ion-a-alert"> 您还未实名认证，请先<a href="realname_centification.html">实名认证</a></i></div>
+        <c:when test="${userInfo.is_authentication!=1}">  
+          <div class="r_c_warndiv warndiv"><i class="me-ion-a-alert"> 您还未实名认证，请先<a href="<%=path%>/front-page/realname_certification.jsp">实名认证</a></i></div>
         
         </c:when>
         <c:otherwise>
           <form id="b_s_form" class="b_s_form p_c_style" onsubmit="return false;">
           <c:choose>
-          <c:when test="${is_bindcard_boolean==true }">
+          <c:when test="${userInfo.is_bindcard==1 }">
             <div class="bindedCard" data-wrap="layout">
               <div class="card_box">
                 <img src="images/withdrawBanks/${bankAbbr}.png" alt="${bankName}">
-                <span>银行户名：${realName}<br>银行卡号：**** {{#bankDto}}{{cardLast}}{{/bankDto}}</span>
+                <span>银行户名：${userInfo.real_name}<br>银行卡号：**** ${cardInfo.card_last}</span>
               </div>
             </div>
           </c:when>
@@ -196,7 +156,7 @@ function submitBindCard(){
                 <label>银行户名</label>
               </div>
               <div data-item="col-5">
-                <input type="text" value="" readonly name="realname" class="label_in_txt">
+                <input type="text" value="${userInfo.real_name }" readonly name="realname" class="label_in_txt">
               </div>
             </div>
             <div data-wrap="layout">
@@ -204,7 +164,7 @@ function submitBindCard(){
                 <label>身份证号</label>
               </div>
               <div data-item="col-5">
-                <input type="text" value="" readonly name="idcard" class="label_in_txt">
+                <input type="text" value="${userInfo.card_no }" readonly name="idcard" class="label_in_txt">
               </div>
             </div>
             <div data-wrap="layout">
@@ -248,7 +208,7 @@ function submitBindCard(){
         </c:otherwise>
         </c:choose>
 
-            <div id="backset"><a href="personal_center.html">返回个人设置&gt;&gt;</a></div>
+            <div id="backset"><a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_user_api&groovySubName=queryInfoByCodeGo">返回个人设置&gt;&gt;</a></div>
           </form>
         </div>
       </div>

@@ -61,38 +61,41 @@ class BankService extends MicroMvcTemplate {
 		}
 		//String identifyId=GroovyExecUtil.execGroovyRetObj("serial_number_util", "getNumber","BK");
 		String identifyId=UUID.randomUUID().toString();
-		JSONObject json=new JSONObject();
-		json.put("businessId",businessId);
-		json.put("memberId",nhUserName);
-		json.put("cardNo",cardNo);
-		json.put("owner",userMap.get("real_name").toString());
-		json.put("certType","01");
-		json.put("certNo",userMap.get("card_no").toString());
-		json.put("phone",phone);
-		json.put("identifyId",identifyId);
-		//Map returnMap=PayUtils.send(json,PayEnum.IDENTIFYPORTAL);
+		Map inMap=new HashMap();
+		inMap.put("businessId",businessId);
+		inMap.put("memberId",nhUserName);
+		inMap.put("cardNo",cardNo);
+		inMap.put("owner",userMap.get("real_name").toString());
+		inMap.put("certType","01");
+		inMap.put("certNo",userMap.get("card_no").toString());
+		inMap.put("phone",phone);
+		inMap.put("identifyId",identifyId);
+		
 		Map returnMap=new HashMap();
+		int status=GroovyExecUtil.execGroovyRetObj("front_pay_api", "bindCard", inMap,returnMap);
+		
+		
 		Map requestParamMap=new HashMap<String,String>();
-		if("000000".equals(returnMap.get("resultCode").toString())){
+		if(status==0){
 			requestParamMap.put("user_code",nhUserName);
 			requestParamMap.put("bank_card_no",cardNo);
-			requestParamMap.put("bank_account_code",returnMap.get("bankCode").toString());
-			requestParamMap.put("bank_phone",returnMap.get("phone").toString());
+			requestParamMap.put("bank_account_code",returnMap.get("bankCode"));
+			requestParamMap.put("bank_phone",returnMap.get("phone"));
 			requestParamMap.put("status","1");
 			requestParamMap.put("is_default","1");
-			requestParamMap.put("bind_id",returnMap.get("bindId").toString());
-			requestParamMap.put("bank_name",returnMap.get("bankName").toString());
-			requestParamMap.put("card_last",returnMap.get("cardLast").toString());
-			requestParamMap.put("bank_card_type",returnMap.get("bankCardType").toString());
+			requestParamMap.put("bind_id",returnMap.get("bindId"));
+			requestParamMap.put("bank_name",returnMap.get("bankName"));
+			requestParamMap.put("card_last",returnMap.get("cardLast"));
+			requestParamMap.put("bank_card_type",returnMap.get("bankCardType"));
 			requestParamMap.put("create_time","now()");
 			Integer retStatus=createInfoService(requestParamMap, "t_front_user_bankcard");
 			Map updateMap=new HashMap();
 			updateMap.put("is_bindcard","1");
 			Integer userStatus=updateInfoByBizIdService(nhUserName, "t_front_user","user_code",updateMap);
-			gOutputParam.setResultMsg(returnMap.get("resultMsg").toString());
+			gOutputParam.setResultMsg(returnMap.get("resultMsg"));
 		}else{
 			gOutputParam.setResultStatus(1);
-			gOutputParam.setResultMsg(returnMap.get("resultMsg").toString());
+			gOutputParam.setResultMsg(returnMap.get("resultMsg"));
 		}
 
 	}
@@ -173,9 +176,18 @@ class BankService extends MicroMvcTemplate {
 		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
 		Map requestParamMap=getRequestParamMap(httpRequest);
+		
+		String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
+			gInputParam,gOutputParam,gContextParam);
+		
 /*		String productCode=httpRequest.getParameter("productCode");
 		Map productInfo=getInfoByBizIdService(productCode,"t_front_product","product_code");
 		httpRequest.setAttribute("productInfo", productInfo);*/
+		Map userInfo=getInfoByBizIdService(nhUserName,"t_front_user","user_code");
+		httpRequest.setAttribute("userInfo", userInfo);
+		Map cardInfo=getInfoByBizIdService(nhUserName,"t_front_user_bankcard","user_code");
+		httpRequest.setAttribute("cardInfo", cardInfo);
+		
 
 		httpRequest.getRequestDispatcher("/front-page/bankcard_set.jsp").forward(httpRequest, httpResponse);
 		httpRequest.setAttribute("forwardFlag", "true");

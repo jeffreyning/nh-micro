@@ -49,6 +49,9 @@ public void queryInfoByCodeGo(GInputParam gInputParam,GOutputParam gOutputParam,
 	Map infoMap=getInfoByBizIdService(nhUserName,"t_front_user","user_code");
 	httpRequest.setAttribute("userInfo", infoMap);
 	
+	Map cardMap=getInfoByBizIdService(nhUserName,"t_front_user_bankcard","user_code");
+	httpRequest.setAttribute("cardInfo", cardMap);
+	
 	httpRequest.getRequestDispatcher("/front-page/personal_center.jsp").forward(httpRequest, httpResponse);
 	httpRequest.setAttribute("forwardFlag", "true");
 
