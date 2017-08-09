@@ -77,6 +77,10 @@ class FrontProduct extends MicroMvcTemplate{
 		Map investMap=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
 		String investAmount=investMap.get("invest_amount");
 		String bidCode=investMap.get("bid_code");
+		
+		Map updateMap=new HashMap();
+		updateMap.put("trade_status", "1");
+		updateInfoByBizIdService(orderNumber,"t_front_invest","order_number",updateMap);
 
 
 		//添加投资总额
@@ -110,7 +114,7 @@ class FrontProduct extends MicroMvcTemplate{
 		tranMap.put("recharge_money",investAmount);
 		tranMap.put("recharge_user_code",nhUserName);
 		tranMap.put("recharge_type","3");
-		tranMap.put("recharge_status","1");
+		tranMap.put("recharge_status","2");
 		tranMap.put("create_time", "now()");
 		createInfoService(tranMap,"t_front_recharge");
 		
@@ -131,6 +135,15 @@ class FrontProduct extends MicroMvcTemplate{
 		String orderNumber=httpRequest.getParameter("orderNumber");
 		String accountPay=httpRequest.getParameter("accountPay");
 		String bankPay=httpRequest.getParameter("bankPay");
+		
+		Map userInfo=getInfoByBizIdService(nhUserName,"t_front_user","user_code");
+		String bindFlag=userInfo.get("is_bindcard");
+		if(bindFlag==null || !"1".equals(bindFlag)){
+			gOutputParam.setResultStatus(1);
+			gOutputParam.setResultMsg("请先绑卡后才能快捷支付");
+			gOutputParam.setResultCode("0001");
+			return;
+		}
 
 
 		Map investMap=new HashMap();
@@ -156,6 +169,8 @@ class FrontProduct extends MicroMvcTemplate{
 		String pageName=getPageName(httpRequest);
 		Map requestParamMap=getRequestParamMap(httpRequest);
 		Map sortMap=new HashMap();
+		sortMap.put("sort", "create_time");
+		sortMap.put("order", "desc");
 		Map paramMap=new HashMap();
 		paramMap.put("user_code", nhUserName);
 
@@ -204,7 +219,7 @@ class FrontProduct extends MicroMvcTemplate{
 		tranMap.put("recharge_money",investAmount);
 		tranMap.put("recharge_user_code",userCode);
 		tranMap.put("recharge_type","3");
-		tranMap.put("recharge_status","1");
+		tranMap.put("recharge_status","2");
 		tranMap.put("create_time", "now()");
 		createInfoService(tranMap,"t_front_recharge");
 		
@@ -219,6 +234,9 @@ class FrontProduct extends MicroMvcTemplate{
 		httpRequest.setAttribute("forwardFlag", "true");
 		return;
 		
+		Map updateMap=new HashMap();
+		updateMap.put("trade_status", "1");
+		updateInfoByBizIdService(orderNumber,"t_front_invest","order_number",updateMap);
 		
 		}
 }

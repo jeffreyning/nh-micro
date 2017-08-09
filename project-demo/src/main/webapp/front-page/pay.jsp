@@ -47,7 +47,12 @@ function payNow(){
 			dataType:'json',
 			data:data,
 			success:function(data,status){
+				var resultData=JSON.parse(data.resultData);
+				if(resultData.resultStatus==0){
 				$("#RechargeSendPaySmsDialog").dialog("open");
+				}else{
+					alert(resultData.resultMsg);
+				}
 			}
 		});
 	}else if($("#mr2").prop("checked")){
@@ -128,11 +133,11 @@ function submitQuickConfirm(){
             </div>
             <div class="pay-title special clearfix">
                 <div data-wrap="radio" data-blue="" class="J_kpay" producttype="1">
-                    <input type="radio" id="mr1" name="my-radio"> 
+                    <input type="radio" id="mr1" name="my-radio" <c:if test="${investInfo.invest_amount+0.0<=accountInfo.available_balance }">disabled="disabled"</c:if>> 
                     <label for="mr1">快捷支付</label>
                 </div>
                 <span class="pay-show J_pay-show">支付:<b class="J_kuaijieMoney" id="J_kuaijieMoney">${investInfo.invest_amount+0.0>accountInfo.available_balance?investInfo.invest_amount-accountInfo.available_balance:0}</b>元</span>
-                <span class="tip">(未绑定银行卡？<a href="javascript:void(0);" class="J_bindCard">立即绑定银行卡)</a></span>
+                <span class="tip">(未绑定银行卡？<a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_bank_api&groovySubName=bankCardSetGo" class="J_bindCard">立即绑定银行卡)</a></span>
             </div>
             <!--快捷支付未绑卡-->
             <div class="not-card none">
@@ -202,11 +207,12 @@ function submitQuickConfirm(){
                 <span data-item="col-3" class="fr">支付:<b>9,500.00 </b> 元</span>-->
             </div>
             <div class="pay-title clearfix">
-                <div data-wrap="radio" data-blue="" class="J_wpay" producttype="2">
+<!--                 <div data-wrap="radio" data-blue="" class="J_wpay" producttype="2">
                     <input type="radio" id="mr2" name="my-radio"> 
                     <label for="mr2">网银支付</label>
-                </div>
+                </div> 
                 <span class="pay-show">支付:<b id="J_wangyinMoney">${investInfo.invest_amount+0.0>accountInfo.available_balance?investInfo.invest_amount-accountInfo.available_balance:0}</b> 元</span>
+-->
             </div>
             <ul class="wy-pay netbankList clearfix">
                 <!--<li>

@@ -24,25 +24,36 @@ String path = request.getContextPath();
           <table class="listTable">
             <thead class="listTitle">
               <tr>
+                <th>投资日期</th>
                 <th>项目名称</th>
                 <th>投资金额(元)</th>
                 <th>预期收益率</th>
-                <th>项目期限</th>
-                <th>预期收益(元)</th>
-                <th>起息日/到期日</th>
+                <th>项目期限(月)</th>
+                <!--<th>预期收益(元)</th>-->
+                <!--<th>起息日/到期日</th>-->
                 <th>状态</th>
-                <th>操作</th>
+                <!--<th>操作</th>-->
               </tr>
             </thead>
             <tbody class="listTitle listCentent2">
 				{{each rowsData as value i}}
 
               <tr>
-                <td>{{value.product_name}}</td>
+				<td>{{value.create_time}}</td>
+                <td>{{value.bid_name}}</td>
                 <td>{{value.invest_amount}}</td>
                 <td>{{value.order_rate}}%</td>
                 <td>{{value.periods}}</td>
-                <td>{{value.expire_profit}}</td>
+                <!--<td>{{value.interrest_date}}/{{value.expire_profit}}</td>-->
+				<td>
+
+				{{if(value.trade_status==0)}}购买失败{{/if}}
+				{{if(value.trade_status==1)}}购买成功{{/if}}
+				{{if(value.trade_status==3)}}支付中{{/if}}
+				{{if(value.trade_status==4)}}待支付{{/if}}
+				{{if(value.trade_status==5)}}持有中（收益中）{{/if}}
+				{{if(value.trade_status==6)}}回款成功{{/if}}
+				</td>
 
               </tr>
 				{{/each}}

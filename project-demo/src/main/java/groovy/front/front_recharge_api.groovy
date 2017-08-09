@@ -77,6 +77,8 @@ class FrontProduct extends MicroMvcTemplate{
 		String pageName=getPageName(httpRequest);
 		Map requestParamMap=getRequestParamMap(httpRequest);
 		Map sortMap=new HashMap();
+		sortMap.put("sort", "create_time");
+		sortMap.put("order", "desc");
 		Map paramMap=new HashMap();
 		paramMap.put("recharge_user_code", nhUserName);
 

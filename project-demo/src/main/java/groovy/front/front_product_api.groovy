@@ -90,7 +90,12 @@ class FrontProduct extends MicroMvcTemplate{
 		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
 		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
 		String nhUserCode=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 
-		gInputParam,gOutputParam,gContextParam);
+			gInputParam,gOutputParam,gContextParam);
+		if(nhUserCode==null || "".equals(nhUserCode)){
+			httpRequest.getRequestDispatcher("/front-page/fundLogin.jsp").forward(httpRequest, httpResponse);
+			httpRequest.setAttribute("forwardFlag", "true");
+			return;
+		}
 		Map requestParamMap=getRequestParamMap(httpRequest);
 		String bidCode=httpRequest.getParameter("bidCode");
 		String investAmount=httpRequest.getParameter("investAmount");
@@ -98,6 +103,8 @@ class FrontProduct extends MicroMvcTemplate{
 		String productCode=productInfo.get("product_code");
 		String productName=productInfo.get("product_name");
 		String bidName=productInfo.get("bid_name");
+		String yearsIncome=productInfo.get("years_income");
+		String periods=productInfo.get("periods");
 		//httpRequest.setAttribute("productInfo", productInfo);
 		//String orderNumber=GroovyExecUtil.execGroovyRetObj("front_invest_api", "createInvestInfo", nhUserCode,productCode,investAmount);
 		//生成投资记录
@@ -112,6 +119,8 @@ class FrontProduct extends MicroMvcTemplate{
 		investMap.put("bid_code", bidCode);
 		investMap.put("product_name", productName);
 		investMap.put("product_code", productCode);
+		investMap.put("order_rate", yearsIncome);
+		investMap.put("periods", periods);
 
 		investMap.put("invest_amount",investAmount);
 		investMap.put("create_time", "now()");

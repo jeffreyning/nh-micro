@@ -83,7 +83,6 @@ public void resetPassword(GInputParam gInputParam,GOutputParam gOutputParam,GCon
 	HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
 	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
 
-	String oldpwd=httpRequest.getParameter("oldpwd");
 
 	String phoneNo=httpRequest.getParameter("phoneNo");
 	String msgCode=httpRequest.getParameter("msgCode");
