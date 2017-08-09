@@ -138,13 +138,13 @@ $(function(){
 
     </li>
     <li class="choosen">
-        <a href="<%=path%>/front-page/recharge_mode.jsp" id="J_goCharge">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_recharge_api&groovySubName=openRechargeGo" id="J_goCharge">
                         账户充值
                         <i class="me-ion-chevron-right"></i>
                     </a>
     </li>
     <li>
-        <a href="<%=path%>/front-page/withdraw.jsp" id="J_goWithdraw">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_withdraw_api&groovySubName=withdrawPageGo" id="J_goWithdraw">
                         账户提现
                         <i class="me-ion-chevron-right"></i>
                     </a>
@@ -173,19 +173,21 @@ $(function(){
         <div class="acTitle">
           <h2>充 值</h2>
         </div>
-        <div id="r_m_module" class="r_m_module"></div>
-
+        <div id="r_m_module" class="r_m_module">
           <h3>充值方式</h3>
           <div class="r_m_pay_type">
             <div data-wrap="radio">
               <input id="quickpay" type="radio" name="payradio" checked>
               <label for="quickpay">快捷支付</label>
             </div>
-            <div data-wrap="radio">
+<!--             <div data-wrap="radio">
               <input id="netbankpay" type="radio" name="payradio">
               <label for="netbankpay">网银支付</label>
-            </div>
-          </div>
+            </div> -->
+          </div>        
+        </div>
+
+
           <div class="r_m_pay_cont">
             <div id="r_m_pay_tabcont" class="r_m_pay_tabcont">
 		          <div id="b_s_form_view">

@@ -123,13 +123,13 @@ $(function(){
 
     </li>
     <li>
-        <a href="<%=path%>/front-page/recharge_mode.jsp" id="J_goCharge">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_recharge_api&groovySubName=openRechargeGo" id="J_goCharge">
                         账户充值
                         <i class="me-ion-chevron-right"></i>
                     </a>
     </li>
     <li>
-        <a href="<%=path%>/front-page/withdraw.jsp" id="J_goWithdraw">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_withdraw_api&groovySubName=withdrawPageGo" id="J_goWithdraw">
                         账户提现
                         <i class="me-ion-chevron-right"></i>
                     </a>
@@ -223,7 +223,7 @@ $(function(){
                         <p id="J_balance" class="balanceAmount hideAmount" data-money="available_balance">****</p>
                         <p class="banlaceTxt">充值后可购买定期理财产品。</p>
                         <div class="charge wBtn"><a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_recharge_api&groovySubName=openRechargeGo" id="J_accountIndexCharge">充 值</a></div>
-                        <div class="withdraw wBtn"><a href="<%=path%>/front-page/withdraw.jsp" id="J_accountIndexWithdraw">提 现</a></div>
+                        <div class="withdraw wBtn"><a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_withdraw_api&groovySubName=withdrawPageGo" id="J_accountIndexWithdraw">提 现</a></div>
                     </div>
                 </div>
 

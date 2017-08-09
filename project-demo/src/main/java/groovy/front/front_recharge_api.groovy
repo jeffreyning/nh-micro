@@ -59,8 +59,9 @@ class FrontProduct extends MicroMvcTemplate{
 		tranMap.put("inner_recharge_number", rechargeNumber);
 		tranMap.put("recharge_money",bankPay);
 		tranMap.put("recharge_user_code",nhUserName);
-		tranMap.put("recharge_type","3");
+		tranMap.put("recharge_type","1");
 		tranMap.put("recharge_status","1");
+		tranMap.put("create_time", "now()");
 		createInfoService(tranMap,"t_front_recharge");
 		
 		//返回流水id
@@ -132,7 +133,7 @@ class FrontProduct extends MicroMvcTemplate{
 		
 		//修改充值流水状态
 		Map rechargeMap=new HashMap();
-		rechargeMap.put("recharge_status","1");
+		rechargeMap.put("recharge_status","2");
 		updateInfoByBizIdService(rechargeNumber,"t_front_recharge","inner_recharge_number",rechargeMap);
 		httpRequest.getRequestDispatcher("/front-page/rechargeSuccess.jsp").forward(httpRequest, httpResponse);
 		httpRequest.setAttribute("forwardFlag", "true");

@@ -107,6 +107,7 @@ class nrule extends MicroMvcTemplate{
 		rechargeMap.put("recharge_user_code",nhUserName);
 		rechargeMap.put("recharge_type","2");
 		rechargeMap.put("recharge_status","1");
+		rechargeMap.put("create_time", "now()");
 		rechargeMap.put("pay_way","3");
 		Map map3=GroovyExecUtil.execGroovyRetObj("MicroServiceTemplate", "getInfoByBizIdService",nhUserName, "t_front_user","user_code");
 		if(map3!=null&&map3.size()>0){
@@ -129,6 +130,7 @@ class nrule extends MicroMvcTemplate{
 		rechargeMap.put("account_balance",map4.get("available_balance"));
 		rechargeMap.put("recharge_money",fee);
 		rechargeMap.put("recharge_type","5");
+		rechargeMap.put("recharge_status","2");
 		//String feeNumber=
 		rechargeMap.put("inner_recharge_number",withdrawNumber);
 		rechargeMap.remove("id");
@@ -143,5 +145,23 @@ class nrule extends MicroMvcTemplate{
 		
 
 	}
+
+	public void withdrawPageGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		Map requestParamMap=getRequestParamMap(httpRequest);
 	
+		
+		String nhUserCode=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
+			gInputParam,gOutputParam,gContextParam);
+		Map accountInfo=getInfoByBizIdService(nhUserCode,"t_front_account","user_code");
+		httpRequest.setAttribute("accountInfo", accountInfo);
+		
+		httpRequest.getRequestDispatcher("/front-page/withdraw.jsp").forward(httpRequest, httpResponse);
+		httpRequest.setAttribute("forwardFlag", "true");
+		return;
+	}
+	
+		
 }

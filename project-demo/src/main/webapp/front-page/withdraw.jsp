@@ -31,7 +31,7 @@ function submitWithdraw(){
 		data:data,
 		dataType:'json',
 		success:function(data,status){
-			
+			window.location.href="<%=path%>/front-page/account.jsp";
 		}
 	});	
 }
@@ -119,13 +119,13 @@ function submitWithdraw(){
 
     </li>
     <li >
-        <a href="<%=path%>/front-page/recharge_mode.jsp" id="J_goCharge">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_recharge_api&groovySubName=openRechargeGo" id="J_goCharge">
                         账户充值
                         <i class="me-ion-chevron-right"></i>
                     </a>
     </li>
     <li class="choosen">
-        <a href="<%=path%>/front-page/withdraw.jsp" id="J_goWithdraw">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_withdraw_api&groovySubName=withdrawPageGo" id="J_goWithdraw">
                         账户提现
                         <i class="me-ion-chevron-right"></i>
                     </a>
@@ -162,13 +162,13 @@ function submitWithdraw(){
             <div class="withdrawContent">
 
                 <div id="J_withdraw" >
-                    <div class="withdrawCard">
+<!--                     <div class="withdrawCard">
                         <img src="" alt="" class="img-responsive bankBelong">
                         <span class="cardNo">**** <em class="bankNoLast">----<em></span>
-                    </div>
+                    </div> -->
                     <p class="balance">
                         <span>可用余额</span>
-                        <span><b class="balanceAmount">----</b>元</span>
+                        <span><b class="balanceAmount">${accountInfo.available_balance }</b>元</span>
                     </p>
                     <div class="withdrawAmount">
                         <span>提现金额</span>
@@ -177,12 +177,12 @@ function submitWithdraw(){
                             <b>元</b>
                         </div>
                         <div data-type="norm" class="withdrawAmtD">
-                            到账金额：<strong>----</strong> 元
+                            
                         </div>
                     </div>
                     <p class="balance fee">
                         <span>提现费用</span>
-                        <span><b class="withdrawFee">----</b>元/笔</span>
+                        <span><b class="withdrawFee">1</b>元/笔</span>
                     </p>
                     <div class="sms">
                         <span>短信验证</span>

@@ -39,7 +39,7 @@ String path = request.getContextPath();
 		{{if(value.recharge_status==3)}}失败{{/if}}
 			</td>
             <td>{{value.recharge_money}}</td>
-            <td>{{value.account_balance}}</td>
+           <!-- <td>{{value.account_balance}}</td> -->
           </tr>
 {{/each}}
 
@@ -143,13 +143,13 @@ $(function(){
 
     </li>
     <li>
-        <a href="<%=path%>/front-page/recharge_mode.jsp" id="J_goCharge">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_recharge_api&groovySubName=openRechargeGo" id="J_goCharge">
                         账户充值
                         <i class="me-ion-chevron-right"></i>
                     </a>
     </li>
     <li>
-        <a href="<%=path%>/front-page/withdraw.jsp" id="J_goWithdraw">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_withdraw_api&groovySubName=withdrawPageGo" id="J_goWithdraw">
                         账户提现
                         <i class="me-ion-chevron-right"></i>
                     </a>
@@ -207,7 +207,7 @@ $(function(){
                 <label for="alltime">
                   <input id="alltime" type="radio" name="transactiontime" value="" num="all" checked><span>全部</span><i></i>
                 </label>
-                <label for="oneweek">
+<!--                 <label for="oneweek">
                   <input id="oneweek" type="radio" name="transactiontime" value="1" num="7"><span>最近一周</span><i></i>
                 </label>
                 <label for="onemonth">
@@ -221,7 +221,7 @@ $(function(){
                 </label>
                 <label for="oneyearover">
                   <input id="oneyearover" type="radio" name="transactiontime" value="12" num="360"><span>最近一年</span><i></i>
-                </label>
+                </label> -->
               </div>
             </div>
             <div data-wrap="layout">
@@ -230,7 +230,7 @@ $(function(){
                 <label for="alltype">
                   <input id="alltype" type="radio" name="transactiontype" value="" checked><span>全部</span><i></i>
                 </label>
-                <label for="rechargemode">
+<!--                 <label for="rechargemode">
                   <input id="rechargemode" type="radio" name="transactiontype" value="1"><span>充值</span><i></i>
                 </label>
                 <label for="withdrawcash">
@@ -247,7 +247,7 @@ $(function(){
                 </label>
 				<label for="redenv">
                   <input id="redenv" type="radio" name="transactiontype" value="6"><span>红包</span><i></i>
-                </label>              
+                </label>         -->      
 			   </div>
             </div>
           </div>
@@ -259,7 +259,7 @@ $(function(){
                   <th>交易类型</th>
                   <th>交易详情</th>
                   <th>交易金额（元）</th>
-                  <th>账户余额（元）</th>
+                  <!-- <th>账户余额（元）</th> -->
                 </tr>
               </thead>
               <tbody id="t_r_tbody" class="listTitle listCentent2"></tbody>
