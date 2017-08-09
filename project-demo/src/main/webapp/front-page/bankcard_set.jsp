@@ -33,7 +33,7 @@ function submitBindCard(){
 			window.location.href=go;			
 		}
 	});
-	return false;
+	
 }
 </script>	
 </head>

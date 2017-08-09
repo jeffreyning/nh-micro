@@ -78,5 +78,22 @@ public void modifyPassword(GInputParam gInputParam,GOutputParam gOutputParam,GCo
 
 }
 
-			
+public void resetPassword(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+	HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+	HttpServletResponse httpResponse = gContextParam.getContextMap().get("httpResponse");
+	HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+
+	String oldpwd=httpRequest.getParameter("oldpwd");
+
+	String phoneNo=httpRequest.getParameter("phoneNo");
+	String msgCode=httpRequest.getParameter("msgCode");
+	String newPassword=httpRequest.getParameter("newPassword");
+	String confirmPassword=httpRequest.getParameter("confirmPassword");
+
+	Map paramMap=new HashMap();
+	paramMap.put("password", newPassword);
+	updateInfoByBizIdService(phoneNo,"t_front_user","user_code",paramMap);
+	
+
+}
 }

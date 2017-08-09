@@ -53,7 +53,7 @@ function login(){
         <div class="formBox">
             <p class="goRegister">
                 <i class="me-ion-edit"></i> 登录没有账号？
-                <a class="redTxt" href="login.html#register">立即注册</a>
+                <a class="redTxt" href="<%=path%>/front-page/login.jsp">立即注册</a>
             </p>
             <div data-wrap="layout" class="username">
                 <div data-item="col-2">登录账号</div>
@@ -72,7 +72,7 @@ function login(){
                 </div>
             </div>
             <p class="findPassword">
-                <a href="forgetPassword.html">忘记密码?</a>
+                <a href="<%=path%>/front-page/forgetPassword.jsp">忘记密码?</a>
             </p>
             <button class="me-u-btn" data-size=block id="login_submit" onclick="login()">马上登录</button>
         </div>
