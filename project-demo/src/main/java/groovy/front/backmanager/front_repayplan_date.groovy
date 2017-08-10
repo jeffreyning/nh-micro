@@ -1,4 +1,4 @@
-package groovy.product.algo
+package groovy.front.backmanager
 
 import com.nh.micro.rule.engine.core.GInputParam;
 import com.nh.micro.rule.engine.core.GOutputParam;
@@ -18,32 +18,31 @@ import com.nh.micro.rule.engine.core.GroovyExecUtil;
 import groovy.json.*;
 import groovy.product.algo.ProductAlgoConst;
 
-class productAlgoRepayplan implements ProductAlgoConst {
+class frontRepayplanDate  {
+	public String calcuDueDate(String payDateStr,String period){
+		int pd=Integer.valueOf(period);
+		Calendar payCalendar = Calendar.getInstance();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date payDate=null;
+		if(payDateStr!=null && !"".equals(payDateStr)){
+			payDate=format.parse(payDateStr);
+		}
+		payCalendar.setTime(payDate);
+		payCalendar.add(Calendar.MONTH, pd);
+		return payCalendar.format("yyyy-MM-dd");
 
-	public void execGroovy(GInputParam gInputParam,GOutputParam gOutputParam) throws Exception {
-		Map<String, Object> inMap = gInputParam.getParamData();
-		Map<String, Object> outMap = gOutputParam.getResultObj();
-
-		String productId=inMap.get(ProductAlgoConst.productId);
-		//Object obj=NhCacheHolderFactory.getHolder("default").getCacheObject(productId);
-		
-		//Map<String, Object> cacheMap = new Gson().fromJson(obj.getCacheData(),Map.class);
-		
-		Map dataMap=GroovyExecUtil.execGroovyRetObj("MicroServiceTemplate", "getInfoByBizIdService", productId,"nh_micro_product_center_list","meta_key");
-		String sdata=dataMap.get("dbcol_ext_sdata");
-		Map rootMap=new JsonSlurper().parseText(sdata);
-		Map cacheMap=(Map)rootMap.get("root");
-		String isLixiUpFlag=cacheMap.get(ProductAlgoConst.isLixiUpFlag);
-		String isBenjinUpFlag=cacheMap.get(ProductAlgoConst.isBenjinUpFlag);
-		String isFuwufeiUpFlag=cacheMap.get(ProductAlgoConst.isFuwufeiUpFlag);
-		//String datalist=cacheMap.get(ProductAlgoConst.productPhaseList);
-		List datas=cacheMap.get("inputList");
-		//List datas=new JsonSlurper().parseText(datalist);
+	}
+	public List calcuRepayplan(Map inMap) throws Exception {
 
 		
 		String payDateStr=inMap.get(ProductAlgoConst.payDate);
 		String dueDateStr=inMap.get(ProductAlgoConst.dueDate);
 		String repayDayStr=inMap.get(ProductAlgoConst.repayDay);
+		
+		String contractAmt=inMap.get(ProductAlgoConst.contractAmt);
+		String monthRate=inMap.get(ProductAlgoConst.monthRate);
+		monthRate=(new BigDecimal(monthRate)).divide(new BigDecimal("1000")).setScale(2,BigDecimal.ROUND_HALF_UP).toString();
+		String contractPeriods=inMap.get(ProductAlgoConst.contractPeriods);
 		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date payDate=null;
@@ -54,6 +53,9 @@ class productAlgoRepayplan implements ProductAlgoConst {
 		Date dueDate=null;
 		if(dueDateStr!=null && !"".equals(dueDateStr)){
 			dueDate=format.parse(dueDateStr);
+		}else{
+			dueDateStr=calcuDueDate(payDateStr,contractPeriods);
+			dueDate=format.parse(dueDateStr);
 		}
 		
 		Integer repayDay=0;
@@ -61,10 +63,7 @@ class productAlgoRepayplan implements ProductAlgoConst {
 			repayDay=Integer.valueOf(repayDayStr);
 		}
 
-		String contractAmt=inMap.get(ProductAlgoConst.contractAmt);
-		String monthRate=inMap.get(ProductAlgoConst.monthRate);
-		String contractPeriods=inMap.get(ProductAlgoConst.contractPeriods);
-		String singleGeneralRate=inMap.get(ProductAlgoConst.singleGeneralRate);
+
 		
 
 		Integer firstPeriodDays=getFirstPeriodDays(payDate,repayDay);
@@ -78,27 +77,16 @@ class productAlgoRepayplan implements ProductAlgoConst {
 			String periodType=rowMap.get(ProductAlgoConst.periodType);
 			Integer period=Integer.valueOf(rowMap.get(ProductAlgoConst.period));
 			
-			Map configMap=getPhaseByPeriod(datas,period);
-			String lixiAlgId=configMap.get(ProductAlgoConst.productLixiAlgId);
-			String benjinAlgId=configMap.get(ProductAlgoConst.productBenjinAlgId);
-			String fuwufeiAlgId=configMap.get(ProductAlgoConst.productFuwufeiAlgId);
-			String stageMonthRate=configMap.get(ProductAlgoConst.monthRate);
-			//String singleGeneralRate=configMap.get(ProductAlgoConst.singleGeneralRate);
 			
 			Map paramMap=new HashMap();
 			paramMap.put(ProductAlgoConst.isNoMonth, isNoMonth);
 			paramMap.put(ProductAlgoConst.periodType, periodType);
 			paramMap.put(ProductAlgoConst.firstPeriodDays, firstPeriodDays);
 			paramMap.put(ProductAlgoConst.contractAmt, contractAmt);
-			if(stageMonthRate!=null && !"".equals(stageMonthRate)){
-				paramMap.put(ProductAlgoConst.monthRate, stageMonthRate);
-			}else{
-				paramMap.put(ProductAlgoConst.monthRate, monthRate);
-			}
+			paramMap.put(ProductAlgoConst.monthRate, monthRate);
 			paramMap.put(ProductAlgoConst.contractPeriods, contractPeriods);
-			paramMap.put(ProductAlgoConst.singleGeneralRate, singleGeneralRate);
 
-			System.out.println(paramMap.toString());
+
 			String subMethod="";
 			if(periodType.equals("first")){
 				if(isNoMonth==true){
@@ -116,81 +104,16 @@ class productAlgoRepayplan implements ProductAlgoConst {
 				}
 			}
 			
-			
 			BigDecimal lixi=GroovyExecUtil.execGroovyRetObj("product_algo_lixi_xxhb",subMethod,paramMap);
-			//rowMap.put("lixi", lixi);
-			lixiList.add(lixi);
+			rowMap.put("lixi", lixi.toString());
 			BigDecimal benjin=GroovyExecUtil.execGroovyRetObj("product_algo_benjin_xxhb",subMethod,paramMap);
-			//rowMap.put("benjin", benjin);
-			benjinList.add(benjin);
-			BigDecimal fuwufei=GroovyExecUtil.execGroovyRetObj("product_algo_fuwufei_yicixing",subMethod,paramMap);
-			//rowMap.put("fuwufei", fuwufei);
-			fuwufeiList.add(fuwufei);
+			rowMap.put("benjin", benjin.toString());
 		}
-		List realList=new ArrayList();
-		isLixiUpFlag="true"; 
-		boolean zeroFlag=false;
-		if("true".equals(isLixiUpFlag) || "true".equals(isBenjinUpFlag) || "true".equals(isFuwufeiUpFlag)){
-			Map zeroMap=new HashMap();
-			zeroMap.put(ProductAlgoConst.periodType, ProductAlgoConst.periodType_zero);
-			zeroMap.put(ProductAlgoConst.period, Integer.valueOf(0));
-			zeroMap.put(ProductAlgoConst.dueDate, payDateStr);
-			realList.add(zeroMap);
-			zeroFlag=true;
-		}
-		realList.addAll(planList);
-		int realSize=realList.size();
-		int planSize=planList.size();
-		int lixiStartIndex=0;
-		int benjinStartIndex=0;
-		int fuwufeiStartIndex=0;
-		if(!"true".equals(isLixiUpFlag) && zeroFlag==true){
-			lixiStartIndex=1;
-		}
-		if(!"true".equals(isBenjinUpFlag) && zeroFlag==true){
-			benjinStartIndex=1;
-		}
-		if(!"true".equals(isFuwufeiUpFlag) && zeroFlag==true){
-			fuwufeiStartIndex=1;
-		}
-		for(int i=0;i<planSize;i++){
-			Map tempMap=realList.get(lixiStartIndex++);
-			BigDecimal lixi=lixiList.get(i);
-			tempMap.put(ProductAlgoConst.interest, lixi);
-		}
-		for(int i=0;i<planSize;i++){
-			Map tempMap=realList.get(benjinStartIndex++);
-			BigDecimal benjin=benjinList.get(i);
-			tempMap.put(ProductAlgoConst.capital, benjin);
-		}
-		for(int i=0;i<planSize;i++){
-			Map tempMap=realList.get(fuwufeiStartIndex++);
-			BigDecimal fuwufei=fuwufeiList.get(i);
-			tempMap.put(ProductAlgoConst.serviceFee, fuwufei);
-		}
-		
-		outMap.put("result", realList);
+		return planList;
+
 						
 	}
-	public static Map getPhaseByPeriod(List<Map> phaseList,int period){
-		for(Map rowMap:phaseList){
-			String start=rowMap.get("product_start_qishu");
-			Integer startInt=null;
-			if(start!=null && !"".equals(start)){
-				startInt=Integer.valueOf(start);
-			}
-			
-			String end=rowMap.get("product_end_qishu");
-			Integer endInt=null;
-			if(end!=null && !"".equals(end)){
-				endInt=Integer.valueOf(end);
-			}
-			if((startInt==null || period>=startInt) && (endInt==null || period<=endInt)){
-				return rowMap;
-			}
-		}
-		return null;
-	}
+
 	
 	public static int getFirstPeriodDays(Date payDate, int repayDay){
 		Calendar payCalendar = Calendar.getInstance();

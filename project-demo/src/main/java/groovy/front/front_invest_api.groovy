@@ -81,6 +81,9 @@ class FrontProduct extends MicroMvcTemplate{
 		
 		Map updateMap=new HashMap();
 		updateMap.put("trade_status", "1");
+		updateMap.put("success_date", "now()");
+		updateMap.put("interrest_date", "now()");
+		updateMap.put("reback_date","20");
 		updateInfoByBizIdService(orderNumber,"t_front_invest","order_number",updateMap);
 
 
@@ -120,6 +123,10 @@ class FrontProduct extends MicroMvcTemplate{
 		tranMap.put("recharge_status","2");
 		tranMap.put("create_time", "now()");
 		createInfoService(tranMap,"t_front_recharge");
+		
+		
+		//生产回款计划
+		GroovyExecUtil.execGroovyRetObj("front_collection_plan_list", "createPlan", orderNumber);
 		
 		httpRequest.getRequestDispatcher("/front-page/paymentSuccess.jsp").forward(httpRequest, httpResponse);
 		httpRequest.setAttribute("forwardFlag", "true");
