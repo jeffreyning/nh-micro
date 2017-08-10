@@ -122,6 +122,10 @@ class FrontProduct extends MicroMvcTemplate{
 		investMap.put("order_rate", yearsIncome);
 		investMap.put("periods", periods);
 
+		BigDecimal expireProfit_big=(new BigDecimal(investAmount)).multiply(new BigDecimal(yearsIncome))
+			.divide(new BigDecimal("100")).divide(new BigDecimal("12")).multiply(new BigDecimal(periods)).setScale(0, BigDecimal.ROUND_HALF_UP);
+		investMap.put("expire_profit", expireProfit_big.toString());
+		
 		investMap.put("invest_amount",investAmount);
 		investMap.put("create_time", "now()");
 		String tradeStatus="4";

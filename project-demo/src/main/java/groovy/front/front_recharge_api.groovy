@@ -47,7 +47,16 @@ class FrontProduct extends MicroMvcTemplate{
 		String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
 			gInputParam,gOutputParam,gContextParam);
 		String bankPay=httpRequest.getParameter("bankPay");
-		
+
+		Map userInfo=getInfoByBizIdService(nhUserName,"t_front_user","user_code");
+		String bindFlag=userInfo.get("is_bindcard");
+		if(bindFlag==null || !"1".equals(bindFlag)){
+			gOutputParam.setResultStatus(1);
+			gOutputParam.setResultMsg("请先绑卡后才能快捷支付");
+			gOutputParam.setResultCode("0001");
+			return;
+		}
+				
 		//调用三方支付接口
 		GroovyExecUtil.execGroovyRetObj("front_pay_api", "startQuickPay", gInputParam, gOutputParam, gContextParam);
 

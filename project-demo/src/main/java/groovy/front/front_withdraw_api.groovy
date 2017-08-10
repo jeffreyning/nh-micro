@@ -93,8 +93,10 @@ class nrule extends MicroMvcTemplate{
 
 		
 		//扣减账户金额start
-		String sql="update t_front_account set available_balance=available_balance-? where user_code=?";
+		String sql="update t_front_account set available_balance=available_balance-?-?, frozen_amount=frozen_amount+? where user_code=?";
 		List paramList=new ArrayList();
+		paramList.add(withdrawMoney);
+		paramList.add(fee);
 		paramList.add(withdrawMoney);
 		paramList.add(nhUserName);
 		updateInfoServiceBySql(sql,paramList);

@@ -77,16 +77,19 @@ class FrontProduct extends MicroMvcTemplate{
 		Map investMap=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
 		String investAmount=investMap.get("invest_amount");
 		String bidCode=investMap.get("bid_code");
+		String expireProfit=investMap.get("expire_profit");
 		
 		Map updateMap=new HashMap();
 		updateMap.put("trade_status", "1");
 		updateInfoByBizIdService(orderNumber,"t_front_invest","order_number",updateMap);
 
 
-		//添加投资总额
-		String subAccountSql0="update t_front_account set total_investment=total_investment+? where user_code=?"
+		//添加投资总额,待收本金,待收利息
+		String subAccountSql0="update t_front_account set total_investment=total_investment+?,principal_received=principal_received+?,interest_received=interest_received+? where user_code=?"
 		List placeList0=new ArrayList();
 		placeList0.add(investAmount);
+		placeList0.add(investAmount);
+		placeList0.add(expireProfit);
 		placeList0.add(nhUserName);
 		updateInfoServiceBySql(subAccountSql0,placeList0);
 		
@@ -197,6 +200,7 @@ class FrontProduct extends MicroMvcTemplate{
 		Map investInfo=getInfoByBizIdService(orderNumber,"t_front_invest","order_number");
 		String bankPay=investInfo.get("bank_pay");
 		String investAmount=investInfo.get("invest_amount");
+		String expireProfit=investInfo.get("expire_profit");
 		
 		//调用三方支付确认接口
 		GroovyExecUtil.execGroovyRetObj("front_pay_api", "confirmQuickPay", gInputParam, gOutputParam, gContextParam);
@@ -223,20 +227,35 @@ class FrontProduct extends MicroMvcTemplate{
 		tranMap.put("create_time", "now()");
 		createInfoService(tranMap,"t_front_recharge");
 		
-		//添加投资总额
-		String subAccountSql0="update t_front_account set total_investment=total_investment+? where user_code=?"
+		//添加投资总额,待收本金,待收利息
+		String subAccountSql0="update t_front_account set total_investment=total_investment+?,principal_received=principal_received+?,interest_received=interest_received+? where user_code=?"
 		List placeList0=new ArrayList();
 		placeList0.add(investAmount);
+		placeList0.add(investAmount);
+		placeList0.add(expireProfit);
 		placeList0.add(userCode);
 		updateInfoServiceBySql(subAccountSql0,placeList0);
-		
-		httpRequest.getRequestDispatcher("/front-page/paymentSuccess.jsp").forward(httpRequest, httpResponse);
-		httpRequest.setAttribute("forwardFlag", "true");
-		return;
 		
 		Map updateMap=new HashMap();
 		updateMap.put("trade_status", "1");
 		updateInfoByBizIdService(orderNumber,"t_front_invest","order_number",updateMap);
 		
+		httpRequest.getRequestDispatcher("/front-page/paymentSuccess.jsp").forward(httpRequest, httpResponse);
+		httpRequest.setAttribute("forwardFlag", "true");
+		return;
+
 		}
+	
+	public void myRegularGo(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
+		HttpServletRequest httpRequest = gContextParam.getContextMap().get("httpRequest");
+		HttpServletResponse httpResponse=gContextParam.getContextMap().get("httpResponse");
+		HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
+		String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode",
+			gInputParam,gOutputParam,gContextParam);
+		Map infoMap=getInfoByBizIdService(nhUserName,"t_front_account","user_code");
+		httpRequest.setAttribute("accountInfo", infoMap);
+		httpRequest.getRequestDispatcher("/front-page/myregular_finance.jsp").forward(httpRequest, httpResponse);
+		httpRequest.setAttribute("forwardFlag", "true");
+	}
+	
 }

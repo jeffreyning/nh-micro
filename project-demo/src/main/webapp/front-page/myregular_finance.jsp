@@ -81,6 +81,22 @@ function renderProductTable(){
 	});
 
 }
+
+function renderAccount(){
+	var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_account_api&groovySubName=queryMyRegularAccount";
+
+	$.ajax({
+		url:url,
+		type:'post',
+		dataType:'json',
+		success:function(data,status){
+			var resultData=JSON.parse(data.resultData);
+			var resultObj=resultData.resultObj;
+			
+		
+		}
+	});
+}
 $(function(){
 	renderProductTable();
 });
@@ -184,7 +200,7 @@ $(function(){
                     </a>
     </li>
     <li class="choosen">
-        <a href="<%=path%>/front-page/myregular_finance.jsp">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_invest_api&groovySubName=myRegularGo">
                         定期理财
                         <i class="me-ion-chevron-right"></i>
                     </a>
@@ -226,15 +242,15 @@ $(function(){
           <div id="mr_f_finance" data-wrap="layout" class="mr_f_finance">
             <div data-item="col-6">
               <h3>定期总资产 (元)</h3>
-              <p><strong>0.00</strong></p>
-              <p>待收本金： 0.00</p>
-              <p>待收收益： 0.00</p>
+              <p><strong>${0+accountInfo.total_investment+accountInfo.accumulated_income}</strong></p>
+              <p>待收本金： ${accountInfo.principal_received}</p>
+              <p>待收收益： ${accountInfo.interest_received}</p>
             </div>
             <div data-item="col-6">
               <h3>定期总收益 (元)</h3>
-              <p><strong>0.00</strong></p>
-              <p>待收收益： 0.00</p>
-              <p>已收收益： 0.00</p>
+              <p><strong>${accountInfo.accumulated_income}</strong></p>
+              <p>待收收益： ${accountInfo.interest_received}</p>
+              <p>已收收益： ${accountInfo.accumulated_income}</p>
             </div>
           </div>
           <div class="selecttool">

@@ -40,6 +40,7 @@ public String getTableName(HttpServletRequest httpRequest){
 	return tableName;
 }
 
+
 public void queryMyAccount(GInputParam gInputParam,GOutputParam gOutputParam,GContextParam gContextParam){
 	HttpSession httpSession=gContextParam.getContextMap().get("httpSession");
 	String nhUserName=GroovyExecUtil.execGroovyRetObj("front_user_login", "getUserCode", 

@@ -110,7 +110,7 @@ String path = request.getContextPath();
                     </a>
     </li>
     <li>
-        <a href="<%=path%>/front-page/myregular_finance.jsp">
+        <a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_invest_api&groovySubName=myRegularGo">
                         定期理财
                         <i class="me-ion-chevron-right"></i>
                     </a>

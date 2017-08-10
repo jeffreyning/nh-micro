@@ -37,8 +37,12 @@ function payNow(){
 			data:data,
 			success:function(data,status){
 				var resultData=JSON.parse(data.resultData);
-				rechargeNumber=resultData.resultObj;
-				$("#RechargeSendPaySmsDialog").dialog("open");
+				if(resultData.resultStatus!=0){
+					alert(resultData.resultMsg);
+				}else{
+					rechargeNumber=resultData.resultObj;
+					$("#RechargeSendPaySmsDialog").dialog("open");
+				}
 			}
 		});
 
@@ -208,6 +212,7 @@ $(function(){
 		              <div data-item="col-5">
 		                <div data-type="norm">
 		                  <input id="money" type="text" name="money"><b>元</b>
+		                  <span class="tip">(未绑定银行卡？<a href="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=front_bank_api&groovySubName=bankCardSetGo" class="J_bindCard">立即绑定银行卡)</a></span>
 		                </div>
 		              </div>
 		            </div>
