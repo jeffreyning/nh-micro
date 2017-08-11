@@ -173,7 +173,23 @@ String path=request.getContextPath();
 				"attributes":{
 				  "url":"/<%=path %>/nh-micro-jsp/front-manager-page/listFrontAccountInfo.jsp"
 				  }
-			}
+			},			
+			{
+				"id":713,
+				"text":"提现审批列表",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/nh-micro-jsp/front-manager-page/listFrontWithdrawInfo.jsp"
+				  }
+			},
+			{
+				"id":713,
+				"text":"用户投资列表",
+				"iconCls":"icon-nav",
+				"attributes":{
+				  "url":"/<%=path %>/nh-micro-jsp/front-manager-page/listFrontInvestInfo.jsp"
+				  }
+			}			
 				
 		]
 	}	
