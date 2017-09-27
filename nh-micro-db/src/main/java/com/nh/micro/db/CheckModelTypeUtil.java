@@ -4,6 +4,7 @@ import com.nh.micro.db.MicroDbModelEntry;
 import com.nh.micro.rule.engine.core.GroovyExecUtil;
 
 
+import groovy.json.JsonBuilder;
 import groovy.json.JsonSlurper;
 
 import java.math.BigDecimal;
@@ -254,6 +255,9 @@ public class CheckModelTypeUtil {
 	}	
 	
 	public static void getModelEntryMap(Map modelEntryMap,List<MicroDbModelEntry> modelEntryList) throws Exception{
+		if(modelEntryList==null){
+			return;
+		}
 		for(MicroDbModelEntry modelEntry:modelEntryList){
 			String colId=modelEntry.getColId();
 			modelEntryMap.put(colId, modelEntry);
@@ -263,6 +267,9 @@ public class CheckModelTypeUtil {
 	
 	
 	public static void getModelEntryMap4Update(Map modelEntryMap,List<MicroDbModelEntry> modelEntryList) throws Exception{
+		if(modelEntryList==null){
+			return;
+		}
 		for(MicroDbModelEntry modelEntry:modelEntryList){
 			String colId=modelEntry.getColId();
 			modelEntryMap.put(colId, modelEntry);
@@ -385,7 +392,7 @@ public class CheckModelTypeUtil {
 				for(String key:keySet){
 					Object obj=metaMap.get(key);
 					if(obj instanceof Map || obj instanceof List){
-						continue;
+						//continue;
 					}
 					String nkey=metaContentNamePrefix+key;
 					if(!rowMap.containsKey(nkey)){
@@ -415,7 +422,7 @@ public class CheckModelTypeUtil {
 					for(String key:keySet){
 						Object obj=metaMap.get(key);
 						if(obj instanceof Map || obj instanceof List){
-							continue;
+							//continue;
 						}
 						String nkey=metaContentNamePrefix+key;
 						if(!rowMap.containsKey(nkey)){
@@ -496,7 +503,12 @@ public class CheckModelTypeUtil {
 				SimpleDateFormat sf=new SimpleDateFormat(java_time_format);
 				String timeStr=sf.format(obj);
 				rowMap.put(key,timeStr);					
-			}else if(obj!=null) {
+			}else if(obj instanceof Map || obj instanceof List){
+				JsonBuilder jsonBuilder=new JsonBuilder(obj);
+				String retStr=jsonBuilder.toString();
+				rowMap.put(key,retStr);
+			}
+			else if(obj!=null) {
 					rowMap.put(key,obj.toString());					
 
 			}

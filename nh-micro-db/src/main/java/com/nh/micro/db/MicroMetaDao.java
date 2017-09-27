@@ -29,6 +29,13 @@ import com.nh.micro.rule.engine.core.GroovyLoadUtil;
  *
  */
 public class MicroMetaDao {
+	public static Boolean orclEndFlag=true;
+	public static Boolean getOrclEndFlag() {
+		return orclEndFlag;
+	}
+	public void setOrclEndFlag(Boolean orclEndFlag) {
+		MicroMetaDao.orclEndFlag = orclEndFlag;
+	}
 
 	private static Logger logger=Logger.getLogger(MicroMetaDao.class);
 	public static Map<String,MicroMetaDao> microDaoMap=new HashMap();
@@ -66,7 +73,24 @@ public class MicroMetaDao {
 		}
 		return instance;
 	}
-	
+	public static MicroMetaDao getInstance(String dbName,String dbType){
+		if(dbName==null || "".equals(dbName)){
+			dbName="default";
+		}
+		MicroMetaDao instance=(MicroMetaDao) microDaoMap.get(dbName);
+		if(instance==null){
+			if("default".equals(dbName)){
+				instance=new MicroMetaDao();
+				instance.setDbType(dbType);
+				microDaoMap.put("default", instance);
+			}else{
+				instance=new MicroMetaDao(dbName);
+				instance.setDbType(dbType);
+				microDaoMap.put(dbName, instance);				
+			}
+		}
+		return instance;
+	}	
 	
 	public MicroMetaDao(){}
 	public MicroMetaDao(String dbName){
@@ -519,6 +543,9 @@ public class MicroMetaDao {
 		}else{
 			String startLimit=" WHERE NHPAGE_RN >= "+start;
 			String endLimit=" WHERE ROWNUM <= "+end;
+			if(orclEndFlag==false){
+				endLimit=" WHERE ROWNUM < "+end;
+			}
 			sql="SELECT * FROM ( SELECT NHPAGE_TEMP.*, ROWNUM NHPAGE_RN FROM ("+ innerSql +" ) NHPAGE_TEMP "+endLimit+" ) "+ startLimit;
 		}
 		logger.debug(sql);
@@ -1113,4 +1140,21 @@ public class MicroMetaDao {
 		return retStatus;
 	}
 	
+	
+	public int[] updateObjBatch(String[] sql) {
+		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
+				.getDbSource(dbName);
+		logger.debug(sql);
+		int[] retStatus=jdbcTemplate.batchUpdate(sql);
+		return retStatus;
+	}
+	
+	public int[] updateObjBatch(String sql,List<Object[]> paramList) {
+		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
+				.getDbSource(dbName);
+		logger.debug(sql);
+		logger.debug(paramList.toArray());
+		int[] retStatus=jdbcTemplate.batchUpdate(sql,paramList);
+		return retStatus;
+	}
 }
