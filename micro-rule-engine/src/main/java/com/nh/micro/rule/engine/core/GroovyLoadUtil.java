@@ -26,6 +26,15 @@ public class GroovyLoadUtil {
 	public static final String LOADTYPE_JAR="jar";
 	//protected static Log logger = LogFactory.getLog(GroovyLoadUtil.class);
 	private static Logger logger=Logger.getLogger(GroovyLoadUtil.class);
+	//加载file路径
+	private static Map<String, String> filePathMap = new HashMap();
+	public static String getFilePath(String ruleName){
+		return filePathMap.get(ruleName);
+	}
+	public static void setFilePath(String ruleName,String fullName){
+		filePathMap.put(ruleName, fullName);
+	}
+	
 	//加载file时记录类型
 	private static Map<String, String> fileMap = new HashMap();
 	public static Map<String, String> getFileMap() {

@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 /**
  * 
  * @author ninghao
  * 
  */
 public class GroovyInitUtil {
+	private static Logger logger=Logger.getLogger(GroovyInitUtil.class);
 	public static List<GFileBean> fileList = new ArrayList<GFileBean>();
 
 	public static List<GFileBean> getFileList() {
@@ -26,7 +29,7 @@ public class GroovyInitUtil {
 		GroovyInitUtil.fileList = fileList;
 	}
 
-	final static void loadDir(String dirName,Boolean flag,String stamp) throws Exception{
+	public static void loadDir(String dirName,Boolean flag,String stamp) throws Exception{
 		File temp=null;
 		if(flag==true){
 			temp=new File(GroovyInitUtil.class.getResource(dirName).toURI());
@@ -52,6 +55,17 @@ public class GroovyInitUtil {
 		  }
 	}
 	public static void initOneFile(String fullName,Boolean flag,String ruleName,String stamp)  throws Exception {
+		
+		String oldFullName=GroovyLoadUtil.getFilePath(ruleName);
+		if(oldFullName!=null && !oldFullName.equals(fullName)){
+			logger.warn("skip load cause exist same filename in diff path ruleName="+ruleName+" fullName="+fullName+" oldFullName="+oldFullName);
+			return ;
+		}
+		if(oldFullName==null){
+			GroovyLoadUtil.setFilePath(ruleName, fullName);
+		}
+		
+		
 		String fileTime="";
 		if (stamp != null && stamp.equals("true")) {
 			if (flag == true) {
