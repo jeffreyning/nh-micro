@@ -38,7 +38,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.google.gson.Gson;
@@ -49,20 +48,13 @@ import groovy.json.JsonSlurper;
  * @author ninghao
  *
  */
-public class MicroServiceTemplateSupport {
-	public static final String TYPE_DEL_ID="del_id";
-	public static final String TYPE_UPDATE_ID="update_id";
-	public static final String TYPE_DEL_BIZID="del_bizid";
-	public static final String TYPE_UPDATE_BIZID="update_bizid";	
-	public static final String TYPE_INSERT="insert";
-	public static final String TYPE_SELECT_ID="insert_id";
-	public static final String TYPE_SELECT_ID_LOCK="insert_id_lock";
-	public static final String TYPE_SELECT_BIZID="insert_bizid";
+public class MicroServiceOracleTempSupport {
+
 	
-	public MicroServiceTemplateSupport(){
+	public MicroServiceOracleTempSupport(){
 		
 	}
-	public MicroServiceTemplateSupport(String dbName){
+	public MicroServiceOracleTempSupport(String dbName){
 		this.dbName=dbName;
 	}
 	public static Map supportHolder=new HashMap();
@@ -72,37 +64,25 @@ public class MicroServiceTemplateSupport {
 	}
 
 	public void setSupportHolder(Map supportHolder) {
-		MicroServiceTemplateSupport.supportHolder = supportHolder;
+		MicroServiceOracleTempSupport.supportHolder = supportHolder;
 	}
 	
-	public void filterParam(String tableName,Map paramMap){
-			
-	}
-
-	public Integer filterView(String tableName,Map paramMap,String bizId,String bizCol,String type){
-		return 0;
-	}
-	
-	public Map filterView4Select(String tableName,Map paramMap,String bizId,String bizCol,String type){
-		return null;
-	}
-	
-	public static MicroServiceTemplateSupport getInstance(){
-		MicroServiceTemplateSupport instance=(MicroServiceTemplateSupport) getSupportHolder().get("default");
+	public static MicroServiceOracleTempSupport getInstance(){
+		MicroServiceOracleTempSupport instance=(MicroServiceOracleTempSupport) getSupportHolder().get("default");
 		if(instance==null){
-			instance=new MicroServiceTemplateSupport();
+			instance=new MicroServiceOracleTempSupport();
 			getSupportHolder().put("default", instance);
 		}
 		return instance;
 		
 	}
-	public static MicroServiceTemplateSupport getInstance(String dbName){
+	public static MicroServiceOracleTempSupport getInstance(String dbName){
 		if(dbName==null || "".equals(dbName)){
 			dbName="default";
 		}
-		MicroServiceTemplateSupport instance=(MicroServiceTemplateSupport) getSupportHolder().get(dbName);
+		MicroServiceOracleTempSupport instance=(MicroServiceOracleTempSupport) getSupportHolder().get(dbName);
 		if(instance==null){
-			instance=new MicroServiceTemplateSupport(dbName);
+			instance=new MicroServiceOracleTempSupport(dbName);
 			getSupportHolder().put(dbName, instance);
 		}
 		return instance;
@@ -190,17 +170,11 @@ public class MicroServiceTemplateSupport {
 			if(CheckModelTypeUtil.isNumber(modelEntry)){
 				whereValue=Cutil.rep("<REPLACE>",value);
 			}else if(CheckModelTypeUtil.isDate(modelEntry) ){
-				whereValue=Cutil.rep("str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')",value);
+				whereValue=Cutil.rep("to_date('<REPLACE>','yyyy-MM-dd HH24:mi:ss')",value);
 			}else{
 				whereValue=Cutil.rep("'<REPLACE>'",value);
 			}
-			if(CheckModelTypeUtil.isRealCol(modelEntry)==false){
-				String metaName=modelEntry.getMetaContentId();
-				String realKey=CheckModelTypeUtil.getRealColName(key);
-				cobjValues.append(Cutil.rep(metaName+"->>'$.<REPLACE>'=", realKey)+whereValue,value!=null);
-			}else if(CheckModelTypeUtil.isRealCol(modelEntry)){
-				cobjValues.append(Cutil.rep("<REPLACE>=", key)+whereValue,value!=null);
-			}
+			cobjValues.append(Cutil.rep("<REPLACE>=", key)+whereValue,value!=null);
 		}
 
 		return cobjValues.getStr();
@@ -221,26 +195,19 @@ public class MicroServiceTemplateSupport {
 				whereValue=Cutil.rep("<REPLACE>",value);
 
 			}else if(CheckModelTypeUtil.isDate(modelEntry) ){
-				whereValue=Cutil.rep("str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')",value);
+				whereValue=Cutil.rep("to_date('<REPLACE>','yyyy-MM-dd HH24:mi:ss')",value);
 
 			}else{
 				whereValue=Cutil.rep("<REPLACE>",value);
 
 			}
-			if(CheckModelTypeUtil.isRealCol(modelEntry)==false){
-				String metaName=modelEntry.getMetaContentId();
-				String realKey=CheckModelTypeUtil.getRealColName(key);
-				cobjValues.append(Cutil.rep(metaName+"->>'$.<REPLACE>'=?", realKey),value!=null);
-				if(value!=null){
-					placeList.add(whereValue);
-				}
-			}else if(CheckModelTypeUtil.isRealCol(modelEntry)){
 
-				cobjValues.append(Cutil.rep("<REPLACE>=?", key),value!=null);
-				if(value!=null){
-					placeList.add(whereValue);
-				}				
-			}
+
+			cobjValues.append(Cutil.rep("<REPLACE>=?", key),value!=null);
+			if(value!=null){
+				placeList.add(whereValue);
+			}				
+
 		}
 
 		return cobjValues.getStr();
@@ -268,61 +235,18 @@ public class MicroServiceTemplateSupport {
 		while(it.hasNext()){
 			String key=(String) it.next();
 			MicroDbModelEntry modelEntry=(MicroDbModelEntry) modelEntryMap.get(key);
-			
+			String value=(String) dbColMap.get(key);
 
-			if(CheckModelTypeUtil.isDynamicCol(modelEntry)){
-				String value=(String) dbColMap.get(key);
-				String metaName=modelEntry.getMetaContentId();
-				Cobj cobjValues=metaFlagMap.get(metaName);
-				if(cobjValues==null){
-					cobjValues=Cutil.createCobj();
-					metaFlagMap.put(metaName,cobjValues);
-				}
-				String realKey=CheckModelTypeUtil.getRealColName(key);
-				cobjValues.append(Cutil.rep("'$.<REPLACE>'", realKey),value!=null);
-				if(CheckModelTypeUtil.isNumber(modelEntry)){
-					cobjValues.append(Cutil.rep("<REPLACE>",value),value!=null);
-				}else if(CheckModelTypeUtil.isDate(modelEntry) ){
-					
-					if(value!=null ){
-						if(value.toLowerCase().equals("now()")){
-							cobjValues.append(Cutil.rep("<REPLACE>",value),value!=null);
-						}else{
-							cobjValues.append(Cutil.rep("'<REPLACE>'",value),value!=null);
-						}
-					}
-					
-				}else if(realKey.endsWith("_json")){
-					cobjValues.append(Cutil.rep("<REPLACE>",value),value!=null && !"".equals(value));
-				}else{
-					cobjValues.append(Cutil.rep("'<REPLACE>'",value),value!=null);
-				}
-				if(value!=null){
-					extValueList.add(value);
-				}
-			}else if(CheckModelTypeUtil.isRealCol(modelEntry)){
-				
-				//add 20170830 by ninghao
-				Object vobj=dbColMap.get(key);
-				if(vobj instanceof MicroColObj){
-					String colInfoStr=((MicroColObj)vobj).getColInfo();
-					crealValues.append(key+"="+colInfoStr);
-					continue;
 
-				}
-				//end
-				
-				
-				String value=(String) dbColMap.get(key);
 				String whereValue="";
 				if(CheckModelTypeUtil.isNumber(modelEntry)){
 					whereValue=Cutil.rep("<REPLACE>",value);
 				}else if(CheckModelTypeUtil.isDate(modelEntry)){
 					if(value!=null ){
 						if(value.toLowerCase().equals("now()")){
-							whereValue=value;
+							whereValue="sysdate";
 						}else{
-							whereValue=Cutil.rep("str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')",value);	
+							whereValue=Cutil.rep("to_date('<REPLACE>','yyyy-MM-dd HH24:mi:ss')",value);	
 						}
 					}
 
@@ -333,14 +257,6 @@ public class MicroServiceTemplateSupport {
 					crealValues.append(Cutil.rep("<REPLACE>=", key)+whereValue,value!=null);
 				}
 
-			}
-		}
-		
-		Set<String> metaKeySet=metaFlagMap.keySet();
-		for(String key:metaKeySet){
-			Cobj cobj=metaFlagMap.get(key);
-			String dynamic=cobj.getStr();
-			crealValues.append(Cutil.rep(key+"=JSON_SET(ifnull("+key+",'{}'),<REPLACE>)",dynamic),dynamic!=null );
 		}
 
 		return crealValues.getStr();
@@ -350,7 +266,7 @@ public class MicroServiceTemplateSupport {
 			return null;
 		}
 		List realValueList=new ArrayList();
-		List extValueList=new ArrayList();
+
 		Boolean metaFlag=false;
 		Map<String,Cobj> metaFlagMap=new LinkedHashMap();
 		Cobj crealValues=Cutil.createCobj();
@@ -358,90 +274,29 @@ public class MicroServiceTemplateSupport {
 		Iterator it=modelEntryMap.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
-			//������idֵ
 			if("id".equals(key)){
 				continue;
 			}
 			MicroDbModelEntry modelEntry=(MicroDbModelEntry) modelEntryMap.get(key);
-			
+			String value=(String) dbColMap.get(key);
 
-			if(CheckModelTypeUtil.isDynamicCol(modelEntry)){
-				String value=(String) dbColMap.get(key);
-				String metaName=modelEntry.getMetaContentId();
-				Cobj cobjValues=metaFlagMap.get(metaName);
-				if(cobjValues==null){
-					cobjValues=Cutil.createCobj();
-					metaFlagMap.put(metaName,cobjValues);
-				}
-				String realKey=CheckModelTypeUtil.getRealColName(key);
-				if((value!=null && !value.equals("")) || (value!=null && !realKey.endsWith("_json"))){
-					cobjValues.append(Cutil.rep("'$.<REPLACE>'", realKey),value!=null);
-					if(CheckModelTypeUtil.isNumber(modelEntry)){
-						cobjValues.append(Cutil.rep("<REPLACE>","?"),value!=null);
-						
-					}else if(CheckModelTypeUtil.isDate(modelEntry) ){
-						if(value!=null ){
-							if(value.toLowerCase().equals("now()")){
-								cobjValues.append(Cutil.rep("<REPLACE>",value),value!=null);
-							}else{
-								cobjValues.append(Cutil.rep("<REPLACE>","?"),value!=null);
-							}
-						}					
-	
-					}else if(realKey.endsWith("_json")){
-						cobjValues.append(Cutil.rep("<REPLACE>","cast(? as json)"),value!=null && !"".equals(value));
-						
-					}else{
-						cobjValues.append(Cutil.rep("<REPLACE>","?"),value!=null);
-						
-					}
-					if(value!=null ){
-						if(value.toLowerCase().equals("now()")==false){
-						extValueList.add(value);
-						}
-					}
-				}
-			}else if(CheckModelTypeUtil.isRealCol(modelEntry)){
-				//add 20170830 by ninghao
-				Object vobj=dbColMap.get(key);
-				if(vobj instanceof MicroColObj){
-					String colInfoStr=((MicroColObj)vobj).getColInfo();
-					List colDataList=((MicroColObj)vobj).getColData();
-					crealValues.append(key+"="+colInfoStr);
-					if(colDataList!=null){
-						realValueList.addAll(colDataList);
-					}
-					continue;
 
-				}
-				//end
-				String value=(String) dbColMap.get(key);
-				if(value!=null ){
-					if(CheckModelTypeUtil.isDate(modelEntry) ){
-						if(value.toLowerCase().equals("now()")){
-							crealValues.append(Cutil.rep("<REPLACE>=", key)+value,value!=null);
-						}else{
-							realValueList.add(value);
-							crealValues.append(key+"=str_to_date(?,'%Y-%m-%d %H:%i:%s')",value!=null);
-						}
-					}else{
-						realValueList.add(value);
-						crealValues.append(key+"=?",value!=null);						
-					}
-				}
+
+			if(value!=null ){
+				if(value.toLowerCase().equals("now()")){
+					crealValues.append(Cutil.rep("<REPLACE>=", key)+"sysdate",value!=null);
+				}else{
 				
-
+					realValueList.add(value);
+					crealValues.append(Cutil.rep("<REPLACE>=", key)+"?",value!=null);
+				}
 			}
+
 		}
 		
-		Set<String> metaKeySet=metaFlagMap.keySet();
-		for(String key:metaKeySet){
-			Cobj cobj=metaFlagMap.get(key);
-			String dynamic=cobj.getStr();
-			crealValues.append(Cutil.rep(key+"=JSON_SET(ifnull("+key+",'{}'),<REPLACE>)",dynamic),dynamic!=null);
-		}
+
 		placeList.addAll(realValueList);
-		placeList.addAll(extValueList);
+
 		return crealValues.getStr();
 	}
 
@@ -469,19 +324,10 @@ public class MicroServiceTemplateSupport {
 			if(modelEntry==null){
 				continue;
 			}
-			if(CheckModelTypeUtil.isRealCol(modelEntry)==false){
-				if(value!=null){
-					String metaName=modelEntry.getMetaContentId();
-					metaFlagSet.add(metaName);
-				}
-			}else {
-				crealValues.append(key,value!=null);
-			}
+			crealValues.append(key,value!=null);
+
 		}
 
-		for(String metaName:metaFlagSet){
-			crealValues.append(metaName);
-		}
 		
 		return crealValues.getStr();
 	}
@@ -503,67 +349,26 @@ public class MicroServiceTemplateSupport {
 		Iterator it=dbColMap.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
-			
+			String value=(String) dbColMap.get(key);
 			
 			MicroDbModelEntry modelEntry=modelEntryMap.get(key);
 			if(modelEntry==null){
 				continue;
 			}
 			
-			if(CheckModelTypeUtil.isRealCol(modelEntry)==false){
 
-				String value=(String) dbColMap.get(key);
-				String metaName=modelEntry.getMetaContentId();
-				Map metaMap=(Map) metaFlagMap.get(metaName);
-				String realKey=CheckModelTypeUtil.getRealColName(key);
-				if(metaMap==null){
-					metaMap=new HashMap();
-					metaFlagMap.put(metaName, metaMap);
-				}
-				if(CheckModelTypeUtil.isNumber(modelEntry)){
-					if(value.contains(".")){
-						metaMap.put(realKey, new BigDecimal(value));
-					}else{
-						metaMap.put(realKey, Long.valueOf(value));
-					}
-				}else if(CheckModelTypeUtil.isDate(modelEntry)){
-					metaMap.put(realKey, value);
-				}else{
-					metaMap.put(realKey, value);
-				}
-			}else{
-				//add 20170830 by ninghao
-				Object vobj=dbColMap.get(key);
-				if(vobj instanceof MicroColObj){
-					String colInfoStr=((MicroColObj)vobj).getColInfo();
-					crealValues.append(key+"="+colInfoStr);
-					continue;
-				}
-				//end				
-				String value=(String) dbColMap.get(key);
 				String whereValue="";
 				if(CheckModelTypeUtil.isNumber(modelEntry)){
 					whereValue=Cutil.rep("<REPLACE>",value);
 				}else if(CheckModelTypeUtil.isDate(modelEntry)){
 			
-					whereValue=Cutil.rep("str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')",value);
+					whereValue=Cutil.rep("to_date('<REPLACE>','yyyy-MM-dd HH24:mi:ss')",value);
 				}else{
 					whereValue=Cutil.rep("'<REPLACE>'",value);
 				}
 				crealValues.append(whereValue,value!=null);
 
-			}
-		}
-		String dynamic=null;
-		Iterator iter = metaFlagMap.keySet().iterator();
-		while(iter.hasNext()){
-			String key=(String) iter.next();
-			Map metaMap=(Map) metaFlagMap.get(key);
-			
-			Gson gson=new Gson();
-			dynamic=gson.toJson(metaMap);
 
-			crealValues.append(Cutil.rep("'<REPLACE>'",dynamic,dynamic!=null ));
 		}
 		
 		return crealValues.getStr();
@@ -579,57 +384,23 @@ public class MicroServiceTemplateSupport {
 		Iterator it=dbColMap.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
-			
+			String value=(String) dbColMap.get(key);
 			
 			MicroDbModelEntry modelEntry=modelEntryMap.get(key);
 			if(modelEntry==null){
 				continue;
 			}
 			
-			if(CheckModelTypeUtil.isRealCol(modelEntry)==false){
-				String value=(String) dbColMap.get(key);
-				String metaName=modelEntry.getMetaContentId();
-				Map metaMap=(Map) metaFlagMap.get(metaName);
-				String realKey=CheckModelTypeUtil.getRealColName(key);
-				if(metaMap==null){
-					metaMap=new HashMap();
-					metaFlagMap.put(metaName, metaMap);
-				}
-				if(CheckModelTypeUtil.isNumber(modelEntry)){
-					if(value.contains(".")){
-						metaMap.put(realKey, new BigDecimal(value));
-					}else{
-						metaMap.put(realKey, Long.valueOf(value));
-					}
-				}else if(CheckModelTypeUtil.isDate(modelEntry)){
-					metaMap.put(realKey, value);
-				}else{
-					metaMap.put(realKey, value);
-				}
-			}else{
-				//add 20170830 by ninghao
-				Object vobj=dbColMap.get(key);
-				if(vobj instanceof MicroColObj){
-					String colInfoStr=((MicroColObj)vobj).getColInfo();
-					List colDataList=((MicroColObj)vobj).getColData();
-					crealValues.append(key+"="+colInfoStr);
-					if(colDataList!=null){
-						placeList.addAll(colDataList);
-					}
-					continue;
 
-				}
-				//end
-				String value=(String) dbColMap.get(key);
 				String whereValue="";
 				if(CheckModelTypeUtil.isNumber(modelEntry)){
 					whereValue=Cutil.rep("?",value);
 				}else if(CheckModelTypeUtil.isDate(modelEntry)){
 					if(value!=null){
 						if(value.toLowerCase().equals("now()")){
-							whereValue=value;
+							whereValue="sysdate";
 						}else{
-							whereValue=Cutil.rep("str_to_date(?,'%Y-%m-%d %H:%i:%s')",value);
+							whereValue=Cutil.rep("to_date(?,'yyyy-MM-dd HH24:mi:ss')",value);
 						}
 					}						
 					
@@ -644,46 +415,9 @@ public class MicroServiceTemplateSupport {
 					}
 				}
 
-			}
 		}
 
 		Iterator iter = metaFlagMap.keySet().iterator();
-		
-		while(iter.hasNext()){
-			String dynamic=null;
-			String key=(String) iter.next();
-			Map metaMap=(Map) metaFlagMap.get(key);
-			
-			Cobj dObj=Cutil.createCobj();
-			Iterator si=metaMap.keySet().iterator();
-			while(si.hasNext()){
-				String skey=(String) si.next();
-				Object svalue=metaMap.get(skey);
-				if(svalue!=null ){
-					String realk="'"+skey+"'";
-					String realv="?";
-					if(skey.endsWith("_json")){
-						if(svalue.equals("")){
-							continue;
-						}
-						realv="cast(? as json)";
-					}
-					if(svalue.toString().equalsIgnoreCase("now()")){
-						realv=svalue.toString();
-					}else{
-						placeList.add(svalue);
-					}
-					dObj.append(realk).append(realv);
-				}
-			}
-			dynamic=dObj.getStr();
-
-			crealValues.append(Cutil.rep("JSON_OBJECT(<REPLACE>)",dynamic,dynamic!=null ));
-			if(dynamic!=null && !"".equals(dynamic)){
-				String realDynamic="JSON_OBJECT("+dynamic+")";
-				//placeList.add(dynamic);
-			}
-		}
 		
 		return crealValues.getStr();
 	}	
@@ -908,61 +642,7 @@ public class MicroServiceTemplateSupport {
 
 	}	
 
-	public Map getInfoList4PageServiceByMySql(String sql,List placeList,Map pageMap) throws Exception{
-		return getInfoList4PageServiceInnerExByMySql(sql,placeList,pageMap);
-	}
 
-	public Map getInfoList4PageServiceByMySql(String sql,Map pageMap) throws Exception{
-		return getInfoList4PageServiceInnerExByMySql(sql,null,pageMap);
-	}
-	
-	private Map getInfoList4PageServiceInnerExByMySql(String sql,List placeList,Map pageMap) throws Exception{
-
-		if(placeList==null){
-			placeList=new ArrayList();
-		}
-		String page=(String) pageMap.get("page");
-		String rows=(String) pageMap.get("rows");
-		String sort=(String) pageMap.get("sort");
-		String order=(String) pageMap.get("order");
-		String cusSort=(String) pageMap.get("cusSort");
-		
-		Integer pageNum=Integer.valueOf(page);
-		Integer rowsNum=Integer.valueOf(rows);
-		
-
-
-		String orderSql="";
-		if(cusSort!=null && !"".equals(cusSort)){
-			orderSql="order by "+cusSort;
-		}else if(sort!=null && !sort.equals("")){
-			orderSql="order by "+sort+" "+order;
-		}		
-		sql="select SQL_CALC_FOUND_ROWS "+sql.substring(6) ;
-		String realSql=sql+" "+orderSql;
-		int startNum=(MicroMetaDao.getInstance(dbName)).calcuStartIndex(pageNum-1, rowsNum);
-		int endNum=startNum+rowsNum;
-		//int endNum=rowsNum;
-		List infoList=(MicroMetaDao.getInstance(dbName)).queryObjJoinDataByPageCondition(realSql, startNum, endNum,placeList.toArray());
-		if(infoList==null){
-			infoList=new ArrayList();
-		}
-		CheckModelTypeUtil.addMetaCols(infoList);
-		CheckModelTypeUtil.changeNoStrCols(infoList);	
-		
-		String countSql="SELECT FOUND_ROWS() as total";
-		List tempList=(MicroMetaDao.getInstance(dbName)).queryObjJoinByCondition(countSql);
-		Long total=0l;
-		if(tempList!=null){
-			Map tempMap=(Map) tempList.get(0);
-			total=(Long) tempMap.get("total");
-		}
-		Map retMap=new HashMap();
-		retMap.put("rows", infoList);
-		retMap.put("total", total);
-		return retMap;		
-
-	}	
 	
 	
 	//inner
@@ -1014,15 +694,6 @@ public class MicroServiceTemplateSupport {
 	 * @throws Exception
 	 */
 	public Integer createInfoServiceInner(Map requestParamMap,String tableName,String cusCol,String cusValue,String modelName) throws Exception{
-		//add 20170829 ninghao
-		Integer filterViewRet=filterView(tableName,requestParamMap,"","",TYPE_INSERT);
-		if(filterViewRet!=null && filterViewRet>0){
-			return filterViewRet;
-		}
-		
-		//add 20170627 ninghao
-		filterParam(tableName,requestParamMap);
-		
 		boolean autoFlag=false;
 		if(modelName==null || "".equals(modelName)){
 			modelName=tableName;
@@ -1032,7 +703,6 @@ public class MicroServiceTemplateSupport {
 		
 		String id=(String) requestParamMap.get("id");
 		if(id==null || "".equals(id)){
-			requestParamMap.put("id", null);
 			if(idEntry!=null && idEntry.colType.equals(String.class)){
 				id=UUID.randomUUID().toString();
 				requestParamMap.put("id", id);	
@@ -1092,15 +762,6 @@ public class MicroServiceTemplateSupport {
 	 * @throws Exception
 	 */
 	public Integer updateInfoServiceInner(String id,Map requestParamMap,String tableName,String cusCondition,String cusSetStr,String modelName) throws Exception{
-		//add 20170829 ninghao
-		Integer filterViewRet=filterView(tableName,requestParamMap,id,"id",TYPE_UPDATE_ID);
-		if(filterViewRet!=null && filterViewRet>0){
-			return filterViewRet;
-		}
-		
-		//add 20170627 ninghao
-		filterParam(tableName,requestParamMap);
-		
 		//String id=(String) requestParamMap.get("id");
 		String condition="id=?";
 		if(modelName==null || "".equals(modelName)){
@@ -1177,14 +838,6 @@ public class MicroServiceTemplateSupport {
 	 * @throws Exception
 	 */	
 	public Integer updateInfoByBizIdServiceInner(String bizId,String tableName,String bizCol,Map requestParamMap,String cusCondition,String cusSetStr,String modelName) throws Exception{
-		//add 20170829 ninghao
-		Integer filterViewRet=filterView(tableName,requestParamMap,bizId,bizCol,TYPE_UPDATE_BIZID);
-		if(filterViewRet!=null && filterViewRet>0){
-			return filterViewRet;
-		}
-		//add 20170627 ninghao
-		filterParam(tableName,requestParamMap);
-		
 		String condition=Cutil.rep(bizCol+"=?",bizId);
 		
 		if(modelName==null || "".equals(modelName)){
@@ -1226,24 +879,12 @@ public class MicroServiceTemplateSupport {
 	public Integer delInfoService(Map requestParamMap,String tableName){
 
 		String id=(String) requestParamMap.get("id");
-		//add 20170829 ninghao
-		Integer filterViewRet=filterView(tableName,requestParamMap,id,"id",TYPE_DEL_ID);
-		if(filterViewRet!=null && filterViewRet>0){
-			return filterViewRet;
-		}
-		
 		Integer retStatus=(MicroMetaDao.getInstance(dbName)).delObjById(tableName,id);
 		return retStatus;
 	}
 
 	public Integer delInfoByIdService(String id,String tableName){
-		//add 20170829 ninghao
-		Map requestParamMap=new HashMap();
-		requestParamMap.put("id", id);
-		Integer filterViewRet=filterView(tableName,requestParamMap,id,"id",TYPE_DEL_ID);
-		if(filterViewRet!=null && filterViewRet>0){
-			return filterViewRet;
-		}
+
 		Integer retStatus=(MicroMetaDao.getInstance(dbName)).delObjById(tableName,id);
 		return retStatus;
 	}
@@ -1268,10 +909,7 @@ public class MicroServiceTemplateSupport {
 	 */	
 	public Integer delInfoByBizIdService(String bizId,String tableName,String bizCol){
 		
-		Integer filterViewRet=filterView(tableName,new HashMap(),bizId,bizCol,TYPE_DEL_BIZID);
-		if(filterViewRet!=null && filterViewRet>0){
-			return filterViewRet;
-		}
+
 		Integer retStatus=(MicroMetaDao.getInstance(dbName)).delObjByBizId(tableName,bizId,bizCol);
 		return retStatus;
 	}
@@ -1296,12 +934,6 @@ public class MicroServiceTemplateSupport {
 	public Map getInfoByIdService(Map requestParamMap,String tableName){
 
 		String id=(String) requestParamMap.get("id");
-		//add 20170831 ninghao
-		Map filterViewRet=filterView4Select(tableName,requestParamMap,id,"id",TYPE_SELECT_ID);
-		if(filterViewRet!=null ){
-			return filterViewRet;
-		}
-		
 		Map retMap=(MicroMetaDao.getInstance(dbName)).queryObjJoinById(tableName, id);
 		if(retMap==null){
 			return null;
@@ -1312,12 +944,7 @@ public class MicroServiceTemplateSupport {
 	}
 
 	public Map getInfoByIdService(String id,String tableName){
-		//add 20170831 ninghao
-		Map filterViewRet=filterView4Select(tableName,new HashMap(),id,"id",TYPE_SELECT_ID);
-		if(filterViewRet!=null ){
-			return filterViewRet;
-		}
-		
+
 		Map retMap=(MicroMetaDao.getInstance(dbName)).queryObjJoinById(tableName, id);
 		if(retMap==null){
 			return null;
@@ -1327,31 +954,6 @@ public class MicroServiceTemplateSupport {
 		return retMap;
 	}
 
-	public Map getInfoByIdForLockService(String id,String tableName){
-		//add 20170831 ninghao
-		Map filterViewRet=filterView4Select(tableName,new HashMap(),id,"id",TYPE_SELECT_ID_LOCK);
-		if(filterViewRet!=null ){
-			return filterViewRet;
-		}
-		
-		String sql="select * from "+tableName+" where id=? FOR UPDATE";
-		List placeList=new ArrayList();
-		placeList.add(id);
-		List retList=(MicroMetaDao.getInstance(dbName)).queryObjJoinByCondition(sql,placeList.toArray());
-		if(retList==null){
-			return null;
-		}
-		Map retMap=(Map) retList.get(0);
-		if(retMap==null){
-			return null;
-		}
-		CheckModelTypeUtil.addMetaCols(retMap);
-		CheckModelTypeUtil.changeNoStrCols(retMap);
-		return retMap;
-	}
-
-	
-	
 	/**
 	 * 
 	 * @param bizId 
@@ -1361,11 +963,6 @@ public class MicroServiceTemplateSupport {
 	 * @throws Exception
 	 */	
 	public Map getInfoByBizIdService(String bizId,String tableName,String bizCol){
-		//add 20170831 ninghao
-		Map filterViewRet=filterView4Select(tableName,new HashMap(),bizId,bizCol,TYPE_SELECT_BIZID);
-		if(filterViewRet!=null ){
-			return filterViewRet;
-		}
 		
 		Map retMap=(MicroMetaDao.getInstance(dbName)).queryObjJoinByBizId(tableName, bizId,bizCol);
 		if(retMap==null){
@@ -1615,88 +1212,23 @@ public class MicroServiceTemplateSupport {
 		PlatformTransactionManager  transactionManager=new DataSourceTransactionManager(dataSource);*/
 		PlatformTransactionManager  transactionManager=MicroTranManagerHolder.getTransactionManager(dbName);
 	    DefaultTransactionDefinition def =new DefaultTransactionDefinition();
-	    def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
 	    def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 	    TransactionStatus status=transactionManager.getTransaction(def);
 	    try
 	    {
-	    	Object retObj= GroovyExecUtil.execGroovyRetObj(groovyName, methodName, paramArray);
-	    	transactionManager.commit(status);
-	    	return retObj;
+	    	return GroovyExecUtil.execGroovyRetObj(groovyName, methodName, paramArray);
 	    }
 	    catch(Exception ex)
 	    {
 	    	transactionManager.rollback(status);
 	        throw ex;
 	    }
+	    finally
+	    {
+	         transactionManager.commit(status);
+	    }		
 		
 	}
-
-	
-	public Object execGroovyRetObjByDbTranNest(String groovyName, String methodName, Integer nestDef,
-			Object... paramArray) throws Exception{
-/*		MicroMetaDao microDao=MicroMetaDao.getInstance(dbName);
-		DataSource dataSource=microDao.getMicroDataSource();
-		PlatformTransactionManager  transactionManager=new DataSourceTransactionManager(dataSource);*/
-		PlatformTransactionManager  transactionManager=MicroTranManagerHolder.getTransactionManager(dbName);
-	    DefaultTransactionDefinition def =new DefaultTransactionDefinition();
-	    def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-	    if(nestDef==null){
-	    	nestDef=TransactionDefinition.PROPAGATION_REQUIRED;
-	    }
-	    def.setPropagationBehavior(nestDef);
-	    TransactionStatus status=transactionManager.getTransaction(def);
-	    try
-	    {
-	    	Object retObj= GroovyExecUtil.execGroovyRetObj(groovyName, methodName, paramArray);
-	    	transactionManager.commit(status);
-	    	return retObj;
-	    }
-	    catch(Exception ex)
-	    {
-	    	transactionManager.rollback(status);
-	        throw ex;
-	    }
-		
-	}	
-
-	public void dbTranNestRollback() throws Exception{
-		PlatformTransactionManager  transactionManager=MicroTranManagerHolder.getTransactionManager(dbName);
-	    DefaultTransactionDefinition def =new DefaultTransactionDefinition();
-	    def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-	    def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-	    TransactionStatus status=transactionManager.getTransaction(def);
-	    transactionManager.rollback(status);
-
-	}	
-	public void dbTranNestRollbackAndThrow() throws Exception{
-		PlatformTransactionManager  transactionManager=MicroTranManagerHolder.getTransactionManager(dbName);
-	    DefaultTransactionDefinition def =new DefaultTransactionDefinition();
-	    def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-	    def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-	    TransactionStatus status=transactionManager.getTransaction(def);
-	    transactionManager.rollback(status);
-	    throw new RuntimeException("dbTranNestRollbackAndThrow");
-
-	}
-	public void checkRollbackAndThrow() throws Exception{
-		PlatformTransactionManager  transactionManager=MicroTranManagerHolder.getTransactionManager(dbName);
-		boolean flag=((AbstractPlatformTransactionManager) transactionManager).isFailEarlyOnGlobalRollbackOnly();
-		if(flag){
-			throw new RuntimeException("dbTranNestRollbackAndThrow");
-		}
-
-	}
-/*	public void dbTranNestRollbackAndReStart() throws Exception{
-		PlatformTransactionManager  transactionManager=MicroTranManagerHolder.getTransactionManager(dbName);
-	    DefaultTransactionDefinition def =new DefaultTransactionDefinition();
-	    def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
-	    def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-	    TransactionStatus status=transactionManager.getTransaction(def);
-	    transactionManager.rollback(status);
-	    ((AbstractPlatformTransactionManager) transactionManager).setFailEarlyOnGlobalRollbackOnly(false);
-
-	}	*/	
 	
 	public Integer getSeqByMysql(String seqKey){
 
@@ -1792,20 +1324,7 @@ public class MicroServiceTemplateSupport {
 		Map retMap=getSingleInfoService(sql);
 		return retMap;
 	}
-	
-	public String getDicItemStrByItemKey(String dicKey,String itemKey) throws Exception{
 
-		if(dicKey==null || itemKey==null){
-			return null;
-		}
-		String sql="select * from nh_micro_dict_items where meta_type='"+dicKey+"' and meta_key='"+itemKey+"'";
-		Map retMap=getSingleInfoService(sql);
-		if(retMap!=null){
-			return (String)retMap.get("meta_name");
-		}
-		return null;
-	}	
-	
 	public void changeJsonMap(Map infoMap){
 		Set<String> keySet=infoMap.keySet();
 		for(String key:keySet){
@@ -2120,14 +1639,4 @@ public class MicroServiceTemplateSupport {
 		
 	}		
 	
-	private int[] batchUpdateInfoServiceBySql(String[] sql) throws Exception{
-
-		int[] retStatus=(MicroMetaDao.getInstance(dbName)).updateObjBatch(sql);
-		return retStatus;
-	}
-	private int[] batchUpdateInfoServiceBySql(String sql,List<Object[]> paramList) throws Exception{
-
-		int[] retStatus=(MicroMetaDao.getInstance(dbName)).updateObjBatch(sql,paramList);
-		return retStatus;
-	}	
 }
