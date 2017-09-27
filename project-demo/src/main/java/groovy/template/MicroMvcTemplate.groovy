@@ -17,7 +17,22 @@ import groovy.template.MicroServiceBizTemplate;
 import org.apache.log4j.Logger;
 
 class MicroMvcTemplate extends MicroServiceBizTemplate{
-	private static Logger logger=Logger.getLogger(MicroMvcTemplate.class);
+
+	Logger logger = LoggerFactory.getLogger(MicroMvcTemplate.getClass());
+
+	public boolean checkExecAuth(String groovyName,String groovyMethod,Map paramMap){
+		if(groovyName.equals("nhlogin")){
+			return true;
+		}
+		HttpServletRequest httpRequest = paramMap.get("httpRequest");
+		HttpSession httpSession=httpRequest.getSession();
+		String nhUserName=httpSession.getAttribute("nhUserName");
+		if(nhUserName!=null ){
+			return true;
+		}
+	
+		return false;
+	}
 
 	public Map getRequestParamMap(HttpServletRequest request) {
 		// 参数Map
@@ -55,7 +70,8 @@ class MicroMvcTemplate extends MicroServiceBizTemplate{
 		return httpRequest.getParameter("pageName");
 	}
 	public String getTableName(HttpServletRequest httpRequest){
-		return httpRequest.getParameter("tableName");
+		//return httpRequest.getParameter("tableName");
+		return "xxx";
 	}
 	public Map createRetDataMap(int page,int rows, Map retMap){
 		Map retDataMap=new HashMap();
@@ -107,7 +123,7 @@ class MicroMvcTemplate extends MicroServiceBizTemplate{
 		Map requestParamMap=getRequestParamMap(httpRequest);
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String sTime = sf.format(new Date());
-		requestParamMap.put("create_time",sTime);
+		//requestParamMap.put("create_time",sTime);
 
 		Integer retStatus=GroovyExecUtil.execGroovyRetObj("MicroServiceTemplate", "createInfoService",requestParamMap, tableName);
 		gOutputParam.setResultObj(retStatus);
