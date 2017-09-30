@@ -820,11 +820,14 @@ public class MicroServiceTemplateSupport {
 			}
 		}
 		List realPlaceList=new ArrayList();
-		realPlaceList.addAll(placeList);
+		//realPlaceList.addAll(placeList);
 		if(cusPlaceList==null){
 			cusPlaceList=new ArrayList();
 		}
 		realPlaceList.addAll(cusPlaceList);
+		
+		//add 170927
+		realPlaceList.addAll(placeList);
 		String selectCount="select count(1) from "+tableName+" "+where;
 		Integer total=(MicroMetaDao.getInstance(dbName)).queryObjJoinCountByCondition(selectCount,realPlaceList.toArray());
 		String select="";
