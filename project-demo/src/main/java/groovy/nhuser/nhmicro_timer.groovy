@@ -15,9 +15,9 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
-import com.minxin.micro.db.*;
+import com.nh.micro.db.*;
 
-import com.minxin.micro.rule.engine.core.*;
+import com.nh.micro.rule.engine.core.*;
 
 
 import groovy.json.*;
@@ -25,8 +25,8 @@ import groovy.template.MicroMvcTemplate;
 import net.sf.json.JSONArray
 import net.sf.json.JSONObject
 
-import com.minxin.micro.template.MicroTranAopInter;
-import com.minxin.micro.rule.engine.context.MicroContextHolder;
+import com.nh.micro.template.MicroTranAopInter;
+
 
 class MicroManager extends MicroMvcTemplate{
 	private static Logger logger=Logger.getLogger(MicroManager.class);

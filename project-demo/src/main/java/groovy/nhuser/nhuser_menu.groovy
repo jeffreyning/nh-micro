@@ -49,10 +49,15 @@ class NhuserMenu extends MicroMvcTemplate{
 		sortMap.put("sort", sort);
 		sortMap.put("order", order);
 
-		String sql="select menu.* from nh_micro_menu menu "+
+/*		String sql="select menu.* from nh_micro_menu menu "+
 		"where  menu.meta_key in ("+
 		"select distinct(menu_unit.meta_key) from nh_micro_menu menu_unit left join nh_micro_ref_menu_role menu_role on menu_unit.meta_key=menu_role.meta_key "+
 		"left join nh_micro_ref_user_role user_role on menu_role.meta_name=user_role.meta_name where user_role.meta_key=? or user_role.meta_key is null"+
+		" )";*/
+		String sql="select menu.* from nh_micro_menu menu "+
+		"where  menu.meta_key in ("+
+		"select distinct(menu_unit.meta_key) from nh_micro_menu menu_unit left join nh_micro_ref_menu_role menu_role on menu_unit.meta_key=menu_role.meta_key "+
+		"left join nh_micro_ref_user_role user_role on menu_role.meta_name=user_role.meta_name where user_role.meta_key=? or (user_role.meta_key is null and menu_role.meta_name is null)"+
 		" )";
 		String userId=httpSession.getAttribute("nhUserName");
 		//List retList=GroovyExecUtil.execGroovyRetObj("MicroServiceTemplate", "getInfoListAllService",requestParamMap, tableName,sortMap);
