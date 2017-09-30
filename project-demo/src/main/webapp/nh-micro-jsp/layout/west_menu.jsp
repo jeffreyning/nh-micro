@@ -1,6 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%
 String path=request.getContextPath();
+System.out.println("xxxxxx");
 %>
 
 [
@@ -13,7 +14,7 @@ String path=request.getContextPath();
 		"text":"用户列表",
 		"iconCls":"icon-nav",
 		"attributes":{
-		  "url":"/<%=path %>/nh-micro-jsp/user-manager/listUserInfo.jsp"
+		  "url":"<%=path %>/nh-micro-jsp/user-manager/listUserInfo.jsp"
 		  }
 	},{
 		"id":16,
@@ -192,5 +193,20 @@ String path=request.getContextPath();
 			}			
 				
 		]
-	}	
+	},
+		
+{
+	"id":8,
+	"text":"技术验证管理",
+	"iconCls":"icon-channels",
+	"children":[{
+		"id":31,
+		"text":"分库分表查询验证",
+		"iconCls":"icon-nav",
+		"attributes":{
+		  "url":"/<%=path %>/nh-micro-jsp/merge-page/testMergeQuery.jsp"
+		  }
+	}
+	]
+}
 ]
