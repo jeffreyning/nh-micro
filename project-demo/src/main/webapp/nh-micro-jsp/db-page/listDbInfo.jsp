@@ -44,7 +44,12 @@ $(function(){
 						width : 100
 					
 					},
-
+					{
+						field : 'datasource_classname',
+						title : '数据源class',
+						width : 100
+					
+					},
 					{
 						field : 'db_url',
 						title : '数据库连接地址',
@@ -356,7 +361,10 @@ function reconn(){
 					<td align="right">数据源标识:</td>
 					<td><input type="text" id="meta_key" name="meta_key" value="" /></td>
 				</tr>
-
+				<tr>
+					<td align="right">数据源class:</td>
+					<td><input type="text" id="datasource_classname" name="datasource_classname" value="" /></td>
+				</tr>	
 				<tr>
 					<td align="right">数据库连接地址:</td>
 					<td><input type="text" id="db_url" name="db_url" value="" /></td>
@@ -387,7 +395,10 @@ function reconn(){
 					<td align="right">数据源标识:</td>
 					<td><input type="text" id="meta_key" name="meta_key" value="" /></td>
 				</tr>
-				
+				<tr>
+					<td align="right">数据源class:</td>
+					<td><input type="text" id="datasource_classname" name="datasource_classname" value="" /></td>
+				</tr>					
 				<tr>
 					<td align="right">数据库连接地址:</td>
 					<td><input type="text" id="db_url" name="db_url" value="" /></td>

@@ -206,6 +206,22 @@ System.out.println("xxxxxx");
 		"attributes":{
 		  "url":"/<%=path %>/nh-micro-jsp/merge-page/testMergeQuery.jsp"
 		  }
+	},
+	{
+		"id":32,
+		"text":"xa分布式事务数据源管理",
+		"iconCls":"icon-nav",
+		"attributes":{
+		  "url":"/<%=path %>/nh-micro-jsp/xa-page/listXADbInfo.jsp"
+		  }
+	},
+	{
+		"id":33,
+		"text":"数据源管理",
+		"iconCls":"icon-nav",
+		"attributes":{
+		  "url":"/<%=path %>/nh-micro-jsp/db-page/listDbInfo.jsp"
+		  }
 	}
 	]
 }
