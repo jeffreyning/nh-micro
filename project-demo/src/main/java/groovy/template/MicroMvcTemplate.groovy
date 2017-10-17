@@ -3,6 +3,7 @@ package groovy.template;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 
 import groovy.json.*;
@@ -18,7 +19,7 @@ import org.apache.log4j.Logger;
 
 class MicroMvcTemplate extends MicroServiceBizTemplate{
 
-	Logger logger = LoggerFactory.getLogger(MicroMvcTemplate.getClass());
+	//Logger logger = LoggerFactory.getLogger(MicroMvcTemplate.getClass());
 
 	public boolean checkExecAuth(String groovyName,String groovyMethod,Map paramMap){
 		if(groovyName.equals("nhlogin")){
