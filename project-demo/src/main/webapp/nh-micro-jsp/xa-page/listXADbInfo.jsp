@@ -211,13 +211,6 @@ function reconn(){
 	
 	function addOne(){
 		var dataO = $("#addForm").serializeObject();
-		if(dataO.reportDateYear==null || dataO.reportDateYear=='' || dataO.reportDateMonth==null || dataO.reportDateMonth=='' ){
-			alert('pls input date');
-			return;
-		}
-		dataO.reportDate=dataO.reportDateYear+"-"+dataO.reportDateMonth;
-
-		var temp = $("#addForm #addShowForm_temp").val();
 	
 		var url="<%=path%>/NhEsbServiceServlet?cmdName=Groovy&subName=MicroXADbList&groovySubName=createInfo";
 		$.post(url,dataO,function(data,stats){
