@@ -136,5 +136,10 @@
 	</list>
 	</property>
 	</bean>   	
-
+    <bean class="com.project.util.xa.XADataSourceHolder" init-method="init">
+        <property name="holderMap">
+            <map>
+            </map>
+        </property>    
+    </bean>
 </beans>
