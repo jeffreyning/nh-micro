@@ -106,6 +106,10 @@ Product_algo_lixi_xxhb.groovy,实现利息(先息后本)计算功能。
 
 内置互联网金融p2p理财功能和互联网页面
 
+内置动态热部署数据源配置功能
+内置动态热部署api服务功能
+内置分库分表查询合并分页功能
+内置分布式事务管理功能
 
 nhmicro微服务框架开发技术说明
 框架描述
@@ -831,4 +835,45 @@ CREATE TABLE `t_front_bid` (
   `is_bid_change_verifier` varchar(2) DEFAULT '0' COMMENT '募集中变更待审核的 审核状态 1 审核拒绝 2审核通过',
   PRIMARY KEY (`bid_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='标的信息表';
+
+-- ----------------------------
+-- Table structure for 数据源配置 
+-- ----------------------------
+CREATE TABLE `nh_micro_dbconf` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识（预留字段）',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `datasource_classname` varchar(255) DEFAULT NULL,
+  `db_user` varchar(50) DEFAULT NULL,
+  `db_password` varchar(100) DEFAULT NULL,
+  `db_url` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='数据源';
+
+-- ----------------------------
+-- Table structure for xa分布式数据源配置 
+-- ----------------------------
+CREATE TABLE `nh_micro_xadbconf` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `meta_key` varchar(50) DEFAULT NULL COMMENT '元数据标识（预留字段）',
+  `meta_name` varchar(100) DEFAULT NULL COMMENT '元数据名称',
+  `meta_type` varchar(100) DEFAULT NULL COMMENT '元数据类型',
+  `meta_content` json DEFAULT NULL COMMENT '元数据内容',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `unique_resource_name` varchar(100) DEFAULT NULL,
+  `xa_datasource_classname` varchar(255) DEFAULT NULL,
+  `db_user` varchar(50) DEFAULT NULL,
+  `db_password` varchar(100) DEFAULT NULL,
+  `db_url` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='xa分布式数据源';
+
+
 
