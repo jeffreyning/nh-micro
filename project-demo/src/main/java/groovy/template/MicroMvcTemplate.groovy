@@ -53,9 +53,13 @@ class MicroMvcTemplate extends MicroServiceBizTemplate{
 			}else if(valueObj instanceof String[]){
 				String[] values = (String[])valueObj;
 				for(int i=0;i<values.length;i++){
-					value = values[i] + ",";
+					if(i==0){
+					value = values[i] ;
+					}else{
+					value = value+","+values[i];
+					}
 				}
-				value = value.substring(0, value.length()-1);
+				//value = value.substring(0, value.length()-1);
 			}else{
 				value = valueObj.toString();
 			}
