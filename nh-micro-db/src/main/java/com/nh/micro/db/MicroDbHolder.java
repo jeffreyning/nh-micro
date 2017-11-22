@@ -13,6 +13,14 @@ import java.util.Map;
 public class MicroDbHolder {
 public static Map dbHolder=new HashMap();
 public static Map readOnlyMap=new HashMap();
+public static Map dbTypeMap=new HashMap();
+public static Map getDbTypeMap() {
+	return dbTypeMap;
+}
+
+public void setDbTypeMap(Map dbTypeMap) {
+	MicroDbHolder.dbTypeMap = dbTypeMap;
+}
 
 public static Map getReadOnlyMap() {
 	return readOnlyMap;

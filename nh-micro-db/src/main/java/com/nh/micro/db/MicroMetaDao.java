@@ -1,8 +1,10 @@
 package com.nh.micro.db;
 
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +21,9 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.nh.micro.rule.engine.core.GroovyLoadUtil;
 
@@ -29,7 +33,7 @@ import com.nh.micro.rule.engine.core.GroovyLoadUtil;
  *
  */
 public class MicroMetaDao {
-	public static Boolean orclEndFlag=true;
+	public static Boolean orclEndFlag=false;
 	public static Boolean getOrclEndFlag() {
 		return orclEndFlag;
 	}
@@ -138,7 +142,7 @@ public class MicroMetaDao {
 		this.dbName = dbName;
 	}
 
-	public String dbType="mysql";
+	public String dbType="default";
 	
 	public String getDbType() {
 		return dbType;
@@ -147,6 +151,16 @@ public class MicroMetaDao {
 	public void setDbType(String dbType) {
 		this.dbType = dbType;
 	}
+	
+	public String defaultId="default";
+	
+	public String getDefaultId() {
+		return defaultId;
+	}
+	public void setDefaultId(String defaultId) {
+		this.defaultId = defaultId;
+	}
+	
 	public JdbcTemplate getMicroJdbcTemplate(){
 		return getMicroJdbcTemplate(dbName);
 		//JdbcTemplate retTemplate=(JdbcTemplate) MicroDbHolder.getDbSource(dbName);
@@ -185,6 +199,33 @@ public class MicroMetaDao {
 		return retTemplate;		
 	}
 	
+	public String calcuDbType(){
+		if(dbType!=null && !"default".equals(dbType)){
+			return dbType;
+		}
+		String retType=(String) MicroDbHolder.getDbTypeMap().get(dbName);
+		if(retType==null){
+			retType="mysql";
+		}
+		return retType;
+	}	
+	
+	public String calcuIdKey(){
+		if(defaultId!=null && !"default".equals(defaultId)){
+			return defaultId;
+		}
+		String retId=null;
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+			retId="id";
+		}else{
+			retId="ID";
+		}
+
+		return retId;
+	}	
+	
+	
 	public static ThreadLocal<Boolean> isThreadReadOnly=new ThreadLocal();
 	
 	public static Boolean getIsThreadReadOnly() {
@@ -207,7 +248,7 @@ public class MicroMetaDao {
 		this.isReadOnly = isReadOnly;
 	}
 	/*
-	 * ���id��ѯ��׼���bean
+	 * 锟斤拷锟絠d锟斤拷询锟斤拷准锟斤拷锟絙ean
 	 */
 	public MicroMetaBean getMetaBeanById(String tableName, String id) {
 /*		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -230,7 +271,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ����idɾ���׼���bean
+	 * 锟斤拷荼锟斤拷锟斤拷id删锟斤拷锟阶硷拷锟斤拷bean
 	 */
 	public int delMetaBeanById(String tableName, String id) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -245,7 +286,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ����id���±�׼���bean
+	 * 锟斤拷荼锟斤拷锟斤拷id锟斤拷锟铰憋拷准锟斤拷锟絙ean
 	 */
 	public int updateMetaBeanById(String tableName, String id,MicroMetaBean microMetaBean) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -303,7 +344,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ����id�����׼���bean
+	 * 锟斤拷荼锟斤拷锟斤拷id锟斤拷锟斤拷锟阶硷拷锟斤拷bean
 	 */
 	public int insertMetaBeanById(String tableName, MicroMetaBean microMetaBean) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -326,7 +367,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ���������ѯ��׼���bean
+	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷锟斤拷锟窖拷锟阶硷拷锟斤拷bean
 	 */
 	public List<MicroMetaBean> queryMetaBeanByCondition(String tableName, String condition) {
 		List<MicroMetaBean> retBeanList=new ArrayList();
@@ -356,7 +397,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ���������ѯ��׼���bean
+	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷锟斤拷锟窖拷锟阶硷拷锟斤拷bean
 	 */
 	public List<MicroMetaBean> queryMetaBeanByCondition(String tableName, String condition,Object[] paramArray,int[] typeArray) {
 		List<MicroMetaBean> retBeanList=new ArrayList();
@@ -385,8 +426,12 @@ public class MicroMetaDao {
 		}
 		return retBeanList;
 	}	
+	
+
+	
 	private String getTimeName(){
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
 			return "now()";
 		}else{
 			return "sysdate";
@@ -394,7 +439,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ���sql��ѯ
+	 * 锟斤拷锟絪ql锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjJoinByCondition(String sql) {
 
@@ -408,8 +453,9 @@ public class MicroMetaDao {
 
 	public Map<String, Object> querySingleObjJoinByCondition(String sql) {
 
-
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+		//if(dbType!=null && dbType.equals("mysql")){
 			sql=sql+" limit 1";
 		}else{
 			sql="select * from ("+sql+") where rownum=1";
@@ -423,15 +469,34 @@ public class MicroMetaDao {
 		}
 		return retMap;
 	}
+
+	public List<Map<String, Object>> queryLimitObjJoinByCondition(String sql,int limit) {
+
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+		//if(dbType!=null && dbType.equals("mysql")){
+			sql=sql+" limit "+limit;
+		}else{
+			sql="select * from ("+sql+") where rownum <="+limit;
+		}	
+		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
+		logger.debug(sql);
+		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql);
+		return retList;
+	}	
+	
+	
 	
 	/*
-	 * ���id��ѯ
+	 * 锟斤拷锟絠d锟斤拷询
 	 */
 	public Map<String, Object> queryObjJoinById(String tableName,Object id) {
-
-		String where="where id=?";
+		String tempIdKey=calcuIdKey();
+		String where="where "+tempIdKey+"=?";
 		String limitStr="";
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){		
+		//if(dbType!=null && dbType.equals("mysql")){
 			limitStr="limit 1";
 		}else{
 			limitStr="and rownum=1";
@@ -451,15 +516,19 @@ public class MicroMetaDao {
 		}		
 		return retMap;
 	}	
+
+
 	
 	/*
-	 * ���ҵ��id��ѯ
+	 * 锟斤拷锟揭碉拷锟絠d锟斤拷询
 	 */
 	public Map<String, Object> queryObjJoinByBizId(String tableName,Object bizId,String condition) {
 
 		String where="where "+condition+"=?";
 		String limitStr="";
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){		
+		//if(dbType!=null && dbType.equals("mysql")){
 			limitStr="limit 1";
 		}else{
 			limitStr="and rownum=1";
@@ -480,7 +549,7 @@ public class MicroMetaDao {
 		return retMap;
 	}	
 	/*
-	 * ���sql��ѯ
+	 * 锟斤拷锟絪ql锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjJoinByCondition(String sql,Object[] paramArray,int[] typeArray) {
 
@@ -495,7 +564,7 @@ public class MicroMetaDao {
 
 	
 	/*
-	 * ���sql��ѯ
+	 * 锟斤拷锟絪ql锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjJoinByCondition(String sql,Object[] paramArray) {
 
@@ -510,8 +579,9 @@ public class MicroMetaDao {
 
 	
 	public Map<String, Object> querySingleObjJoinByCondition(String sql,Object[] paramArray) {
-
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+		//if(dbType!=null && dbType.equals("mysql")){
 			sql=sql+" limit 1";
 		}else{
 			sql="select * from ("+sql+") where rownum=1";
@@ -526,8 +596,24 @@ public class MicroMetaDao {
 		}
 		return retMap;
 	}	
+	
+	
+	public List<Map<String, Object>> queryLimitObjJoinByCondition(String sql,Object[] paramArray,int limit) {
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+		//if(dbType!=null && dbType.equals("mysql")){
+			sql=sql+" limit "+limit;
+		}else{
+			sql="select * from ("+sql+") where rownum <= "+limit;
+		}	
+		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
+		logger.debug(sql);
+		logger.debug(Arrays.toString(paramArray));
+		List<Map<String, Object>> infoList = jdbcTemplate.queryForList(sql,paramArray);
+		return infoList;
+	}		
 	/*
-	 * ���sql��ҳ��ѯ
+	 * 锟斤拷锟絪ql锟斤拷页锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjJoinDataByPageCondition(String innerSql, int start,int end) {
 
@@ -535,17 +621,18 @@ public class MicroMetaDao {
 		.getDbSource(dbName);*/
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		String sql = "";
-		
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){		
+		//if(dbType!=null && dbType.equals("mysql")){
 			int pageRows=end-start;
 			String limit=start+","+pageRows;
 			sql=innerSql+ " limit "+limit;
 		}else{
 			String startLimit=" WHERE NHPAGE_RN >= "+start;
-			String endLimit=" WHERE ROWNUM <= "+end;
-			if(orclEndFlag==false){
+			String endLimit=" WHERE ROWNUM < "+end;
+/*			if(orclEndFlag==false){
 				endLimit=" WHERE ROWNUM < "+end;
-			}
+			}*/
 			sql="SELECT * FROM ( SELECT NHPAGE_TEMP.*, ROWNUM NHPAGE_RN FROM ("+ innerSql +" ) NHPAGE_TEMP "+endLimit+" ) "+ startLimit;
 		}
 		logger.debug(sql);
@@ -554,7 +641,7 @@ public class MicroMetaDao {
 	}	
 
 	/*
-	 * ���sql��ҳ��ѯ
+	 * 锟斤拷锟絪ql锟斤拷页锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjJoinDataByPageCondition(String innerSql, int start,int end, Object[] paramArray,int[] typeArray) {
 
@@ -562,14 +649,15 @@ public class MicroMetaDao {
 		.getDbSource(dbName);*/
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		String sql = "";
-		
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){	
+		//if(dbType!=null && dbType.equals("mysql")){
 			int pageRows=end-start;
 			String limit=start+","+pageRows;
 			sql=innerSql+ " limit "+limit;
 		}else{
 			String startLimit=" WHERE NHPAGE_RN >= "+start;
-			String endLimit=" WHERE ROWNUM <= "+end;
+			String endLimit=" WHERE ROWNUM < "+end;
 			sql="SELECT * FROM ( SELECT NHPAGE_TEMP.*, ROWNUM NHPAGE_RN FROM ("+ innerSql +" ) NHPAGE_TEMP "+endLimit+" ) "+ startLimit;
 		}
 		logger.debug(sql);
@@ -579,7 +667,7 @@ public class MicroMetaDao {
 	}		
 
 	/*
-	 * ���sql��ҳ��ѯ
+	 * 锟斤拷锟絪ql锟斤拷页锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjJoinDataByPageCondition(String innerSql, int start,int end, Object[] paramArray) {
 
@@ -587,14 +675,15 @@ public class MicroMetaDao {
 		.getDbSource(dbName);*/
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		String sql = "";
-		
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+		//if(dbType!=null && dbType.equals("mysql")){
 			int pageRows=end-start;
 			String limit=start+","+pageRows;
 			sql=innerSql+ " limit "+limit;
 		}else{
 			String startLimit=" WHERE NHPAGE_RN >= "+start;
-			String endLimit=" WHERE ROWNUM <= "+end;
+			String endLimit=" WHERE ROWNUM < "+end;
 			sql="SELECT * FROM ( SELECT NHPAGE_TEMP.*, ROWNUM NHPAGE_RN FROM ("+ innerSql +" ) NHPAGE_TEMP "+endLimit+" ) "+ startLimit;
 		}
 		logger.debug(sql);
@@ -604,7 +693,7 @@ public class MicroMetaDao {
 	}	
 	
 	/*
-	 * ���sql��ѯ��¼��
+	 * 锟斤拷锟絪ql锟斤拷询锟斤拷录锟斤拷
 	 */
 	public int queryObjJoinCountByCondition(String sql){
 		/*		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -616,7 +705,7 @@ public class MicroMetaDao {
 	}
 
 	/*
-	 * ���sql��ѯ��¼��
+	 * 锟斤拷锟絪ql锟斤拷询锟斤拷录锟斤拷
 	 */
 	public int queryObjJoinCountByCondition(String sql,Object[] paramArray){
 		/*		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -629,7 +718,7 @@ public class MicroMetaDao {
 	}	
 	
 	/*
-	 * ��ݱ����ѯ
+	 * 锟斤拷荼锟斤拷锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjByCondition(String tableName, String condition,String cols, String orders) {
 
@@ -643,7 +732,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ����ѯ
+	 * 锟斤拷荼锟斤拷锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjByCondition(String tableName, String condition,String cols, String orders,Object[] paramArray,int[] typeArray) {
 
@@ -658,7 +747,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ����ѯ
+	 * 锟斤拷荼锟斤拷锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjByCondition(String tableName, String condition,String cols, String orders,Object[] paramArray) {
 
@@ -673,21 +762,22 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ����ҳ��ѯ
+	 * 锟斤拷荼锟斤拷锟斤拷页锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjDataPageByCondition(String tableName, String condition,String cols,String orders, int start,int end ) {
 		/*		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
 		.getDbSource(dbName);*/
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		String sql = "";
-		
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+		//if(dbType!=null && dbType.equals("mysql")){
 			int pageRows=end-start;
 			String limit=start+","+pageRows;
 			sql="select "+cols+" from " + tableName + " where "+condition+" order by "+orders+ " limit "+limit;
 		}else{
 			String startLimit=" WHERE NHPAGE_RN >= "+start;
-			String endLimit=" WHERE ROWNUM <= "+end;
+			String endLimit=" WHERE ROWNUM < "+end;
 			String innerSql="select "+cols+" from " + tableName + " where "+condition+" order by "+orders;
 			sql="SELECT * FROM ( SELECT NHPAGE_TEMP.*, ROWNUM NHPAGE_RN FROM ("+ innerSql +" ) NHPAGE_TEMP "+endLimit+" ) "+ startLimit;
 		}
@@ -698,21 +788,22 @@ public class MicroMetaDao {
 	}	
 	
 	/*
-	 * ��ݱ����ҳ��ѯ
+	 * 锟斤拷荼锟斤拷锟斤拷页锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjDataPageByCondition(String tableName, String condition,String cols,String orders, int start,int end,Object[] paramArray,int[] typeArray ) {
 		/*		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
 		.getDbSource(dbName);*/
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		String sql = "";
-		
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+		//if(dbType!=null && dbType.equals("mysql")){
 			int pageRows=end-start;
 			String limit=start+","+pageRows;
 			sql="select "+cols+" from " + tableName + " where "+condition+" order by "+orders+ " limit "+limit;
 		}else{
 			String startLimit=" WHERE NHPAGE_RN >= "+start;
-			String endLimit=" WHERE ROWNUM <= "+end;
+			String endLimit=" WHERE ROWNUM < "+end;
 			String innerSql="select "+cols+" from " + tableName + " where "+condition+" order by "+orders;
 			sql="SELECT * FROM ( SELECT NHPAGE_TEMP.*, ROWNUM NHPAGE_RN FROM ("+ innerSql +" ) NHPAGE_TEMP "+endLimit+" ) "+ startLimit;
 		}
@@ -723,21 +814,22 @@ public class MicroMetaDao {
 	}	
 	
 	/*
-	 * ��ݱ����ҳ��ѯ
+	 * 锟斤拷荼锟斤拷锟斤拷页锟斤拷询
 	 */
 	public List<Map<String, Object>> queryObjDataPageByCondition(String tableName, String condition,String cols,String orders, int start,int end,Object[] paramArray ) {
 		/*		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
 		.getDbSource(dbName);*/
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		String sql = "";
-		
-		if(dbType!=null && dbType.equals("mysql")){
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+		//if(dbType!=null && dbType.equals("mysql")){
 			int pageRows=end-start;
 			String limit=start+","+pageRows;
 			sql="select "+cols+" from " + tableName + " where "+condition+" order by "+orders+ " limit "+limit;
 		}else{
 			String startLimit=" WHERE NHPAGE_RN >= "+start;
-			String endLimit=" WHERE ROWNUM <= "+end;
+			String endLimit=" WHERE ROWNUM < "+end;
 			String innerSql="select "+cols+" from " + tableName + " where "+condition+" order by "+orders;
 			sql="SELECT * FROM ( SELECT NHPAGE_TEMP.*, ROWNUM NHPAGE_RN FROM ("+ innerSql +" ) NHPAGE_TEMP "+endLimit+" ) "+ startLimit;
 		}
@@ -748,7 +840,7 @@ public class MicroMetaDao {
 	}		
 	
 	/*
-	 * ��ݱ����ѯ��¼��
+	 * 锟斤拷荼锟斤拷锟斤拷询锟斤拷录锟斤拷
 	 */
 	public int queryObjCountByCondition(String tableName, String condition){
 		/*		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -762,7 +854,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ����ѯ��¼��
+	 * 锟斤拷荼锟斤拷锟斤拷询锟斤拷录锟斤拷
 	 */
 	public int queryObjCountByCondition(String tableName, String condition,Object[] paramArray){
 		/*		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -777,11 +869,14 @@ public class MicroMetaDao {
 	}	
 	
 	/*
-	 * �����ҳ��ʼ��¼λ��
+	 * 锟斤拷锟斤拷锟揭筹拷锟绞硷拷锟铰嘉伙拷锟�
 	 */
 	public int calcuStartIndex(int pageNum,int onePageCount){
 		int startIndex=0;
-		if(dbType!=null && dbType.equals("mysql")){
+		
+		String tempType=calcuDbType();
+		if(tempType!=null && tempType.equals("mysql")){
+		//if(dbType!=null && dbType.equals("mysql")){
 			startIndex=pageNum*onePageCount;
 		}else{
 			startIndex=pageNum*onePageCount+1;
@@ -791,7 +886,7 @@ public class MicroMetaDao {
 	
 	
 	/*
-	 * ��ݱ������
+	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int updateObjByCondition(String tableName, String condition,String setStr) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -808,7 +903,7 @@ public class MicroMetaDao {
 		return retStatus;
 	}	
 	/*
-	 * ���sql����
+	 * 锟斤拷锟絪ql锟斤拷锟斤拷
 	 */
 	public int updateObjByCondition(String sql) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -827,7 +922,7 @@ public class MicroMetaDao {
 		return retStatus;
 	}	
 	/*
-	 * ��ݱ������
+	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int updateObjByCondition(String tableName, String condition,String setStr,Object[] paramArray,int[] typeArray) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -846,7 +941,7 @@ public class MicroMetaDao {
 	
 	
 	/*
-	 * ��ݱ������
+	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int updateObjByCondition(String tableName, String condition,String setStr,Object[] paramArray) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -871,7 +966,8 @@ public class MicroMetaDao {
 		if(autoOperTime){
 			setStr="update_time="+timeName+","+setStr;
 		}
-		String sql = "update " + tableName +" set "+setStr+ " where id=?";
+		String tempIdKey=calcuIdKey();
+		String sql = "update " + tableName +" set "+setStr+ " where "+tempIdKey+"=?";
 		if(paramList==null){
 			paramList=new ArrayList();
 		}
@@ -924,7 +1020,8 @@ public class MicroMetaDao {
 		if(autoOperTime){
 			setStr="update_time="+timeName+","+setStr;
 		}
-		String sql = "update " + tableName +" set "+setStr+ " where id=?";
+		String tempIdKey=calcuIdKey();
+		String sql = "update " + tableName +" set "+setStr+ " where "+tempIdKey+"=?";
 
 		paramList.add(id);
 		logger.debug(sql);
@@ -969,7 +1066,7 @@ public class MicroMetaDao {
 	
 	
 	/*
-	 * ��ݱ���ɾ��
+	 * 锟斤拷荼锟斤拷锟缴撅拷锟�
 	 */
 	public int delObjByCondition(String tableName, String condition) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -981,7 +1078,7 @@ public class MicroMetaDao {
 	}	
 	
 	/*
-	 * ��ݱ���ɾ��
+	 * 锟斤拷荼锟斤拷锟缴撅拷锟�
 	 */
 	public int delObjByCondition(String tableName, String condition,Object[] paramArray,int[] typeArray) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -994,7 +1091,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ���ɾ��
+	 * 锟斤拷荼锟斤拷锟缴撅拷锟�
 	 */
 	public int delObjByCondition(String tableName, String condition,Object[] paramArray) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -1010,7 +1107,8 @@ public class MicroMetaDao {
 	public int delObjById(String tableName, Object id) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
 				.getDbSource(dbName);
-		String sql = "delete from " + tableName + " where id=?";
+		String tempIdKey=calcuIdKey();
+		String sql = "delete from " + tableName + " where "+tempIdKey+"=?";
 		Object[] paramArray=new Object[1];
 		paramArray[0]=id;
 		logger.debug(sql);
@@ -1032,7 +1130,7 @@ public class MicroMetaDao {
 	}
 	
 	/*
-	 * ��ݱ������
+	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int insertObj(String tableName, String cols,String values) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -1051,7 +1149,7 @@ public class MicroMetaDao {
 
 	
 	/*
-	 * ���sql����
+	 * 锟斤拷锟絪ql锟斤拷锟斤拷
 	 */
 	public int insertObj(String sql) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -1069,7 +1167,7 @@ public class MicroMetaDao {
 		return retStatus;
 	}	
 	/*
-	 * ��ݱ������
+	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int insertObj(String tableName, String cols,String values,Object[] paramArray,int[] typeArray) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -1088,7 +1186,7 @@ public class MicroMetaDao {
 	}		
 	
 	/*
-	 * ��ݱ������
+	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int insertObj(String tableName, String cols,String values,Object[] paramArray) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
@@ -1106,6 +1204,42 @@ public class MicroMetaDao {
 		return retStatus;
 	}
 
+	
+	public int insertObj(String tableName, String cols,String values,final Object[] paramArray, KeyHolder keyHolder, final String idCol) {
+		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
+				.getDbSource(dbName);
+
+		String timeName=getTimeName();
+		if(autoOperTime){
+			cols="create_time,update_time,"+cols;
+			values=timeName+","+timeName+","+values;
+		}
+		final String sql = "insert into " + tableName + " ("+cols+") values ("+values+")";
+		logger.debug(sql);
+		logger.debug(Arrays.toString(paramArray));
+
+		//Integer retStatus=jdbcTemplate.update(sql,paramArray);
+		Integer retStatus=jdbcTemplate.update(new PreparedStatementCreator() { 
+
+			public PreparedStatement createPreparedStatement(Connection con) 
+			throws SQLException { 
+					String[] keyColNames=new String[1];
+					keyColNames[0]=idCol;
+					PreparedStatement ps=con.prepareStatement(sql,keyColNames); 
+					if(paramArray!=null){
+						int size=paramArray.length;
+						for(int i=0;i<size;i++){
+							ps.setObject(i+1, paramArray[i]);
+						}
+					}
+		
+					return ps; 
+				} 
+			}, keyHolder);		
+		
+		return retStatus;
+	}	
+	
 	public int insertObj(String tableName, Map paramMap) {
 		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
 				.getDbSource(dbName);

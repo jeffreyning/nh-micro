@@ -1,5 +1,6 @@
 package com.nh.micro.db;
 
+
 import com.nh.micro.db.MicroDbModelEntry;
 import com.nh.micro.rule.engine.core.GroovyExecUtil;
 
@@ -320,7 +321,13 @@ public class CheckModelTypeUtil {
 		}
 		
 		List tableFieldList=new ArrayList();
-		String sql = "select "+cusSelect+" from "+ tableName+" limit 0";
+		//add for oracle by ninghao
+		String sql = "select "+cusSelect+" from "+ tableName+" where 1=2";
+/*		if("mysql".equalsIgnoreCase(type)){
+			sql=sql+" limit 0";
+		}else{
+			sql=sql+" rownum=1";
+		}*/
 		JdbcTemplate jdbcTemplate = (JdbcTemplate)MicroDbHolder.getDbSource(dbName);
 		SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql);
 		SqlRowSetMetaData sqlRsmd = sqlRowSet.getMetaData();
