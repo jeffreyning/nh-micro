@@ -1,5 +1,7 @@
 package com.nh.micro.template;
 
+import groovy.json.JsonSlurper;
+
 import java.io.StringWriter;
 import java.math.BigDecimal;
 
@@ -19,6 +21,7 @@ import java.util.UUID;
 
 import com.nh.micro.db.Cutil;
 import com.nh.micro.db.Cobj;
+import com.nh.micro.db.MicroMetaDao;
 
 import com.nh.micro.db.MicroDbModelEntry;
 
@@ -35,6 +38,8 @@ import javax.sql.DataSource;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -42,11 +47,10 @@ import org.springframework.transaction.support.AbstractPlatformTransactionManage
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.google.gson.Gson;
-import groovy.json.JsonSlurper;
 
 /**
- * service
- * @author ninghao
+ * service��ģ���װ֧��
+ * @author ninghao ���
  *
  */
 public class MicroServiceTemplateSupport {
@@ -59,12 +63,17 @@ public class MicroServiceTemplateSupport {
 	public static final String TYPE_SELECT_ID_LOCK="insert_id_lock";
 	public static final String TYPE_SELECT_BIZID="insert_bizid";
 	
+	public static final String ORCL_DATE_FORMAT="yyyy-mm-dd hh24:mi:ss";
 	public MicroServiceTemplateSupport(){
 		
 	}
 	public MicroServiceTemplateSupport(String dbName){
 		this.dbName=dbName;
 	}
+	public MicroServiceTemplateSupport(String dbName,String dbType){
+		this.dbName=dbName;
+		this.dbType=dbType;
+	}	
 	public static Map supportHolder=new HashMap();
 	
 	public static Map getSupportHolder() {
@@ -86,7 +95,16 @@ public class MicroServiceTemplateSupport {
 	public Map filterView4Select(String tableName,Map paramMap,String bizId,String bizCol,String type){
 		return null;
 	}
-	
+	private MicroMetaDao microDao=null;
+	public MicroMetaDao getInnerDao(){
+		if(microDao!=null){
+			return microDao;
+		}
+		microDao=new MicroMetaDao(dbName,dbType);
+		microDao.setDefaultId(defaultId);
+		return microDao;
+		
+	}
 	public static MicroServiceTemplateSupport getInstance(){
 		MicroServiceTemplateSupport instance=(MicroServiceTemplateSupport) getSupportHolder().get("default");
 		if(instance==null){
@@ -108,6 +126,22 @@ public class MicroServiceTemplateSupport {
 		return instance;
 		
 	}	
+	
+	public static MicroServiceTemplateSupport getInstance(String dbName,String dbType){
+		if(dbName==null || "".equals(dbName)){
+			dbName="default";
+		}
+		if(dbType==null || "".equals(dbType)){
+			dbType="mysql";
+		}		
+		MicroServiceTemplateSupport instance=(MicroServiceTemplateSupport) getSupportHolder().get(dbName);
+		if(instance==null){
+			instance=new MicroServiceTemplateSupport(dbName,dbType);
+			getSupportHolder().put(dbName, instance);
+		}
+		return instance;
+		
+	}		
 	public String dbName="default";
 	public String getDbName() {
 		return dbName;
@@ -116,19 +150,55 @@ public class MicroServiceTemplateSupport {
 	public void setDbName(String dbName) {
 		this.dbName = dbName;
 	}
+	
+	public String dbType="default";
+	public String getDbType(){
+		return dbType;
+	}
+	public void setDbType(String dbType){
+		this.dbType=dbType;
+	}
+	
+	public String defaultId="default";
 
+	public String getDefaultId() {
+		return defaultId;
+	}
+	public void setDefaultId(String defaultId) {
+		this.defaultId = defaultId;
+	}
+	
+	public String calcuDbType(){
+		if(dbType!=null && !dbType.equals("default")){
+			return dbType;
+		}
+		MicroMetaDao microDao=getInnerDao();
+		String tempDbType=microDao.calcuDbType();
+		
+		return tempDbType;
+	}
+	
+	public String calcuIdKey(){
+		if(defaultId!=null && !"default".equals(defaultId)){
+			return defaultId;
+		}
+		MicroMetaDao microDao=getInnerDao();
+		String tempIdKey=microDao.calcuIdKey();
+		return tempIdKey;		
+	}
+	
 	/**
-	 * 
-	 * @param requestParamMap 
-	 * @param tableName 
-	 * @param modelName 
+	 * ��ȡ���ģ��
+	 * @param requestParamMap �ύ�������
+	 * @param tableName �����
+	 * @param modelName ģ�����
 	 * @return
 	 * @throws Exception
 	 */
-	public static Map getModelEntryMap(Map requestParamMap,String tableName,String modelName,String dbName) throws Exception{
+	public Map getModelEntryMap(Map requestParamMap,String tableName,String modelName,String dbName) throws Exception{
 		return getModelEntryMap( requestParamMap, tableName, modelName, dbName,"");
 	}	
-	public static Map getModelEntryMap(Map requestParamMap,String tableName,String modelName,String dbName,String cusSelect) throws Exception{
+	public Map getModelEntryMap(Map requestParamMap,String tableName,String modelName,String dbName,String cusSelect) throws Exception{
 		Map modelEntryMap=new HashMap();
 		if(requestParamMap==null || requestParamMap.isEmpty()){
 			return modelEntryMap;
@@ -147,16 +217,16 @@ public class MicroServiceTemplateSupport {
 	}
 	
 	/**
+	 * ��ݱ�ṹʵʱ��ȡ���ģ��
 	 * 
-	 * 
-	 * @param tableName 
+	 * @param tableName �����
 	 * @return
 	 * @throws Exception
 	 */
-	public static List getColInfoFromMeta(String tableName,String dbName){
+	public List getColInfoFromMeta(String tableName,String dbName){
 		return getColInfoFromMeta(tableName,dbName,"");
 	}
-	public static List getColInfoFromMeta(String tableName,String dbName,String cusSelect){
+	public List getColInfoFromMeta(String tableName,String dbName,String cusSelect){
 		List tableFieldList=new ArrayList();
 		List modelEntryList=CheckModelTypeUtil.getModelEntryList4Db(tableName,dbName);
 		for (int i = 1; i <= modelEntryList.size(); i++) {
@@ -170,61 +240,84 @@ public class MicroServiceTemplateSupport {
 		return tableFieldList;
 	}	
 	/**
-	 * 
-	 * @param requestParamMap 
-	 * @param modelEntryMap 
+	 * ���ģ�ͺ��ύ����where�ַ�
+	 * @param requestParamMap �ύ����
+	 * @param modelEntryMap ���ģ��
 	 * @return
 	 * @throws Exception
 	 */
-	public static String createWhereInStr(Map requestParamMap,Map modelEntryMap){
+	public String createWhereInStr(Map requestParamMap,Map modelEntryMap){
 		if(modelEntryMap==null){
 			return null;
 		}
 		Cobj cobjValues=Cutil.createCobj(" and ");
+		String tempDbType=calcuDbType();
 		Iterator it=modelEntryMap.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
 			MicroDbModelEntry modelEntry=(MicroDbModelEntry) modelEntryMap.get(key);
-			String value=(String) requestParamMap.get(key);
+			Object value= requestParamMap.get(key);
 			String whereValue="";
 			if(CheckModelTypeUtil.isNumber(modelEntry)){
-				whereValue=Cutil.rep("<REPLACE>",value);
+				whereValue=Cutil.rep("<REPLACE>",(String) value);
 			}else if(CheckModelTypeUtil.isDate(modelEntry) ){
-				whereValue=Cutil.rep("str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')",value);
+				//20171103 for oracle
+				String temp="str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')";
+				if(tempDbType!=null && "oracle".equals(tempDbType)){
+					temp="to_date('<REPLACE>','"+ORCL_DATE_FORMAT+"')";
+				}
+				whereValue=Cutil.rep(temp,(String) value);
+
 			}else{
-				whereValue=Cutil.rep("'<REPLACE>'",value);
+				whereValue=Cutil.rep("'<REPLACE>'",(String) value);
 			}
 			if(CheckModelTypeUtil.isRealCol(modelEntry)==false){
 				String metaName=modelEntry.getMetaContentId();
 				String realKey=CheckModelTypeUtil.getRealColName(key);
 				cobjValues.append(Cutil.rep(metaName+"->>'$.<REPLACE>'=", realKey)+whereValue,value!=null);
 			}else if(CheckModelTypeUtil.isRealCol(modelEntry)){
+				//add 20171115 by ninghao
+
+				if(value instanceof MicroColObj){
+					String colInfoStr=((MicroColObj)value).getColInfo();
+					List colData=((MicroColObj)value).getColData();
+					cobjValues.append(key+" "+colInfoStr);
+
+				}else{
+					//end				
 				cobjValues.append(Cutil.rep("<REPLACE>=", key)+whereValue,value!=null);
+				}
 			}
 		}
 
 		return cobjValues.getStr();
 	}
 
-	public static String createWhereInStr(Map requestParamMap,Map modelEntryMap,List placeList){
+	public String createWhereInStr(Map requestParamMap,Map modelEntryMap,List placeList){
 		if(modelEntryMap==null){
 			return null;
 		}
 		Cobj cobjValues=Cutil.createCobj(" and ");
 		Iterator it=modelEntryMap.keySet().iterator();
+		String tempDbType=calcuDbType();
 		while(it.hasNext()){
 			String key=(String) it.next();
 			MicroDbModelEntry modelEntry=(MicroDbModelEntry) modelEntryMap.get(key);
-			String value=(String) requestParamMap.get(key);
+			Object value= requestParamMap.get(key);
 			String whereValue="";
 			if(CheckModelTypeUtil.isNumber(modelEntry)){
-				whereValue=Cutil.rep("<REPLACE>",value);
+				whereValue=Cutil.rep("<REPLACE>",(String) value);
 
 			}else if(CheckModelTypeUtil.isDate(modelEntry) ){
-				whereValue=Cutil.rep("str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')",value);
+				//for oracle
+				String temp="str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')";
+				if(tempDbType!=null && "oracle".equals(tempDbType)){
+					temp="to_date('<REPLACE>','"+ORCL_DATE_FORMAT+"')";
+				}
+				whereValue=Cutil.rep(temp,(String) value);
 
 			}else{
-				whereValue=Cutil.rep("<REPLACE>",value);
+				whereValue=Cutil.rep("<REPLACE>",(String) value);
 
 			}
 			if(CheckModelTypeUtil.isRealCol(modelEntry)==false){
@@ -235,11 +328,23 @@ public class MicroServiceTemplateSupport {
 					placeList.add(whereValue);
 				}
 			}else if(CheckModelTypeUtil.isRealCol(modelEntry)){
+				//add 20171115 by ninghao
 
-				cobjValues.append(Cutil.rep("<REPLACE>=?", key),value!=null);
-				if(value!=null){
-					placeList.add(whereValue);
-				}				
+				if(value instanceof MicroColObj){
+					String colInfoStr=((MicroColObj)value).getColInfo();
+					List colData=((MicroColObj)value).getColData();
+					cobjValues.append(key+" "+colInfoStr);
+					if(value!=null){
+						placeList.addAll(colData);
+					}
+
+				}else{
+					//end
+					cobjValues.append(Cutil.rep("<REPLACE>=?", key),value!=null);
+					if(value!=null){
+						placeList.add(whereValue);
+					}	
+				}
 			}
 		}
 
@@ -247,14 +352,14 @@ public class MicroServiceTemplateSupport {
 	}	
 	
 	/**
-	 * 
-	 * @param dbColMap 
-	 * @param modelEntryMap 
-	 * @param placeList
+	 * ���ģ�ͺ��ύ����update-set�ַ�
+	 * @param dbColMap �ύ����
+	 * @param modelEntryMap ���ģ��
+	 * @param placeList ռλ���滻ֵ
 	 * @return
 	 * @throws Exception
 	 */
-	public static String createUpdateInStr(Map dbColMap,Map modelEntryMap){
+	public String createUpdateInStr(Map dbColMap,Map modelEntryMap){
 		if(dbColMap==null){
 			return null;
 		}
@@ -264,6 +369,7 @@ public class MicroServiceTemplateSupport {
 		Map<String,Cobj> metaFlagMap=new LinkedHashMap();
 		Cobj crealValues=Cutil.createCobj();
 
+		String tempDbType=calcuDbType();
 		Iterator it=modelEntryMap.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
@@ -286,7 +392,12 @@ public class MicroServiceTemplateSupport {
 					
 					if(value!=null ){
 						if(value.toLowerCase().equals("now()")){
-							cobjValues.append(Cutil.rep("<REPLACE>",value),value!=null);
+							//for oracle
+							String tmpValue="now()";
+							if(tempDbType!=null && "oracle".equals(tempDbType)){
+								tmpValue="SYSDATE";
+							}
+							cobjValues.append(Cutil.rep("<REPLACE>",tmpValue),value!=null);
 						}else{
 							cobjValues.append(Cutil.rep("'<REPLACE>'",value),value!=null);
 						}
@@ -320,9 +431,19 @@ public class MicroServiceTemplateSupport {
 				}else if(CheckModelTypeUtil.isDate(modelEntry)){
 					if(value!=null ){
 						if(value.toLowerCase().equals("now()")){
-							whereValue=value;
+							//for oracle
+							String tmpValue="now()";
+							if(tempDbType!=null && "oracle".equals(tempDbType)){
+								tmpValue="SYSDATE";
+							}							
+							whereValue=tmpValue;
 						}else{
-							whereValue=Cutil.rep("str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')",value);	
+							//for oracle
+							String temp="str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')";
+							if(tempDbType!=null && "oracle".equals(tempDbType)){
+								temp="to_date('<REPLACE>','"+ORCL_DATE_FORMAT+"')";
+							}
+							whereValue=Cutil.rep(temp,value);	
 						}
 					}
 
@@ -345,7 +466,7 @@ public class MicroServiceTemplateSupport {
 
 		return crealValues.getStr();
 	}	
-	public static String createUpdateInStr(Map dbColMap,Map modelEntryMap,List placeList){
+	public String createUpdateInStr(Map dbColMap,Map modelEntryMap,List placeList){
 		if(dbColMap==null){
 			return null;
 		}
@@ -355,11 +476,13 @@ public class MicroServiceTemplateSupport {
 		Map<String,Cobj> metaFlagMap=new LinkedHashMap();
 		Cobj crealValues=Cutil.createCobj();
 
+		String tempKeyId=calcuIdKey();
+		String tempDbType=calcuDbType();
 		Iterator it=modelEntryMap.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
 			//������idֵ
-			if("id".equals(key)){
+			if(tempKeyId.equals(key)){
 				continue;
 			}
 			MicroDbModelEntry modelEntry=(MicroDbModelEntry) modelEntryMap.get(key);
@@ -382,7 +505,12 @@ public class MicroServiceTemplateSupport {
 					}else if(CheckModelTypeUtil.isDate(modelEntry) ){
 						if(value!=null ){
 							if(value.toLowerCase().equals("now()")){
-								cobjValues.append(Cutil.rep("<REPLACE>",value),value!=null);
+								//for oracle
+								String tmpValue="now()";
+								if(tempDbType!=null && "oracle".equals(tempDbType)){
+									tmpValue="SYSDATE";
+								}								
+								cobjValues.append(Cutil.rep("<REPLACE>",tmpValue),value!=null);
 							}else{
 								cobjValues.append(Cutil.rep("<REPLACE>","?"),value!=null);
 							}
@@ -419,10 +547,20 @@ public class MicroServiceTemplateSupport {
 				if(value!=null ){
 					if(CheckModelTypeUtil.isDate(modelEntry) ){
 						if(value.toLowerCase().equals("now()")){
-							crealValues.append(Cutil.rep("<REPLACE>=", key)+value,value!=null);
+							//for oracle
+							String tmpValue="now()";
+							if(tempDbType!=null && "oracle".equals(tempDbType)){
+								tmpValue="SYSDATE";
+							}
+							crealValues.append(Cutil.rep("<REPLACE>=", key)+tmpValue,value!=null);
 						}else{
 							realValueList.add(value);
-							crealValues.append(key+"=str_to_date(?,'%Y-%m-%d %H:%i:%s')",value!=null);
+							//add for oracle
+							String temp="=str_to_date(?,'%Y-%m-%d %H:%i:%s')";
+							if(tempDbType!=null && "oracle".equals(tempDbType)){
+								temp="=to_date(?,'"+ORCL_DATE_FORMAT+"')";
+							}
+							crealValues.append(key+temp,value!=null);
 						}
 					}else{
 						realValueList.add(value);
@@ -447,13 +585,13 @@ public class MicroServiceTemplateSupport {
 
 	
 	/**
-	 * 
-	 * @param dbColMap 
-	 * @param modelEntryMap
+	 * ��װ�������ַ�
+	 * @param dbColMap �ύ���
+	 * @param modelEntryMap ���ģ�� 
 	 * @return
 	 * @throws Exception
 	 */	
-	public static String createInsertBeforeStr4ModelEntry(Map dbColMap,Map<String,MicroDbModelEntry> modelEntryMap){
+	public String createInsertBeforeStr4ModelEntry(Map dbColMap,Map<String,MicroDbModelEntry> modelEntryMap){
 		if(dbColMap==null){
 			return null;
 		}
@@ -487,19 +625,20 @@ public class MicroServiceTemplateSupport {
 	}
 	
 	/**
-	 * 
-	 * @param dbColMap 
-	 * @param modelEntryMap 
+	 * ��װ����value�ַ�
+	 * @param dbColMap �ύ���
+	 * @param modelEntryMap ���ģ�� 
 	 * @return
 	 * @throws Exception
 	 */	
-	public static String createInsertValueStr4ModelEntry(Map dbColMap,Map<String,MicroDbModelEntry> modelEntryMap){
+	public String createInsertValueStr4ModelEntry(Map dbColMap,Map<String,MicroDbModelEntry> modelEntryMap){
 		if(dbColMap==null){
 			return null;
 		}
 		Cobj crealValues=Cutil.createCobj();
 		Map metaFlagMap=new TreeMap();
 		
+		String tempDbType=calcuDbType();
 		Iterator it=dbColMap.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
@@ -545,8 +684,12 @@ public class MicroServiceTemplateSupport {
 				if(CheckModelTypeUtil.isNumber(modelEntry)){
 					whereValue=Cutil.rep("<REPLACE>",value);
 				}else if(CheckModelTypeUtil.isDate(modelEntry)){
-			
-					whereValue=Cutil.rep("str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')",value);
+					//add for oracle
+					String temp="str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')";
+					if(tempDbType!=null && "oracle".equals(tempDbType)){
+						temp="to_date('<REPLACE>','"+ORCL_DATE_FORMAT+"')";
+					}
+					whereValue=Cutil.rep(temp,value);
 				}else{
 					whereValue=Cutil.rep("'<REPLACE>'",value);
 				}
@@ -569,13 +712,14 @@ public class MicroServiceTemplateSupport {
 		return crealValues.getStr();
 	}
 
-	public static String createInsertValueStr4ModelEntry(Map dbColMap,Map<String,MicroDbModelEntry> modelEntryMap,List placeList){
+	public String createInsertValueStr4ModelEntry(Map dbColMap,Map<String,MicroDbModelEntry> modelEntryMap,List placeList){
 		if(dbColMap==null){
 			return null;
 		}
 		Cobj crealValues=Cutil.createCobj();
 		Map metaFlagMap=new TreeMap();
 		
+		String tempDbType=calcuDbType();
 		Iterator it=dbColMap.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
@@ -627,9 +771,19 @@ public class MicroServiceTemplateSupport {
 				}else if(CheckModelTypeUtil.isDate(modelEntry)){
 					if(value!=null){
 						if(value.toLowerCase().equals("now()")){
-							whereValue=value;
+							//for oracle
+							String tmpValue="now()";
+							if(tempDbType!=null && "oracle".equals(tempDbType)){
+								tmpValue="SYSDATE";
+							}
+							whereValue=tmpValue;
 						}else{
-							whereValue=Cutil.rep("str_to_date(?,'%Y-%m-%d %H:%i:%s')",value);
+							//add for oracle
+							String temp="str_to_date(?,'%Y-%m-%d %H:%i:%s')";
+							if(tempDbType!=null && "oracle".equals(tempDbType)){
+								temp="to_date(?,'"+ORCL_DATE_FORMAT+"')";
+							}
+							whereValue=Cutil.rep(temp,value);
 						}
 					}						
 					
@@ -669,7 +823,12 @@ public class MicroServiceTemplateSupport {
 						realv="cast(? as json)";
 					}
 					if(svalue.toString().equalsIgnoreCase("now()")){
-						realv=svalue.toString();
+						//for oracle
+						String tmpValue="now()";
+						if(tempDbType!=null && "oracle".equals(tempDbType)){
+							tmpValue="SYSDATE";
+						}
+						realv=tmpValue;
 					}else{
 						placeList.add(svalue);
 					}
@@ -688,7 +847,7 @@ public class MicroServiceTemplateSupport {
 		return crealValues.getStr();
 	}	
 	
-	//
+	//����joinʱ��ǰ׺��where����
 	public String createWhere4Join(Map requestParamMap,String joinName,String colsStr) throws Exception{
 
 		String[] colsArray=colsStr.split(",");
@@ -748,15 +907,29 @@ public class MicroServiceTemplateSupport {
 		String retStr= createWhereInStr(requestParamMapEx, modelEntryMapEx,placeList);
 		return retStr;
 	}	
+
+	
+	private Map getInfoList4PageService(SupportParamBean supportParamBean) throws Exception{
+		Map requestParamMap=supportParamBean.getRequestParamMap();
+		
+		String tableName=supportParamBean.getTableName();
+		Map pageMap=supportParamBean.getSortMap();
+		String cusWhere=supportParamBean.getCusWhere();
+		String cusSelect=supportParamBean.getCusSelect();
+		String modelName=supportParamBean.getModelName();
+		List cusPlaceList=supportParamBean.getCusPlaceList();
+		return getInfoList4PageServiceInnerEx(requestParamMap,tableName,pageMap,cusWhere,cusSelect,modelName,cusPlaceList);
+	}
+	
 	
 	/**
-	 * 
-	 * @param requestParamMap 
-	 * @param tableName 
-	 * @param pageMap 
-	 * @param cusWhere 
-	 * @param cusSelect 
-	 * @param modelName 
+	 * ��ҳ��ѯ
+	 * @param requestParamMap �ύ����
+	 * @param tableName �����
+	 * @param pageMap ��ҳ����
+	 * @param cusWhere ����where�ַ�
+	 * @param cusSelect ����select�ַ�
+	 * @param modelName ģ����� 
 	 * @return
 	 * @throws Exception
 	 */
@@ -768,6 +941,8 @@ public class MicroServiceTemplateSupport {
 		String order=(String) pageMap.get("order");
 		String cusSort=(String) pageMap.get("cusSort");
 		
+		String tempDbType=calcuDbType();
+		
 		Integer pageNum=Integer.valueOf(page);
 		Integer rowsNum=Integer.valueOf(rows);
 		
@@ -775,7 +950,8 @@ public class MicroServiceTemplateSupport {
 			modelName=tableName;
 		}
 		
-		String id=(String) requestParamMap.get("id");
+		String tempKeyId=calcuIdKey();
+		String id=(String) requestParamMap.get(tempKeyId);
 		String where="";
 
 		if(cusWhere !=null && !"".equals(cusWhere)){
@@ -826,10 +1002,10 @@ public class MicroServiceTemplateSupport {
 		}
 		realPlaceList.addAll(cusPlaceList);
 		
-		//add 170927
+		//add 20170927
 		realPlaceList.addAll(placeList);
 		String selectCount="select count(1) from "+tableName+" "+where;
-		Integer total=(MicroMetaDao.getInstance(dbName)).queryObjJoinCountByCondition(selectCount,realPlaceList.toArray());
+		Integer total=getInnerDao().queryObjJoinCountByCondition(selectCount,realPlaceList.toArray());
 		String select="";
 		if(cusSelect!=null && !"".equals(cusSelect)){
 			select="select "+cusSelect+" from "+tableName+" "+where; 
@@ -845,10 +1021,10 @@ public class MicroServiceTemplateSupport {
 		}
 
 		String sql=select+" "+orderSql;
-		int startNum=(MicroMetaDao.getInstance(dbName)).calcuStartIndex(pageNum-1, rowsNum);
+		int startNum=getInnerDao().calcuStartIndex(pageNum-1, rowsNum);
 		int endNum=startNum+rowsNum;
 
-		List infoList=(MicroMetaDao.getInstance(dbName)).queryObjJoinDataByPageCondition(sql, startNum, endNum,realPlaceList.toArray());
+		List infoList=getInnerDao().queryObjJoinDataByPageCondition(sql, startNum, endNum,realPlaceList.toArray());
 		if(infoList==null){
 			infoList=new ArrayList();
 		}
@@ -869,6 +1045,17 @@ public class MicroServiceTemplateSupport {
 	public Map getInfoList4PageServiceBySql(String countSql,List countPlaceList,String sql,List placeList,Map pageMap) throws Exception{
 		return getInfoList4PageServiceInnerExBySql(countSql, countPlaceList, sql, placeList, pageMap);
 	}
+	
+	
+	public Map getInfoList4PageServiceBySql(SupportParamBean supportParamBean) throws Exception{
+		String countSql=supportParamBean.getCountSql();
+		List countPlaceList=supportParamBean.getCountPlaceList();
+		String sql=supportParamBean.getSql();
+		List placeList=supportParamBean.getPlaceList();
+		Map sortMap=supportParamBean.getSortMap();
+		return getInfoList4PageServiceInnerExBySql(countSql,countPlaceList,sql,placeList,sortMap);
+	}
+	
 	private Map getInfoList4PageServiceInnerExBySql(String countSql,List countPlaceList,String sql,List placeList,Map pageMap) throws Exception{
 
 		if(countPlaceList==null){
@@ -877,6 +1064,7 @@ public class MicroServiceTemplateSupport {
 		if(placeList==null){
 			placeList=new ArrayList();
 		}
+		String tempDbType=calcuDbType();
 		String page=(String) pageMap.get("page");
 		String rows=(String) pageMap.get("rows");
 		String sort=(String) pageMap.get("sort");
@@ -886,7 +1074,7 @@ public class MicroServiceTemplateSupport {
 		Integer pageNum=Integer.valueOf(page);
 		Integer rowsNum=Integer.valueOf(rows);
 		
-		Integer total=(MicroMetaDao.getInstance(dbName)).queryObjJoinCountByCondition(countSql,countPlaceList.toArray());
+		Integer total=getInnerDao().queryObjJoinCountByCondition(countSql,countPlaceList.toArray());
 
 		String orderSql="";
 		if(cusSort!=null && !"".equals(cusSort)){
@@ -895,10 +1083,10 @@ public class MicroServiceTemplateSupport {
 			orderSql="order by "+sort+" "+order;
 		}		
 		String realSql=sql+" "+orderSql;
-		int startNum=(MicroMetaDao.getInstance(dbName)).calcuStartIndex(pageNum-1, rowsNum);
+		int startNum=getInnerDao().calcuStartIndex(pageNum-1, rowsNum);
 		int endNum=startNum+rowsNum;
 		//int endNum=rowsNum;
-		List infoList=(MicroMetaDao.getInstance(dbName)).queryObjJoinDataByPageCondition(realSql, startNum, endNum,placeList.toArray());
+		List infoList=getInnerDao().queryObjJoinDataByPageCondition(realSql, startNum, endNum,placeList.toArray());
 		if(infoList==null){
 			infoList=new ArrayList();
 		}
@@ -933,7 +1121,7 @@ public class MicroServiceTemplateSupport {
 		Integer pageNum=Integer.valueOf(page);
 		Integer rowsNum=Integer.valueOf(rows);
 		
-
+		String tempDbType=calcuDbType();
 
 		String orderSql="";
 		if(cusSort!=null && !"".equals(cusSort)){
@@ -943,10 +1131,10 @@ public class MicroServiceTemplateSupport {
 		}		
 		sql="select SQL_CALC_FOUND_ROWS "+sql.substring(6) ;
 		String realSql=sql+" "+orderSql;
-		int startNum=(MicroMetaDao.getInstance(dbName)).calcuStartIndex(pageNum-1, rowsNum);
+		int startNum=getInnerDao().calcuStartIndex(pageNum-1, rowsNum);
 		int endNum=startNum+rowsNum;
 		//int endNum=rowsNum;
-		List infoList=(MicroMetaDao.getInstance(dbName)).queryObjJoinDataByPageCondition(realSql, startNum, endNum,placeList.toArray());
+		List infoList=getInnerDao().queryObjJoinDataByPageCondition(realSql, startNum, endNum,placeList.toArray());
 		if(infoList==null){
 			infoList=new ArrayList();
 		}
@@ -954,7 +1142,7 @@ public class MicroServiceTemplateSupport {
 		CheckModelTypeUtil.changeNoStrCols(infoList);	
 		
 		String countSql="SELECT FOUND_ROWS() as total";
-		List tempList=(MicroMetaDao.getInstance(dbName)).queryObjJoinByCondition(countSql);
+		List tempList=getInnerDao().queryObjJoinByCondition(countSql);
 		Long total=0l;
 		if(tempList!=null){
 			Map tempMap=(Map) tempList.get(0);
@@ -1006,13 +1194,21 @@ public class MicroServiceTemplateSupport {
 		return getInfoList4PageServiceInner(requestParamMap,tableName,pageMap,"","","",cusPlaceList);
 	}
 	
+	public Integer createInfoSerivce(SupportParamBean supportParamBean) throws Exception{
+		Map requestParamMap=supportParamBean.getRequestParamMap();
+		String tableName=supportParamBean.getTableName();
+		String cusCol=supportParamBean.getCusCol();
+		String cusValue=supportParamBean.getCusValue();
+		String modelName=supportParamBean.getModelName();
+		return createInfoServiceInner(requestParamMap, tableName, cusCol, cusValue, modelName);
+	}
 	/**
-	 * 
-	 * @param requestParamMap 
-	 * @param tableName
-	 * @param cusCol
-	 * @param cusValue
-	 * @param modelName 
+	 * ������ݼ�¼
+	 * @param requestParamMap �ύ����
+	 * @param tableName �����
+	 * @param cusCol �����ֶ��ַ�
+	 * @param cusValue ����value�ַ�
+	 * @param modelName ģ����� 
 	 * @return
 	 * @throws Exception
 	 */
@@ -1022,7 +1218,7 @@ public class MicroServiceTemplateSupport {
 		if(filterViewRet!=null && filterViewRet>0){
 			return filterViewRet;
 		}
-		
+		String tempDbType=calcuDbType();
 		//add 20170627 ninghao
 		filterParam(tableName,requestParamMap);
 		
@@ -1030,15 +1226,16 @@ public class MicroServiceTemplateSupport {
 		if(modelName==null || "".equals(modelName)){
 			modelName=tableName;
 		}
+		String tempKeyId=calcuIdKey();
 		Map modelEntryMap=getModelEntryMap(requestParamMap,tableName,modelName,dbName);
-		MicroDbModelEntry idEntry=(MicroDbModelEntry) modelEntryMap.get("id");
+		MicroDbModelEntry idEntry=(MicroDbModelEntry) modelEntryMap.get(tempKeyId);
 		
-		String id=(String) requestParamMap.get("id");
+		String id=(String) requestParamMap.get(tempKeyId);
 		if(id==null || "".equals(id)){
-			requestParamMap.put("id", null);
+			requestParamMap.put(tempKeyId, null);
 			if(idEntry!=null && idEntry.colType.equals(String.class)){
 				id=UUID.randomUUID().toString();
-				requestParamMap.put("id", id);	
+				requestParamMap.put(tempKeyId, id);	
 			}else{
 				autoFlag=true;
 			}
@@ -1051,13 +1248,23 @@ public class MicroServiceTemplateSupport {
 		String values=createInsertValueStr4ModelEntry(requestParamMap,modelEntryMap,placeList);
 		String ncols=Cutil.jn(",", cols,cusCol);
 		String nvalues=Cutil.jn(",", values,cusValue);
-		Integer retStatus=(MicroMetaDao.getInstance(dbName)).insertObj(tableName, ncols, nvalues,placeList.toArray());
-		if(autoFlag==true){
-			String sql="SELECT LAST_INSERT_ID() as last_insert_id";
-			List dataList=(MicroMetaDao.getInstance(dbName)).queryObjJoinByCondition(sql);
-			Map oneMap=(Map) dataList.get(0);
-			Object retId=oneMap.get("last_insert_id");
-			requestParamMap.put("id", String.valueOf(retId));
+		Integer retStatus=0;
+		if(autoFlag==false){
+			retStatus=getInnerDao().insertObj(tableName, ncols, nvalues,placeList.toArray());
+		}else{
+			KeyHolder keyHolder=new GeneratedKeyHolder(); 
+			retStatus=getInnerDao().insertObj(tableName, ncols, nvalues,placeList.toArray(),keyHolder,tempKeyId);
+			if(keyHolder!=null){
+/*				List keyList=keyHolder.getKeyList();
+				if(keyList!=null && keyList.size()>0){
+					Map keyMap=(Map) keyList.get(0);
+					Object retId=keyMap.get(defaultId);
+					if(retId!=null){
+						requestParamMap.put(defaultId, retId.toString());
+					}
+				}*/
+				requestParamMap.put(tempKeyId, keyHolder.getKey());
+			}
 		}
 
 		return retStatus;
@@ -1075,37 +1282,52 @@ public class MicroServiceTemplateSupport {
 	}	
 	
 	public Integer createInfoService(String id,Map requestParamMap,String tableName) throws Exception{
-		requestParamMap.put("id", id);
+		String tempKeyId=calcuIdKey();
+		requestParamMap.put(tempKeyId, id);
 		return createInfoServiceInner(requestParamMap,tableName,null,null,null);
 
 	}
 	public Integer createInfoService(String id,Map requestParamMap,String tableName,String cusCol,String cusValue) throws Exception{
-		requestParamMap.put("id", id);
+		String tempKeyId=calcuIdKey();
+		requestParamMap.put(tempKeyId, id);
 		return createInfoServiceInner(requestParamMap,tableName,cusCol,cusValue,null);
 
 	}
+	
+	
+	public Integer updateInfoService(SupportParamBean supportParamBean) throws Exception{
+		String id=supportParamBean.getId();
+		Map requestParamMap=supportParamBean.getRequestParamMap();
+		String tableName=supportParamBean.getTableName();
+		String cusCondition=supportParamBean.getCusCondition();
+		String cusSetStr=supportParamBean.getCusSetStr();
+		String modelName=supportParamBean.getModelName();
+		return updateInfoServiceInner(id,requestParamMap,tableName,cusCondition,cusSetStr,modelName);
+	}
+	
 	/**
-	 * 
-	 * @param requestParamMap 
-	 * @param tableName
-	 * @param cusCondition
-	 * @param cusSetStr 
-	 * @param modelName 
+	 * ������ݼ�¼
+	 * @param requestParamMap �ύ����
+	 * @param tableName �����
+	 * @param cusCondition ���������ַ�
+	 * @param cusSetStr ����set�ַ�
+	 * @param modelName ģ����� 
 	 * @return
 	 * @throws Exception
 	 */
 	public Integer updateInfoServiceInner(String id,Map requestParamMap,String tableName,String cusCondition,String cusSetStr,String modelName) throws Exception{
+		String tempKeyId=calcuIdKey();
 		//add 20170829 ninghao
-		Integer filterViewRet=filterView(tableName,requestParamMap,id,"id",TYPE_UPDATE_ID);
+		Integer filterViewRet=filterView(tableName,requestParamMap,id,tempKeyId,TYPE_UPDATE_ID);
 		if(filterViewRet!=null && filterViewRet>0){
 			return filterViewRet;
 		}
-		
+		String tempDbType=calcuDbType();
 		//add 20170627 ninghao
 		filterParam(tableName,requestParamMap);
 		
-		//String id=(String) requestParamMap.get("id");
-		String condition="id=?";
+		//String id=(String) requestParamMap.get(defaultId);
+		String condition=tempKeyId+"=?";
 		if(modelName==null || "".equals(modelName)){
 			modelName=tableName;
 		}
@@ -1116,16 +1338,17 @@ public class MicroServiceTemplateSupport {
 		String nCondition=Cutil.jn(" and ", cusCondition,condition);
 		String nSetStr=Cutil.jn(",", setStr,cusSetStr);
 		placeList.add(id);
-		Integer retStatus=(MicroMetaDao.getInstance(dbName)).updateObjByCondition(tableName, nCondition, nSetStr,placeList.toArray());
+		Integer retStatus=getInnerDao().updateObjByCondition(tableName, nCondition, nSetStr,placeList.toArray());
 		return retStatus;
 	}	
-	
+
 	//sql
 	private Integer updateInfoServiceInnerBySql(String sql,List placeList) throws Exception{
 		if(placeList==null){
 			placeList=new ArrayList();
 		}
-		Integer retStatus=(MicroMetaDao.getInstance(dbName)).updateObjByCondition(sql,placeList.toArray());
+		String tempDbType=calcuDbType();
+		Integer retStatus=getInnerDao().updateObjByCondition(sql,placeList.toArray());
 		return retStatus;
 	}
 	public Integer updateInfoServiceBySql(String sql,List placeList) throws Exception{
@@ -1133,23 +1356,25 @@ public class MicroServiceTemplateSupport {
 	}
 	
 	public Integer updateInfoService(Map requestParamMap,String tableName) throws Exception{
-		String id=(String) requestParamMap.get("id");
+		String tempKeyId=calcuIdKey();
+		String id=(String) requestParamMap.get(tempKeyId);
 		return updateInfoServiceInner(id,requestParamMap,tableName,null,null,null);
 	}
 
 	public Integer updateInfoService(Map requestParamMap,String tableName,String cusCondition,String cusSetStr) throws Exception{
-		String id=(String) requestParamMap.get("id");
+		String tempKeyId=calcuIdKey();
+		String id=(String) requestParamMap.get(tempKeyId);
 		return updateInfoServiceInner(id,requestParamMap,tableName,cusCondition,cusSetStr,null);
 	}
 	
 	/**
-	 * 
-	 * @param id 	  
-	 * @param requestParamMap 
-	 * @param tableName 
-	 * @param cusCondition 
-	 * @param cusSetStr 
-	 * @param modelName 
+	 * ���id������ݼ�¼
+	 * @param id ��������	  
+	 * @param requestParamMap �ύ����
+	 * @param tableName �����
+	 * @param cusCondition ���������ַ�
+	 * @param cusSetStr ����set�ַ�
+	 * @param modelName ģ����� 
 	 * @return
 	 * @throws Exception
 	 */
@@ -1166,16 +1391,25 @@ public class MicroServiceTemplateSupport {
 		return updateInfoServiceInner(id,requestParamMap,tableName,null,null,modelName);
 	}
 
-	
+	public Integer updateInfoByBizIdSerivce(SupportParamBean supportParamBean) throws Exception{
+		String bizId=supportParamBean.getBizId();
+		String tableName=supportParamBean.getTableName();
+		String bizCol=supportParamBean.getBizCol();
+		Map requestParamMap=supportParamBean.getRequestParamMap();
+		String cusCondition=supportParamBean.getCusCondition();
+		String cusSetStr=supportParamBean.getCusSetStr();
+		String modelName=supportParamBean.getModelName();
+		return updateInfoByBizIdServiceInner(bizId, tableName, bizCol, requestParamMap, cusCondition, cusSetStr, modelName);
+	}
 	/**
-	 * 
-	 * @param bizid 	
-	 * @param tableName 
-	 * @param bizCol  
-	 * @param requestParamMap 
-	 * @param cusCondition 
-	 * @param cusSetStr 
-	 * @param modelName  
+	 * ���ҵ��id������ݼ�¼
+	 * @param bizid ҵ������	
+	 * @param tableName �����
+	 * @param bizCol ҵ������� 
+	 * @param requestParamMap �ύ����
+	 * @param cusCondition ���������ַ�
+	 * @param cusSetStr ����set�ַ�
+	 * @param modelName ģ����� 
 	 * @return
 	 * @throws Exception
 	 */	
@@ -1187,7 +1421,7 @@ public class MicroServiceTemplateSupport {
 		}
 		//add 20170627 ninghao
 		filterParam(tableName,requestParamMap);
-		
+		String tempDbType=calcuDbType();
 		String condition=Cutil.rep(bizCol+"=?",bizId);
 		
 		if(modelName==null || "".equals(modelName)){
@@ -1201,7 +1435,7 @@ public class MicroServiceTemplateSupport {
 		String nCondition=Cutil.jn(" and ", cusCondition,condition);
 		String nSetStr=Cutil.jn(",", setStr,cusSetStr);
 		placeList.add(bizId);
-		Integer retStatus=(MicroMetaDao.getInstance(dbName)).updateObjByCondition(tableName, nCondition, nSetStr,placeList.toArray());
+		Integer retStatus=getInnerDao().updateObjByCondition(tableName, nCondition, nSetStr,placeList.toArray());
 		return retStatus;
 	}	
 
@@ -1220,52 +1454,56 @@ public class MicroServiceTemplateSupport {
 	
 	
 	/**
-	 * 
-	 * @param requestParamMap
-	 * @param tableName
+	 * ɾ����ݼ�¼
+	 * @param requestParamMap �ύ����
+	 * @param tableName ����� 
 	 * @return
 	 * @throws Exception
 	 */		
 	public Integer delInfoService(Map requestParamMap,String tableName){
-
-		String id=(String) requestParamMap.get("id");
+		String tempKeyId=calcuIdKey();
+		String id=(String) requestParamMap.get(tempKeyId);
 		//add 20170829 ninghao
-		Integer filterViewRet=filterView(tableName,requestParamMap,id,"id",TYPE_DEL_ID);
+		Integer filterViewRet=filterView(tableName,requestParamMap,id,tempKeyId,TYPE_DEL_ID);
 		if(filterViewRet!=null && filterViewRet>0){
 			return filterViewRet;
 		}
-		
-		Integer retStatus=(MicroMetaDao.getInstance(dbName)).delObjById(tableName,id);
+		String tempDbType=calcuDbType();
+		Integer retStatus=getInnerDao().delObjByBizId(tableName, id, tempKeyId);
 		return retStatus;
 	}
 
 	public Integer delInfoByIdService(String id,String tableName){
+		String tempKeyId=calcuIdKey();
 		//add 20170829 ninghao
 		Map requestParamMap=new HashMap();
-		requestParamMap.put("id", id);
-		Integer filterViewRet=filterView(tableName,requestParamMap,id,"id",TYPE_DEL_ID);
+		requestParamMap.put(tempKeyId, id);
+		Integer filterViewRet=filterView(tableName,requestParamMap,id,tempKeyId,TYPE_DEL_ID);
 		if(filterViewRet!=null && filterViewRet>0){
 			return filterViewRet;
 		}
-		Integer retStatus=(MicroMetaDao.getInstance(dbName)).delObjById(tableName,id);
+		String tempDbType=calcuDbType();
+		Integer retStatus=getInnerDao().delObjByBizId(tableName, id, tempKeyId);
 		return retStatus;
 	}
 	
-	//
+	//���id�б�����ɾ��
 	public Integer delInfoByIdListService(List<String> idList,String tableName){
 		int status=0;
+		String tempDbType=calcuDbType();
+		String tempKeyId=calcuIdKey();
 		for(String id:idList){
 
-			int retStatus=(MicroMetaDao.getInstance(dbName)).delObjById(tableName,id);
+			int retStatus=getInnerDao().delObjByBizId(tableName, id, tempKeyId);
 			status=status+retStatus;
 		}
 		return status;
 	}	
 	
 	/**
-	 * 
-	 * @param requestParamMap 
-	 * @param tableName 
+	 * ���ҵ��idɾ����ݼ�¼
+	 * @param requestParamMap �ύ����
+	 * @param tableName ����� 
 	 * @return
 	 * @throws Exception
 	 */	
@@ -1275,37 +1513,38 @@ public class MicroServiceTemplateSupport {
 		if(filterViewRet!=null && filterViewRet>0){
 			return filterViewRet;
 		}
-		Integer retStatus=(MicroMetaDao.getInstance(dbName)).delObjByBizId(tableName,bizId,bizCol);
+		
+		Integer retStatus=getInnerDao().delObjByBizId(tableName,bizId,bizCol);
 		return retStatus;
 	}
-	//
+	//���ҵ��id�б�����ɾ��
 	public Integer delInfoByBizIdListService(List<String> bizIdList,String tableName,String bizCol){
 		int status=0;
 		for(String bizId:bizIdList){
 
-			int retStatus=(MicroMetaDao.getInstance(dbName)).delObjByBizId(tableName,bizId,bizCol);
+			int retStatus=getInnerDao().delObjByBizId(tableName,bizId,bizCol);
 			status=status+retStatus;
 		}
 		return status;
 	}	
 	
 	/**
-	 * 
-	 * @param requestParamMap 
-	 * @param tableName 
+	 * ���id��ȡ��ݼ�¼
+	 * @param requestParamMap �ύ����
+	 * @param tableName ����� 
 	 * @return
 	 * @throws Exception
 	 */	
 	public Map getInfoByIdService(Map requestParamMap,String tableName){
-
-		String id=(String) requestParamMap.get("id");
+		String tempKeyId=calcuIdKey();
+		String id=(String) requestParamMap.get(tempKeyId);
 		//add 20170831 ninghao
-		Map filterViewRet=filterView4Select(tableName,requestParamMap,id,"id",TYPE_SELECT_ID);
+		Map filterViewRet=filterView4Select(tableName,requestParamMap,id,tempKeyId,TYPE_SELECT_ID);
 		if(filterViewRet!=null ){
 			return filterViewRet;
 		}
 		
-		Map retMap=(MicroMetaDao.getInstance(dbName)).queryObjJoinById(tableName, id);
+		Map retMap=getInnerDao().queryObjJoinByBizId(tableName, id, tempKeyId);
 		if(retMap==null){
 			return null;
 		}
@@ -1315,13 +1554,14 @@ public class MicroServiceTemplateSupport {
 	}
 
 	public Map getInfoByIdService(String id,String tableName){
+		String tempKeyId=calcuIdKey();
 		//add 20170831 ninghao
-		Map filterViewRet=filterView4Select(tableName,new HashMap(),id,"id",TYPE_SELECT_ID);
+		Map filterViewRet=filterView4Select(tableName,new HashMap(),id,tempKeyId,TYPE_SELECT_ID);
 		if(filterViewRet!=null ){
 			return filterViewRet;
 		}
 		
-		Map retMap=(MicroMetaDao.getInstance(dbName)).queryObjJoinById(tableName, id);
+		Map retMap=getInnerDao().queryObjJoinByBizId(tableName, id, tempKeyId);
 		if(retMap==null){
 			return null;
 		}
@@ -1331,8 +1571,9 @@ public class MicroServiceTemplateSupport {
 	}
 
 	public Map getInfoByIdForLockService(String id,String tableName){
+		String tempKeyId=calcuIdKey();
 		//add 20170831 ninghao
-		Map filterViewRet=filterView4Select(tableName,new HashMap(),id,"id",TYPE_SELECT_ID_LOCK);
+		Map filterViewRet=filterView4Select(tableName,new HashMap(),id,tempKeyId,TYPE_SELECT_ID_LOCK);
 		if(filterViewRet!=null ){
 			return filterViewRet;
 		}
@@ -1340,7 +1581,7 @@ public class MicroServiceTemplateSupport {
 		String sql="select * from "+tableName+" where id=? FOR UPDATE";
 		List placeList=new ArrayList();
 		placeList.add(id);
-		List retList=(MicroMetaDao.getInstance(dbName)).queryObjJoinByCondition(sql,placeList.toArray());
+		List retList=getInnerDao().queryObjJoinByCondition(sql,placeList.toArray());
 		if(retList==null){
 			return null;
 		}
@@ -1356,10 +1597,10 @@ public class MicroServiceTemplateSupport {
 	
 	
 	/**
-	 * 
-	 * @param bizId 
-	 * @param tableName 
-	 * @param bizCol 
+	 * ���ҵ��id��ȡ��ݼ�¼
+	 * @param bizId ҵ��id
+	 * @param tableName ����� 
+	 * @param bizCol ҵ�������
 	 * @return
 	 * @throws Exception
 	 */	
@@ -1370,7 +1611,7 @@ public class MicroServiceTemplateSupport {
 			return filterViewRet;
 		}
 		
-		Map retMap=(MicroMetaDao.getInstance(dbName)).queryObjJoinByBizId(tableName, bizId,bizCol);
+		Map retMap=getInnerDao().queryObjJoinByBizId(tableName, bizId,bizCol);
 		if(retMap==null){
 			return null;
 		}
@@ -1381,15 +1622,15 @@ public class MicroServiceTemplateSupport {
 		
 
 	/**
-	 * 
-	 * @param bizId 
-	 * @param tableName
-	 * @param bizCol 
+	 * ��ȡ�Ƿ�ҳ��ݼ�¼
+	 * @param bizId ҵ��id
+	 * @param tableName ����� 
+	 * @param bizCol ҵ�������
 	 * @return
 	 * @throws Exception
 	 */	
 	private List getInfoListAllServiceInnerEx(Map requestParamMap,String tableName,Map sortMap,String cusWhere,String cusSelect,String modelName,int limit,List cusPlaceList) throws Exception{
-		
+		String tempKeyId=calcuIdKey();
 
 		String sort=(String) sortMap.get("sort");
 		String order=(String) sortMap.get("order");
@@ -1398,7 +1639,7 @@ public class MicroServiceTemplateSupport {
 		if(modelName==null || "".equals(modelName)){
 			modelName=tableName;
 		}
-		String id=(String) requestParamMap.get("id");
+		String id=(String) requestParamMap.get(tempKeyId);
 
 		String where="";
 		
@@ -1475,13 +1716,17 @@ public class MicroServiceTemplateSupport {
 /*		else{
 			orderSql=orderSql+"id desc";
 		}*/
+		List infoList=null;
 		String sql=select+" "+orderSql;
 		if(limit>=0){
-			sql=sql+" limit "+limit;
+
+			infoList=getInnerDao().queryLimitObjJoinByCondition(sql,realPlaceList.toArray(),limit);
+		}else{
+			infoList=getInnerDao().queryObjJoinByCondition(sql,realPlaceList.toArray());			
 		}
 
 		
-		List infoList=(MicroMetaDao.getInstance(dbName)).queryObjJoinByCondition(sql,realPlaceList.toArray());
+
 		if(infoList==null){
 			return null;
 		}
@@ -1496,22 +1741,22 @@ public class MicroServiceTemplateSupport {
 		return getInfoListAllServiceInnerExBySql(sql, null);
 	}
 	public List getInfoListAllServiceBySql(String sql,int limit) throws Exception{
-		String realSql=sql+" limit "+limit;
-		return getInfoListAllServiceInnerExBySql(realSql, null);
+		String realSql=sql;
+		return getInfoListLimitServiceInnerExBySql(realSql, null,limit);
 	}	
 	public List getInfoListAllServiceBySql(String sql,List placeList) throws Exception{
 		return getInfoListAllServiceInnerExBySql(sql, placeList);
 	}
 	public List getInfoListAllServiceBySql(String sql,List placeList,int limit) throws Exception{
-		String realSql=sql+" limit "+limit;
-		return getInfoListAllServiceInnerExBySql(realSql, placeList);
+		String realSql=sql;
+		return getInfoListLimitServiceInnerExBySql(realSql, placeList, limit);
 	}
 	
 	private List getInfoListAllServiceInnerExBySql(String sql,List placeList) throws Exception{
 		if(placeList==null){
 			placeList=new ArrayList();
 		}
-		List infoList=(MicroMetaDao.getInstance(dbName)).queryObjJoinByCondition(sql,placeList.toArray());
+		List infoList=getInnerDao().queryObjJoinByCondition(sql,placeList.toArray());
 		if(infoList==null){
 			return null;
 		}
@@ -1519,7 +1764,18 @@ public class MicroServiceTemplateSupport {
 		CheckModelTypeUtil.changeNoStrCols(infoList);
 		return infoList;
 	}
-	
+	private List getInfoListLimitServiceInnerExBySql(String sql,List placeList,int limit) throws Exception{
+		if(placeList==null){
+			placeList=new ArrayList();
+		}
+		List infoList=getInnerDao().queryLimitObjJoinByCondition(sql,placeList.toArray(),limit);
+		if(infoList==null){
+			return null;
+		}
+		CheckModelTypeUtil.addMetaCols(infoList);
+		CheckModelTypeUtil.changeNoStrCols(infoList);
+		return infoList;
+	}	
 	
 	//inner
 	public List getInfoListAllServiceInner(Map requestParamMap,String tableName,Map sortMap,String cusWhere,String cusSelect,String modelName,int limit) throws Exception{
@@ -1586,20 +1842,29 @@ public class MicroServiceTemplateSupport {
 	//sql
 	public Map getSingleInfoService(String sql) throws Exception{
 		
-		String realSql=sql+" limit 1";
+/*		String realSql=sql+" limit 1";
 		List retList= getInfoListAllServiceInnerExBySql(realSql, null);
 		if(retList==null || retList.size()<=0){
 			return null;
-		}
-		return (Map) retList.get(0);
+		}		
+		return (Map) retList.get(0);*/
+		//for oracle
+		String realSql=sql;
+		Map retMap= getInnerDao().querySingleObjJoinByCondition(realSql);
+		return retMap;
+
+		
 	}
 	public Map getSingleInfoService(String sql,List placeList) throws Exception{
-		String realSql=sql+" limit 1";
+/*		String realSql=sql+" limit 1";
 		List retList= getInfoListAllServiceInnerExBySql(realSql, placeList);
 		if(retList==null || retList.size()<=0){
 			return null;
 		}
-		return (Map) retList.get(0);
+		return (Map) retList.get(0);*/
+		String realSql=sql;
+		Map retMap= getInnerDao().querySingleObjJoinByCondition(realSql,placeList.toArray());
+		return retMap;		
 	}
 	
 	@Deprecated
@@ -1613,7 +1878,7 @@ public class MicroServiceTemplateSupport {
 	
 	public Object execGroovyRetObjByDbTran(String groovyName, String methodName,
 			Object... paramArray) throws Exception{
-/*		MicroMetaDao microDao=MicroMetaDao.getInstance(dbName);
+/*		MicroMetaDao microDao=MicroMetaDao.getInstance(dbName,dbType);
 		DataSource dataSource=microDao.getMicroDataSource();
 		PlatformTransactionManager  transactionManager=new DataSourceTransactionManager(dataSource);*/
 		PlatformTransactionManager  transactionManager=MicroTranManagerHolder.getTransactionManager(dbName);
@@ -1638,7 +1903,7 @@ public class MicroServiceTemplateSupport {
 	
 	public Object execGroovyRetObjByDbTranNest(String groovyName, String methodName, Integer nestDef,
 			Object... paramArray) throws Exception{
-/*		MicroMetaDao microDao=MicroMetaDao.getInstance(dbName);
+/*		MicroMetaDao microDao=MicroMetaDao.getInstance(dbName,dbType);
 		DataSource dataSource=microDao.getMicroDataSource();
 		PlatformTransactionManager  transactionManager=new DataSourceTransactionManager(dataSource);*/
 		PlatformTransactionManager  transactionManager=MicroTranManagerHolder.getTransactionManager(dbName);
@@ -1710,7 +1975,7 @@ public class MicroServiceTemplateSupport {
 	    try
 	    {
 			String sql="select get_micro_seq('"+seqKey+"') as seq";
-			List retList=(MicroMetaDao.getInstance(dbName)).queryObjJoinByCondition(sql);
+			List retList=getInnerDao().queryObjJoinByCondition(sql);
 			if(retList==null){
 				transactionManager.commit(status);
 				return null;
@@ -1737,7 +2002,8 @@ public class MicroServiceTemplateSupport {
 	}	
 	
 	private Integer saveOrUpdateInfoByIdServiceInner(String id,String tableName,Map requestParamMap,String cusSetStr4Update,String cusCol4Insert,String cusValue4Insert) throws Exception{
-		requestParamMap.put("id", id);
+		String tempKeyId=calcuIdKey();
+		requestParamMap.put(tempKeyId, id);
 		Map retMap=getInfoByIdService(id,tableName);
 		Integer status=0;
 		if(retMap==null){
@@ -1820,16 +2086,16 @@ public class MicroServiceTemplateSupport {
 		}
 	}
 	
-	//
+	//页面获取指定节点数据(data)
 	public String getNodeData(String nodePath,String formId,String tableName,String dataColName,String idColName){
 
-		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		MicroMetaDao microDao=getInnerDao();
 		String select=dataColName+"->>'$."+dianNode(nodePath)+"' as dyna_data";
 		String sql="select "+select+" from "+tableName+" where "+idColName+"=?";
 		Object[] paramArray=new Object[1];
 		paramArray[0]=formId;
 		Map retMap=microDao.querySingleObjJoinByCondition(sql,paramArray);
-		//
+		//返回的一定是个map
 		if(retMap!=null){
 			return (String) retMap.get("dyna_data");
 		}
@@ -1851,14 +2117,14 @@ public class MicroServiceTemplateSupport {
 			placeList.add(paramMap.get(key));
 		}
 		checkAndCreateNodePathService(nodePath,formId,tableName,dataColName,idColName);
-		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		MicroMetaDao microDao=getInnerDao();
 		String sql="update nh_micro_dyna_form_list set dyna_content=JSON_SET(dyna_content"+setStr+") where "+idColName+"=?";
 		microDao.updateObjByCondition(sql, placeList.toArray());
 
 		return ;
 	}
 	
-	//
+	//设置指定位置数据(data)
 	public void putNodeData(String paramData,String nodePath,String formId,String tableName,String dataColName,String idColName,String dataType){
 
 		checkAndCreateNodePathService(nodePath,formId,tableName,dataColName,idColName);
@@ -1880,7 +2146,7 @@ public class MicroServiceTemplateSupport {
 			placeList.add(formId);
 		}
 		
-		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		MicroMetaDao microDao=getInnerDao();
 		microDao.updateObjByCondition(sql, placeList.toArray());
 		return ;
 	}
@@ -1888,7 +2154,7 @@ public class MicroServiceTemplateSupport {
 	public void removeNodeData(String nodePath,String formId,String tableName,String dataColName,String idColName){
 
 		checkAndCreateNodePathService(nodePath,formId,tableName,dataColName,idColName);
-		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		MicroMetaDao microDao=getInnerDao();
 		String sql="update "+tableName+" set "+dataColName+"=JSON_REMOVE("+dataColName+",?) where "+idColName+"=?";
 		Object[] paramArray=new Object[2];
 		String filter="$."+dianNode(nodePath);
@@ -1904,7 +2170,7 @@ public class MicroServiceTemplateSupport {
 			checkNodePath=nodePath+"[]";
 		}
 		checkAndCreateNodePathService(checkNodePath,formId,tableName,dataColName,idColName);
-		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		MicroMetaDao microDao=getInnerDao();
 		String sql="update "+tableName+" set "+dataColName+"=JSON_ARRAY_APPEND("+dataColName+",?,";
 		String filter="$."+dianNode(nodePath);
 		List placeList=new ArrayList();
@@ -1930,7 +2196,7 @@ public class MicroServiceTemplateSupport {
 			nodePath=nodePath+"[]";
 		}
 		checkAndCreateNodePathService(nodePath,formId,tableName,dataColName,idColName);
-		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		MicroMetaDao microDao=getInnerDao();
 		String sql="update "+tableName+" set "+dataColName+"=JSON_ARRAY_INSERT("+dataColName+",?,";
 		String filter="$."+dianNode(nodePath);
 		List placeList=new ArrayList();
@@ -1972,7 +2238,7 @@ public class MicroServiceTemplateSupport {
 	private Integer checkNodePathService(String node_path,String formId,String tableName,String dataColName,String idColName){
 		node_path=node_path.replace("[]", "");
 		String sql="select JSON_CONTAINS_PATH("+dataColName+",'all',?) as data_flag from "+tableName+" where "+idColName+"=?";
-		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		MicroMetaDao microDao=getInnerDao();
 		Object[] paramArray=new Object[2];
 		String filter="$."+dianNode(node_path);
 		paramArray[0]=filter;
@@ -2016,7 +2282,7 @@ public class MicroServiceTemplateSupport {
 	}
 	
 	private void creatNodePath4MapService(String nodePath,String formId,String tableName,String dataColName,String idColName){
-		MicroMetaDao microDao=MicroMetaDao.getInstance();
+		MicroMetaDao microDao=getInnerDao();
 		String sql="update "+tableName+" set "+dataColName+"=JSON_SET("+dataColName+",?,convert(null,JSON)) where "+idColName+"=?";
 
 		List paramList=new ArrayList();
@@ -2058,7 +2324,7 @@ public class MicroServiceTemplateSupport {
 		String filter="$."+dianNode(nodePath);
 		paramArray[0]=filter;
 		paramArray[1]=formId;
-		Map retMap=MicroMetaDao.getInstance().querySingleObjJoinByCondition(sql, paramArray);
+		Map retMap=getInnerDao().querySingleObjJoinByCondition(sql, paramArray);
 		if(retMap==null){
 			return null;
 		}
@@ -2072,7 +2338,7 @@ public class MicroServiceTemplateSupport {
 		paramArray[0]=filter;
 		paramArray[1]="[]";
 		paramArray[2]=formId;
-		MicroMetaDao.getInstance().updateObjByCondition(sql, paramArray);
+		getInnerDao().updateObjByCondition(sql, paramArray);
 	}
 	private void appendNodePath4EmptyListService(String nodePath,String formId,String tableName,String dataColName,String idColName){
 		String sql="update "+tableName+" set "+dataColName+"=JSON_ARRAY_APPEND("+dataColName+",?,convert(?,JSON)) where "+idColName+"=?";
@@ -2081,7 +2347,7 @@ public class MicroServiceTemplateSupport {
 		paramArray[0]=filter;
 		paramArray[1]="null";
 		paramArray[2]=formId;
-		MicroMetaDao.getInstance().updateObjByCondition(sql, paramArray);
+		getInnerDao().updateObjByCondition(sql, paramArray);
 	}
 	
 	private String checkNodeTypeService(String nodePath,String formId,String tableName,String dataColName,String idColName){
@@ -2090,7 +2356,7 @@ public class MicroServiceTemplateSupport {
 		String filter="$."+dianNode(nodePath);
 		paramArray[0]=filter;
 		paramArray[1]=formId;
-		Map retMap=MicroMetaDao.getInstance().querySingleObjJoinByCondition(sql, paramArray);
+		Map retMap=getInnerDao().querySingleObjJoinByCondition(sql, paramArray);
 		if(retMap==null){
 			return null;
 		}
@@ -2121,16 +2387,16 @@ public class MicroServiceTemplateSupport {
 	    	MicroMetaDao.setIsThreadReadOnly(temp);
 	    }		
 		
-	}		
+	}	
 	
-	private int[] batchUpdateInfoServiceBySql(String[] sql) throws Exception{
+	public int[] batchUpdateInfoServiceBySql(String[] sql) throws Exception{
 
-		int[] retStatus=(MicroMetaDao.getInstance(dbName)).updateObjBatch(sql);
+		int[] retStatus=getInnerDao().updateObjBatch(sql);
 		return retStatus;
 	}
-	private int[] batchUpdateInfoServiceBySql(String sql,List<Object[]> paramList) throws Exception{
+	public int[] batchUpdateInfoServiceBySql(String sql,List<Object[]> paramList) throws Exception{
 
-		int[] retStatus=(MicroMetaDao.getInstance(dbName)).updateObjBatch(sql,paramList);
+		int[] retStatus=getInnerDao().updateObjBatch(sql,paramList);
 		return retStatus;
 	}	
 }

@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.jeffreyning</groupId>
   <artifactId>nh-micro-template</artifactId>
-  <version>0.0.3-RELEASE</version>
+  <version>1.0.5-RELEASE</version>
   
  <dependencies>
    	<dependency>
   		<groupId>com.github.jeffreyning</groupId>
   		<artifactId>nh-micro-db</artifactId>
-  		<version>0.0.3-RELEASE</version>
+  		<version>1.0.5-RELEASE</version>
 	  <scope>compile</scope>
       <optional>true</optional>    		
   	</dependency> 
@@ -19,15 +19,29 @@
 	  <scope>compile</scope>
       <optional>true</optional>     
 </dependency>	
-  	   	<dependency>
+  	<dependency>
   		<groupId>com.github.jeffreyning</groupId>
   		<artifactId>nh-micro-engine</artifactId>
-  		<version>0.0.3-RELEASE</version>
+  		<version>1.0.5-RELEASE</version>
 	  <scope>compile</scope>
       <optional>true</optional>    		
   	</dependency>
+	<dependency>  	
+	  <groupId>com.github.jeffreyning</groupId>
+	  <artifactId>nh-micro-datasource</artifactId>
+	  <version>1.0.0-RELEASE</version>
+	  <scope>compile</scope>
+      <optional>true</optional>  	  
+  	</dependency>  
+  	<dependency>
+	  <groupId>com.github.jeffreyning</groupId>
+	  <artifactId>nh-micro-context</artifactId>
+	  <version>1.0.5-RELEASE</version>  
+  	  <scope>compile</scope>
+      <optional>true</optional>  
+  	</dependency>
   	
-  	 
+  		 
  </dependencies>  
   
   
