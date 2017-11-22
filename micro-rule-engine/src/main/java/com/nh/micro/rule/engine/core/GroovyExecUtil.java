@@ -7,6 +7,8 @@ import java.util.Map;
 //import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 
+
+
 /**
  * 
  * @author ninghao
@@ -50,7 +52,15 @@ public class GroovyExecUtil {
 			Object... paramArray) {
 		try {
 			GroovyObject groovyObject = (GroovyObject) getGroovyObj(groovyName);
-			groovyObject.invokeMethod(methodName, paramArray);
+			//groovyObject.invokeMethod(methodName, paramArray);
+			//GroovyAopInter groovyAop=(GroovyAopInter) MicroContextHolder.getContextMap().get("groovyAop");
+			GroovyAopInter firstAop=GroovyAopChain.getFirstAop();
+			Object retObj=null;
+			if(firstAop==null){
+				retObj=groovyObject.invokeMethod(methodName, paramArray);
+			}else{
+				retObj=firstAop.invokeMethod(groovyObject,groovyName, methodName, paramArray);
+			}			
 			return true;
 		} catch (Throwable t) {
 			logger.error(t.toString(), t);
@@ -65,7 +75,36 @@ public class GroovyExecUtil {
 			Object... paramArray) {
 		try {
 			GroovyObject groovyObject = (GroovyObject) getGroovyObj(groovyName);
-			Object retObj=groovyObject.invokeMethod(methodName, paramArray);
+			//GroovyAopInter groovyAop=(GroovyAopInter) MicroContextHolder.getContextMap().get("groovyAop");
+			GroovyAopInter firstAop=GroovyAopChain.getFirstAop();
+			Object retObj=null;
+			if(firstAop==null){
+				retObj=groovyObject.invokeMethod(methodName, paramArray);
+			}else{
+				retObj=firstAop.invokeMethod(groovyObject,groovyName, methodName, paramArray);
+			}
+			return retObj;
+		} catch (Throwable t) {
+			logger.error(t.toString(), t);
+			if(throwFlag){
+				throw new RuntimeException(t);
+			}
+			return null;
+		}
+	}
+	
+	public static Object execGroovyRetObj(GroovyObject groovyObject, String methodName,
+			Object... paramArray) {
+		try {
+			//GroovyObject groovyObject = (GroovyObject) getGroovyObj(groovyName);
+			//GroovyAopInter groovyAop=(GroovyAopInter) MicroContextHolder.getContextMap().get("groovyAop");
+			GroovyAopInter firstAop=GroovyAopChain.getFirstAop();
+			Object retObj=null;
+			if(firstAop==null){
+				retObj=groovyObject.invokeMethod(methodName, paramArray);
+			}else{
+				retObj=firstAop.invokeMethod(groovyObject,null, methodName, paramArray);
+			}
 			return retObj;
 		} catch (Throwable t) {
 			logger.error(t.toString(), t);
