@@ -5,11 +5,13 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.nh.micro.db.MicroDbHolder;
 import com.nh.micro.db.MicroMetaDao;
 
 public class MicroTranManagerHolder {
@@ -34,8 +36,10 @@ public class MicroTranManagerHolder {
 	}
 	
 	public static PlatformTransactionManager getTransactionManager(String dbName){
-		MicroMetaDao microDao=MicroMetaDao.getInstance(dbName);
-		DataSource dataSource=microDao.getMicroDataSource();
+		//MicroMetaDao microDao=MicroMetaDao.getInstance(dbName);
+		//DataSource dataSource=microDao.getMicroDataSource();
+		JdbcTemplate retTemplate=(JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		DataSource dataSource=retTemplate.getDataSource();
 		PlatformTransactionManager  transactionManager=null;
 		if(singleFlag==true){
 			transactionManager=(PlatformTransactionManager) transManagerHolderMap.get(dataSource);

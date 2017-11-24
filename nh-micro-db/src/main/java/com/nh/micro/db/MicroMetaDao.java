@@ -196,6 +196,10 @@ public class MicroMetaDao {
 		if(isReadOnly==true || getIsThreadReadOnly()==true){
 			retTemplate=(JdbcTemplate) MicroDbHolder.getDbSource(name+"_readonly");	
 		}
+		String changeDbName=GroovyDbSwitcher.peekCurrentDataSource(name);
+		if(changeDbName!=null && !"".equals(changeDbName)){
+			retTemplate=(JdbcTemplate) MicroDbHolder.getDbSource(changeDbName);				
+		}
 		return retTemplate;		
 	}
 	
@@ -274,8 +278,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟斤拷id删锟斤拷锟阶硷拷锟斤拷bean
 	 */
 	public int delMetaBeanById(String tableName, String id) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String sql = "delete from " + tableName + " where id=?";
 		String[] paramArray=new String[1];
 		paramArray[0]=id;
@@ -289,8 +293,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟斤拷id锟斤拷锟铰憋拷准锟斤拷锟絙ean
 	 */
 	public int updateMetaBeanById(String tableName, String id,MicroMetaBean microMetaBean) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String setMetaContent="";
 		String setMetaKey="";
 		String setMetaName="";
@@ -347,8 +351,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟斤拷id锟斤拷锟斤拷锟阶硷拷锟斤拷bean
 	 */
 	public int insertMetaBeanById(String tableName, MicroMetaBean microMetaBean) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		final MicroMetaBean insertBean=microMetaBean;
 		String timeName=getTimeName();
 		String sql = "insert into " + tableName +"(id,meta_content,meta_key,meta_name,meta_type,remark,create_time,update_time) values(?,?,?,?,?,?,"+timeName+","+timeName+") ";
@@ -889,9 +893,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int updateObjByCondition(String tableName, String condition,String setStr) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
-
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String timeName=getTimeName();
 		if(autoOperTime){
 			setStr="update_time="+timeName+","+setStr;
@@ -906,16 +909,16 @@ public class MicroMetaDao {
 	 * 锟斤拷锟絪ql锟斤拷锟斤拷
 	 */
 	public int updateObjByCondition(String sql) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		logger.debug(sql);
 		Integer retStatus=jdbcTemplate.update(sql);
 		return retStatus;
 	}	
 	
 	public int updateObjByCondition(String sql,Object[] paramArray) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
 		Integer retStatus=jdbcTemplate.update(sql,paramArray);
@@ -925,9 +928,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int updateObjByCondition(String tableName, String condition,String setStr,Object[] paramArray,int[] typeArray) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
-
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String timeName=getTimeName();
 		if(autoOperTime){
 			setStr="update_time="+timeName+","+setStr;
@@ -944,9 +946,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int updateObjByCondition(String tableName, String condition,String setStr,Object[] paramArray) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
-
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String timeName=getTimeName();
 		if(autoOperTime){
 			setStr="update_time="+timeName+","+setStr;
@@ -959,9 +960,8 @@ public class MicroMetaDao {
 	}		
 
 	public int updateObjById(String tableName, Object id,String setStr,List paramList) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
-
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String timeName=getTimeName();
 		if(autoOperTime){
 			setStr="update_time="+timeName+","+setStr;
@@ -979,9 +979,8 @@ public class MicroMetaDao {
 	}	
 
 	public int updateObjByBizId(String tableName, Object bizId,String bizCol,String setStr,List paramList) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
-
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String timeName=getTimeName();
 		if(autoOperTime){
 			setStr="update_time="+timeName+","+setStr;
@@ -998,9 +997,8 @@ public class MicroMetaDao {
 	}
 	
 	public int updateObjById(String tableName, Object id,Map paramMap) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
-
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		List paramList=new ArrayList();
 		String setStr="";
 		String values="";
@@ -1031,9 +1029,8 @@ public class MicroMetaDao {
 	}
 	
 	public int updateObjByBizId(String tableName, Object bizId,String bizCol,Map paramMap) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
-
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		List paramList=new ArrayList();
 		String setStr="";
 		String values="";
@@ -1069,8 +1066,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟缴撅拷锟�
 	 */
 	public int delObjByCondition(String tableName, String condition) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String sql = "delete from " + tableName + " where "+condition;
 		logger.debug(sql);
 		Integer retStatus=jdbcTemplate.update(sql);
@@ -1081,8 +1078,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟缴撅拷锟�
 	 */
 	public int delObjByCondition(String tableName, String condition,Object[] paramArray,int[] typeArray) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String sql = "delete from " + tableName + " where "+condition;
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
@@ -1094,8 +1091,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟缴撅拷锟�
 	 */
 	public int delObjByCondition(String tableName, String condition,Object[] paramArray) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String sql = "delete from " + tableName + " where "+condition;
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
@@ -1105,8 +1102,8 @@ public class MicroMetaDao {
 	
 	
 	public int delObjById(String tableName, Object id) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String tempIdKey=calcuIdKey();
 		String sql = "delete from " + tableName + " where "+tempIdKey+"=?";
 		Object[] paramArray=new Object[1];
@@ -1118,8 +1115,8 @@ public class MicroMetaDao {
 	}		
 
 	public int delObjByBizId(String tableName, Object bizId,String bizCol) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String sql = "delete from " + tableName + " where "+bizCol+"=?";
 		Object[] paramArray=new Object[1];
 		paramArray[0]=bizId;
@@ -1133,8 +1130,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int insertObj(String tableName, String cols,String values) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 
 		String timeName=getTimeName();
 		if(autoOperTime){
@@ -1152,15 +1149,15 @@ public class MicroMetaDao {
 	 * 锟斤拷锟絪ql锟斤拷锟斤拷
 	 */
 	public int insertObj(String sql) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		logger.debug(sql);
 		Integer retStatus=jdbcTemplate.update(sql);
 		return retStatus;
 	}
 	public int insertObj(String sql,Object[] paramArray) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
 		Integer retStatus=jdbcTemplate.update(sql,paramArray);
@@ -1170,8 +1167,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int insertObj(String tableName, String cols,String values,Object[] paramArray,int[] typeArray) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 
 		String timeName=getTimeName();
 		if(autoOperTime){
@@ -1189,8 +1186,8 @@ public class MicroMetaDao {
 	 * 锟斤拷荼锟斤拷锟斤拷锟斤拷
 	 */
 	public int insertObj(String tableName, String cols,String values,Object[] paramArray) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 
 		String timeName=getTimeName();
 		if(autoOperTime){
@@ -1206,9 +1203,8 @@ public class MicroMetaDao {
 
 	
 	public int insertObj(String tableName, String cols,String values,final Object[] paramArray, KeyHolder keyHolder, final String idCol) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
-
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String timeName=getTimeName();
 		if(autoOperTime){
 			cols="create_time,update_time,"+cols;
@@ -1241,8 +1237,8 @@ public class MicroMetaDao {
 	}	
 	
 	public int insertObj(String tableName, Map paramMap) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		String cols="";
 		String values="";
 		List paramList=new ArrayList();
@@ -1276,16 +1272,16 @@ public class MicroMetaDao {
 	
 	
 	public int[] updateObjBatch(String[] sql) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		logger.debug(sql);
 		int[] retStatus=jdbcTemplate.batchUpdate(sql);
 		return retStatus;
 	}
 	
 	public int[] updateObjBatch(String sql,List<Object[]> paramList) {
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder
-				.getDbSource(dbName);
+		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		logger.debug(sql);
 		logger.debug(paramList.toArray());
 		int[] retStatus=jdbcTemplate.batchUpdate(sql,paramList);
