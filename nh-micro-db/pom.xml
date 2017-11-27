@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.jeffreyning</groupId>
   <artifactId>nh-micro-db</artifactId>
-  <version>1.0.5-RELEASE</version>
+  <version>1.0.6-RELEASE</version>
   
  <dependencies>
    	<dependency>
@@ -19,7 +19,7 @@
    <description>nh-micro-db</description>
    <url>https://github.com/jeffreyning/nh-micro</url>
     <properties>
-        <project.release.version>0.0.1-RELEASE</project.release.version>
+        <project.release.version>0.0.6-RELEASE</project.release.version>
     </properties>
 
 
