@@ -36,18 +36,23 @@
 	<dependency>
   		<groupId>com.github.jeffreyning</groupId>
   		<artifactId>nh-micro-db</artifactId>
-  		<version>1.0.5-RELEASE</version>
+  		<version>1.0.6-RELEASE</version>
   	</dependency>   	
 	<dependency>
   		<groupId>com.github.jeffreyning</groupId>
   		<artifactId>nh-micro-template</artifactId>
-  		<version>1.0.5-RELEASE</version>
+  		<version>1.0.6-RELEASE</version>
   	</dependency>  
 	<dependency>
   		<groupId>com.github.jeffreyning</groupId>
   		<artifactId>nh-micro-context</artifactId>
   		<version>1.0.5-RELEASE</version>
-  	</dependency>    	
+  	</dependency>   
+  	<dependency>
+  		<groupId>com.github.jeffreyning</groupId>
+  		<artifactId>nh-micro-orm</artifactId>
+  		<version>0.0.1-RELEASE</version>
+  	</dependency> 
   </dependencies>
   
     <build>
