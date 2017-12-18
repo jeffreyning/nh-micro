@@ -1287,4 +1287,30 @@ public class MicroMetaDao {
 		int[] retStatus=jdbcTemplate.batchUpdate(sql,paramList);
 		return retStatus;
 	}
+	
+	
+	public int insertObj(final String sql,final Object[] paramArray, KeyHolder keyHolder, final String idCol) {
+
+		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
+		logger.debug(sql);
+		logger.debug(Arrays.toString(paramArray));
+		Integer retStatus=jdbcTemplate.update(new PreparedStatementCreator() { 
+
+			public PreparedStatement createPreparedStatement(Connection con) 
+			throws SQLException { 
+					String[] keyColNames=new String[1];
+					keyColNames[0]=idCol;
+					PreparedStatement ps=con.prepareStatement(sql,keyColNames); 
+					if(paramArray!=null){
+						int size=paramArray.length;
+						for(int i=0;i<size;i++){
+							ps.setObject(i+1, paramArray[i]);
+						}
+					}
+		
+					return ps; 
+				} 
+			}, keyHolder);	
+		return retStatus;
+	}	
 }
