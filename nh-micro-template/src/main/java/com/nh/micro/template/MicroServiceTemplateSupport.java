@@ -2399,4 +2399,15 @@ public class MicroServiceTemplateSupport {
 		int[] retStatus=getInnerDao().updateObjBatch(sql,paramList);
 		return retStatus;
 	}	
+	
+	public Integer createInfoServiceBySql(String sql, List placeList, IdHolder idHolder) throws Exception{
+		String tempKeyId=calcuIdKey();
+		KeyHolder keyHolder=new GeneratedKeyHolder(); 
+		Integer retStatus=getInnerDao().insertObj(sql,placeList.toArray(),keyHolder,tempKeyId);
+		if(idHolder!=null){
+			idHolder.setIdVal(keyHolder.getKey());
+		}
+		return retStatus;
+	}	
+	
 }
