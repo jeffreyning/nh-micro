@@ -1,5 +1,7 @@
 package com.nh.micro.orm;
 
+
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -8,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -51,7 +54,7 @@ public class MicroBeanMapUtil {
 		return map;
 	}
 
-	/**
+	/*
 	 * @param beanObj
 	 * 
 	 * @param fieldName
@@ -182,11 +185,42 @@ public class MicroBeanMapUtil {
 	}	
 	
 	public static Object mapToBean(Map paramMap, Class cls) throws Exception {
+		if(paramMap==null){
+			return null;
+		}
+		if(checkPrim(cls)){
+			if(paramMap.isEmpty()){
+				return null;
+			}
+			Set set=paramMap.entrySet();
+			Object[] objArray=set.toArray();
+			Entry entry=(Entry) objArray[0];
+			Object val=entry.getValue();
+			return str2Obj(cls,val);
+		}
+		if(cls.isAssignableFrom(Map.class)){
+			return paramMap;
+		}
 		Object retObj = cls.newInstance();
 		mapToBean(paramMap,retObj);
 		return retObj;
 	}
 	
+	public static boolean checkPrim(Class cls){
+		if(cls.isPrimitive()){
+			return true;
+		}
+		if(cls.isAssignableFrom(String.class)){
+			return true;
+		}
+		if(cls.isAssignableFrom(Date.class)){
+			return true;
+		}	
+		if(cls.isAssignableFrom(BigDecimal.class)){
+			return true;
+		}		
+		return false;
+	}
 	
 	public static void mapToBean(Map paramMap, Object beanObj) throws Exception {
 		Class cls=beanObj.getClass();

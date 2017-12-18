@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.jeffreyning</groupId>
   <artifactId>nh-micro-orm</artifactId>
-  <version>0.0.1-RELEASE</version>
+  <version>0.0.2-RELEASE</version>
   
    <name>com.github.jeffreyning:nh-micro-orm</name>
    <description>nh-micro-orm</description>
    <url>https://github.com/jeffreyning/nh-micro</url>
     <properties>
-        <project.release.version>0.0.1-RELEASE</project.release.version>
+        <project.release.version>0.0.2-RELEASE</project.release.version>
     </properties>
 
 
