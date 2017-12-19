@@ -105,7 +105,7 @@ public class NhsParseHandler implements ILoadHandler {
 	
 	public static String toGroovy(String groovyName, Map midMap){
 		StringBuilder sb=new StringBuilder();
-		sb.append("import com.minxin.micro.dao.mapper.load.CheckSqlUtil;\r\n");
+		sb.append("import com.nh.micro.nhs.CheckSqlUtil;\r\n");
 		sb.append("public class "+groovyName+" {\r\n");
 		Set<String> keySet=midMap.keySet();
 		for(String key:keySet){

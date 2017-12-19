@@ -1263,7 +1263,7 @@ public class MicroServiceTemplateSupport {
 						requestParamMap.put(defaultId, retId.toString());
 					}
 				}*/
-				requestParamMap.put(tempKeyId, keyHolder.getKey());
+				requestParamMap.put(tempKeyId, keyHolder.getKey().toString());
 			}
 		}
 
