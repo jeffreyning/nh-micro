@@ -91,19 +91,19 @@ public class MicroBeanMapUtil {
 		if (cls.isAssignableFrom(String.class)) {
 			retObj = new String((String) val);
 		}
-		if (cls.isAssignableFrom(Integer.class)) {
+		if (cls.isAssignableFrom(Integer.class) || cls.isAssignableFrom(int.class)) {
 			retObj = Integer.valueOf((String) val);
 		}
-		if (cls.isAssignableFrom(Long.class)) {
+		if (cls.isAssignableFrom(Long.class) || cls.isAssignableFrom(long.class)) {
 			retObj = Long.valueOf((String) val);
 		}
 		if (cls.isAssignableFrom(BigDecimal.class)) {
 			retObj = new BigDecimal((String) val);
 		}
-		if (cls.isAssignableFrom(Float.class)) {
+		if (cls.isAssignableFrom(Float.class) || cls.isAssignableFrom(float.class)) {
 			retObj = Float.valueOf((String) val);
 		}
-		if (cls.isAssignableFrom(Double.class)) {
+		if (cls.isAssignableFrom(Double.class) || cls.isAssignableFrom(double.class)) {
 			retObj = Double.valueOf((String) val);
 		}
 		if (cls.isAssignableFrom(Date.class)) {
@@ -115,19 +115,22 @@ public class MicroBeanMapUtil {
 			retObj = (Date)sdf.parseObject(tempVal);
 		}
 		
-		if (cls.isAssignableFrom(Boolean.class)) {
+		if (cls.isAssignableFrom(Boolean.class) || cls.isAssignableFrom(boolean.class)) {
 			retObj = Boolean.valueOf((String) val);
 		}
 		if (cls.isAssignableFrom(List.class)) {
 			retObj = val;
 		}
-		if (cls.isAssignableFrom(Short.class)) {
+		if (cls.isAssignableFrom(Short.class) || cls.isAssignableFrom(short.class)) {
 			retObj = Short.valueOf((String) val);
 		}
-		if (cls.isAssignableFrom(Byte.class)) {
+		if (cls.isAssignableFrom(Byte.class) || cls.isAssignableFrom(byte.class)) {
 			retObj = Byte.valueOf((String) val);
 		}		
 		
+		if (cls.isAssignableFrom(Character.class) || cls.isAssignableFrom(char.class)) {
+			retObj = Character.valueOf(((String)val).charAt(0));
+		}		
 		if (cls.isAssignableFrom(Map.class)) {
 			retObj = val;
 		}
@@ -144,19 +147,19 @@ public class MicroBeanMapUtil {
 		if (cls.isAssignableFrom(String.class)) {
 			retObj = new String((String) val);
 		}
-		if (cls.isAssignableFrom(Integer.class)) {
+		if (cls.isAssignableFrom(Integer.class) || cls.isAssignableFrom(int.class) ) {
 			retObj = val.toString();
 		}
-		if (cls.isAssignableFrom(Long.class)) {
+		if (cls.isAssignableFrom(Long.class) || cls.isAssignableFrom(long.class)) {
 			retObj = val.toString();
 		}
 		if (cls.isAssignableFrom(BigDecimal.class)) {
 			retObj = val.toString();
 		}
-		if (cls.isAssignableFrom(Float.class)) {
+		if (cls.isAssignableFrom(Float.class) || cls.isAssignableFrom(float.class)) {
 			retObj = val.toString();
 		}
-		if (cls.isAssignableFrom(Double.class)) {
+		if (cls.isAssignableFrom(Double.class) || cls.isAssignableFrom(double.class)) {
 			retObj = val.toString();
 		}
 		if (cls.isAssignableFrom(Date.class)) {
@@ -164,19 +167,22 @@ public class MicroBeanMapUtil {
 			retObj=sdf.format(val);
 		}
 		
-		if (cls.isAssignableFrom(Boolean.class)) {
+		if (cls.isAssignableFrom(Boolean.class) || cls.isAssignableFrom(boolean.class)) {
 			retObj = val.toString();
 		}
 		if (cls.isAssignableFrom(List.class)) {
 			retObj = val;
 		}
-		if (cls.isAssignableFrom(Short.class)) {
+		if (cls.isAssignableFrom(Short.class) || cls.isAssignableFrom(short.class)) {
 			retObj = val.toString();
 		}
-		if (cls.isAssignableFrom(Byte.class)) {
+		if (cls.isAssignableFrom(Byte.class) || cls.isAssignableFrom(byte.class)) {
+			retObj = val.toString();
+		}	
+
+		if (cls.isAssignableFrom(Character.class) || cls.isAssignableFrom(char.class)) {
 			retObj = val.toString();
 		}		
-		
 		if (cls.isAssignableFrom(Map.class)) {
 			retObj = val;
 		}
