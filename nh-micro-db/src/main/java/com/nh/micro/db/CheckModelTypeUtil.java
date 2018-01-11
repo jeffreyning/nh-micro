@@ -385,7 +385,11 @@ public class CheckModelTypeUtil {
 	}
 	
 	public static void addMetaCols(Map rowMap){
-
+		//add 20180111 ninghao
+		if(rowMap==null){
+			return;
+		}
+		
 		List<String> metaContentNameList=checkMetaContentName(rowMap);
 		for(String metaContentName:metaContentNameList){
 			String metaContentNamePrefix=metaContentName.replace("meta_content", "");
@@ -467,6 +471,11 @@ public class CheckModelTypeUtil {
 	
 	public static void changeDateCols(Map rowMap){
 
+		//add 20180111 ninghao
+		if(rowMap==null){
+			return;
+		}
+		
 		Set<String> keySet=rowMap.keySet();
 		for(String key:keySet){
 			Object obj=rowMap.get(key);
@@ -495,6 +504,11 @@ public class CheckModelTypeUtil {
 	}	
 	
 	public static void changeNoStrCols(Map rowMap){
+		//add 20180111 ninghao
+		if(rowMap==null){
+			return;
+		}
+		
 		Set<String> keySet=rowMap.keySet();
 		for(String key:keySet){
 			Object obj=rowMap.get(key);
