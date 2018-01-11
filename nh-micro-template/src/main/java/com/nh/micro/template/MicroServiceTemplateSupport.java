@@ -1851,6 +1851,8 @@ public class MicroServiceTemplateSupport {
 		//for oracle
 		String realSql=sql;
 		Map retMap= getInnerDao().querySingleObjJoinByCondition(realSql);
+		CheckModelTypeUtil.addMetaCols(retMap);
+		CheckModelTypeUtil.changeNoStrCols(retMap);			
 		return retMap;
 
 		
@@ -1864,6 +1866,8 @@ public class MicroServiceTemplateSupport {
 		return (Map) retList.get(0);*/
 		String realSql=sql;
 		Map retMap= getInnerDao().querySingleObjJoinByCondition(realSql,placeList.toArray());
+		CheckModelTypeUtil.addMetaCols(retMap);
+		CheckModelTypeUtil.changeNoStrCols(retMap);	
 		return retMap;		
 	}
 	
