@@ -6,7 +6,9 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
@@ -84,6 +86,15 @@ public class GroovyLoadUtil {
 		}	
 		return false;
 	}
+
+	public static List pluginList=new ArrayList();
+	
+	public static List getPluginList() {
+		return pluginList;
+	}
+	public static void setPluginList(List pluginList) {
+		GroovyLoadUtil.pluginList = pluginList;
+	}	
 	
 	public static void loadGroovyStampCheck(String name, String content,
 			String stamp) throws Exception {
@@ -113,7 +124,18 @@ public class GroovyLoadUtil {
 		GroovyClassLoader loader = new GroovyClassLoader(parent);
 		Class<?> groovyClass = loader.parseClass(content,name+".groovy");
 		GroovyObject groovyObject = (GroovyObject) groovyClass.newInstance();
-		GroovyExecUtil.getGroovyMap().put(name, groovyObject);
+		
+		GroovyObject proxyObject=groovyObject;		
+		if(pluginList!=null){
+			
+			int size=pluginList.size();
+			for(int i=0;i<size;i++){
+				IGroovyLoadPlugin plugin=(IGroovyLoadPlugin) pluginList.get(i);
+				proxyObject=plugin.execPlugIn(name, groovyObject, proxyObject);
+			}
+		}		
+		GroovyExecUtil.getGroovyMap().put(name, proxyObject);		
+		//GroovyExecUtil.getGroovyMap().put(name, groovyObject);
 		logger.info("finish load groovy name=" + name);
 	}
 
