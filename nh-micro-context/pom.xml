@@ -2,15 +2,23 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.jeffreyning</groupId>
   <artifactId>nh-micro-context</artifactId>
-  <version>1.0.5-RELEASE</version>
-  
-  
+  <version>1.1.5-RELEASE</version>
+
+  <dependencies>  
+	<dependency>
+  		<groupId>com.github.jeffreyning</groupId>
+  		<artifactId>nh-micro-engine</artifactId>
+  		<version>1.1.5-RELEASE</version>
+	  <scope>compile</scope>
+      <optional>true</optional>    		
+  	</dependency>
+  </dependencies>
 
    <name>com.github.jeffreyning:nh-micro-context</name>
    <description>nh-micro-context</description>
    <url>https://github.com/jeffreyning/nh-micro</url>
     <properties>
-        <project.release.version>1.0.5-RELEASE</project.release.version>
+        <project.release.version>1.1.5-RELEASE</project.release.version>
     </properties>
 
 
