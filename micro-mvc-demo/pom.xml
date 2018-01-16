@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>com.github.jeffreyning</groupId>
 			<artifactId>nh-micro-service</artifactId>
-			<version>1.0.0-RELEASE</version>
+			<version>1.0.1-RELEASE</version>
 		</dependency> 
 		  	 	
 		<dependency>
