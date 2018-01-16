@@ -34,7 +34,14 @@ public class NServiceMapperFactory implements FactoryBean {
 	@Override
 	public Object getObject() throws Exception {
 		InjectGroovyProxy injectGroovyProxy=new InjectGroovyProxy();
-		injectGroovyProxy.setGroovyName(groovyName);		
+		injectGroovyProxy.setGroovyName(groovyName);	
+		if(groovyName==null || "".equals(groovyName)){
+			InjectGroovy anno=(InjectGroovy) mapperInterface.getAnnotation(InjectGroovy.class);
+			if(anno!=null){
+				String tempGroovyName=anno.name();
+				injectGroovyProxy.setGroovyName(tempGroovyName);
+			}
+		}		
 	    Object proxy = Proxy.newProxyInstance(mapperInterface.getClassLoader(), 
 	    	     new Class[]{mapperInterface}, 
 	    	     (InvocationHandler) injectGroovyProxy);	  
