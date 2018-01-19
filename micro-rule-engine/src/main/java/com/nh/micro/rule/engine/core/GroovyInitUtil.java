@@ -36,6 +36,10 @@ public class GroovyInitUtil {
 		  }else{
 			temp=new File(dirName);
 		  }
+		if(!temp.exists()){
+			logger.warn("skip load cause not exists path="+dirName);
+			return;				
+		}		
 		File[] fs=null;  
 		fs=temp.listFiles();
 		  for(int i=0; i<fs.length; i++){
