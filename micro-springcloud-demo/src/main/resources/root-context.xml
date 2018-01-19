@@ -10,7 +10,14 @@
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<description>This is the micro configuration for the web applications.
 	</description>
-	
+   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:flag.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" /> 
+	</bean>		
 	<bean class="com.nh.micro.service.GroovyBeanScannerConfigurer">
 		<property name="scanPath" value="com.nh.micro.springcloud.demo.web"></property>
 	</bean>
@@ -61,7 +68,7 @@
 
 	<!-- 启动时加载groovy -->
 	<bean id="groovyInitUtil" class="com.nh.micro.rule.engine.core.GroovyInitUtil"
-		init-method="initGroovy" lazy-init="false" >
+		init-method="initGroovy" lazy-init="false" depends-on="gitSync" >
 		<property name="fileList">
 			<list>
 				<bean class="com.nh.micro.rule.engine.core.GFileBean">
@@ -70,11 +77,24 @@
 					<property name="dirFlag" value="true"></property>
 					<property name="rulePath" value="/groovy/"></property>
 				</bean>
+				<bean class="com.nh.micro.rule.engine.core.GFileBean">
+					<property name="ruleStamp" value="true"></property>
+					<property name="jarFileFlag" value="false"></property>
+					<property name="dirFlag" value="true"></property>
+					<property name="rulePath" value="H:/temp/git/test-sync/groovy/"></property>
+				</bean>					
 			</list>
 		</property>
 	</bean>
 
-
+<bean id="gitSync" class="com.nh.micro.sync.git.MicroGitSync"
+	init-method="initRep" lazy-init="false">
+	<property name="localPath" value="h:/temp/git"></property>
+	<property name="remotePath"	value="https://github.com/nhmicro/test-sync-groovy.git"></property>
+	<property name="cloneFlag" value="true"></property>
+	<property name="openFlag" value="${openFlag}"></property>
+	<property name="version" value="head"></property>
+</bean>
 
 
 	<!-- 配置微服务全局变量（使用微服务dao时必须配置） -->
