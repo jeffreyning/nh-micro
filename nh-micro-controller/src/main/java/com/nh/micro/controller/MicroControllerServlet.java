@@ -3,6 +3,8 @@ package com.nh.micro.controller;
 
 
 import java.io.IOException;
+
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,24 +22,31 @@ import com.nh.micro.rule.engine.core.GroovyExecUtil;
 public class MicroControllerServlet extends HttpServlet  {
 
 	private static final long serialVersionUID = 1L;
-	
+	private String prepath="";
     /**
      * @see HttpServlet#HttpServlet()
      */
     public MicroControllerServlet() {
         super();
     }
-
+    public void init(ServletConfig config) throws ServletException {  
+        this.prepath=config.getInitParameter("prepath");  
+    } 
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String url=request.getRequestURI();
 		String context=request.getServletContext().getContextPath();
 		int prelen=context.length();
 		String busUrl=url.substring(prelen);
+		if(prepath!=null && !"".equals(prepath)){
+			if(busUrl.startsWith("/"+prepath)){
+				busUrl=busUrl.substring(prepath.length()+1);
+			}
+		}
 		String version=request.getParameter("micro_api_version");
 		String[] config=MicroControllerMap.mappingGroovyName(busUrl,version);
 		if(config==null){
-			throw new RuntimeException("can not check "+url+" config is null");
+			throw new RuntimeException("can not check from "+url+" to "+busUrl+" config is null");
 		}
 		
 		String groovyName=config[0];
