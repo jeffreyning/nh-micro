@@ -1,8 +1,9 @@
 package com.nh.micro.controller;
 
 
-
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -11,22 +12,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-import com.nh.micro.rule.engine.core.GroovyExecUtil;
-
-
 /**
  * 
  * @author ninghao
  *
  */
-public class MicroControllerServlet extends HttpServlet  {
+public class MicroStaticServlet extends HttpServlet  {
 
 	private static final long serialVersionUID = 1L;
 	private String prepath=null;
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public MicroControllerServlet() {
+    public MicroStaticServlet() {
         super();
     }
     public String getPrepath() {
@@ -51,15 +49,25 @@ public class MicroControllerServlet extends HttpServlet  {
 				busUrl=busUrl.substring(prepath.length()+1);
 			}
 		}
-		String version=request.getParameter("micro_api_version");
-		String[] config=MicroControllerMap.mappingGroovyName(busUrl,version);
-		if(config==null){
-			throw new RuntimeException("can not check from "+url+" to "+busUrl+" config is null");
-		}
-		
-		String groovyName=config[0];
-		String methodName=config[1];
-		GroovyExecUtil.execGroovyRetObj(groovyName, methodName, request, response);
+		String subPath="/WEB-INF"+busUrl;
+		String abPath=request.getSession().getServletContext().getRealPath("");
+		String realPath=abPath+subPath;
+        InputStream in = null;
+        try{
+	        in=new FileInputStream(realPath);  
+	        byte b[]=new byte[1024];
+	        int size=in.read(b);
+	        while(size>0){
+	        	response.getOutputStream().write(b, 0, size);
+	        	size=in.read(b);
+	        }
+        }catch(Exception e){
+        	response.setStatus(HttpServletResponse.SC_NOT_FOUND);//返回404状态码
+        }finally{
+        	if(in!=null){
+        		in.close();
+        	}
+        }
 	
 	}
 	
