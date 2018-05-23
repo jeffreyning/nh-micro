@@ -544,7 +544,16 @@ public class MicroServiceTemplateSupport {
 				}
 				//end
 				String value=(String) dbColMap.get(key);
-				if(value!=null ){
+				if(value!=null && "".equals(value)){//add 201805 ning
+					if(CheckModelTypeUtil.isDate(modelEntry) || CheckModelTypeUtil.isNumber(modelEntry)){
+						realValueList.add(null);
+						crealValues.append(key+"=?",value!=null);	
+					}else{
+						realValueList.add("");
+						crealValues.append(key+"=?",value!=null);
+					}
+				}
+				else if(value!=null ){
 					if(CheckModelTypeUtil.isDate(modelEntry) ){
 						if(value.toLowerCase().equals("now()")){
 							//for oracle
@@ -767,9 +776,13 @@ public class MicroServiceTemplateSupport {
 				String value=(String) dbColMap.get(key);
 				String whereValue="";
 				if(CheckModelTypeUtil.isNumber(modelEntry)){
+					
 					whereValue=Cutil.rep("?",value);
 				}else if(CheckModelTypeUtil.isDate(modelEntry)){
-					if(value!=null){
+					
+					if(value!=null && "".equals(value)){//add 201805 ning
+						whereValue="?";
+					}else if(value!=null){
 						if(value.toLowerCase().equals("now()")){
 							//for oracle
 							String tmpValue="now()";
@@ -792,7 +805,13 @@ public class MicroServiceTemplateSupport {
 					whereValue=Cutil.rep("?",value);
 				}
 				crealValues.append(whereValue,value!=null);
-				if(value!=null){
+				if(value!=null && "".equals(value)){//add 201805 ning
+					if(CheckModelTypeUtil.isDate(modelEntry) || CheckModelTypeUtil.isNumber(modelEntry)){
+						placeList.add(null);
+					}else{
+						placeList.add("");
+					}
+				}else if(value!=null){
 					if(value.toLowerCase().equals("now()")==false){
 						placeList.add(value);
 					}
