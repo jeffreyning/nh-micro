@@ -1250,11 +1250,15 @@ public class MicroServiceTemplateSupport {
 		MicroDbModelEntry idEntry=(MicroDbModelEntry) modelEntryMap.get(tempKeyId);
 		
 		String id=(String) requestParamMap.get(tempKeyId);
+		
 		if(id==null || "".equals(id)){
 			requestParamMap.put(tempKeyId, null);
+			
 			if(idEntry!=null && idEntry.colType.equals(String.class)){
 				id=UUID.randomUUID().toString();
 				requestParamMap.put(tempKeyId, id);	
+			}else if(idEntry==null){//add 201805 ning support nonid
+				autoFlag=false;
 			}else{
 				autoFlag=true;
 			}
