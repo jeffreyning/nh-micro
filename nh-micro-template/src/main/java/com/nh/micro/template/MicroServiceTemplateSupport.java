@@ -2437,4 +2437,230 @@ public class MicroServiceTemplateSupport {
 		return retStatus;
 	}	
 	
+	
+
+	//20180605 ning
+	
+	public Map getMapByIdService4text(String id, String tableName, String colName){
+		Map data=getInfoByIdService(id,tableName);
+		if(data==null){
+			return null;
+		}
+		String dataStr=(String) data.get(colName);
+		if(dataStr==null || "".equals(dataStr)){
+			dataStr="{}";
+		}
+		Gson gson = new Gson();
+		Map dataMap=gson.fromJson(dataStr,Map.class);
+		return dataMap;
+	}
+	
+	public int saveMapByIdService4text(String id, String tableName, String colName, Map paramMap) {
+		Gson gson = new Gson();
+		String jsonString = gson.toJson(paramMap); 
+		Map saveMap=new HashMap();
+		saveMap.put(colName, jsonString);
+		int status=0;
+		try {
+			status = updateInfoByIdService(id,tableName,saveMap);
+		} catch (Exception e) {
+
+		}
+		return status;
+
+	}
+
+	//根据fullpath获取指定位置数据(data)
+	public static Object getCurDataByFull4text(Map dataMap,String dept_fullpath){
+		String[] paths=dept_fullpath.split("/");
+		int size=paths.length;
+		String dept_id="";
+		if(size>0){
+			dept_id=paths[size-1];
+		}
+		String dept_path="";
+		int dept_id_size=dept_id.length();
+		dept_path=(String) dept_fullpath.subSequence(0, dept_fullpath.length()-dept_id_size);
+		Object deptData=null;
+		Map parentMap=(Map) getParentObjByPath4text(dataMap,dept_path);
+		if(parentMap!=null){
+			int haveIndex=dept_id.indexOf("[");
+			if(haveIndex<=0){
+				deptData=parentMap.get(dept_id);
+			}else{
+				String real_id=dept_id.substring(0,haveIndex);
+				int lastIndex=dept_id.indexOf("]");
+				String real_index=dept_id.substring(haveIndex+1,lastIndex);
+				Integer index_i=Integer.valueOf(real_index);
+				List tempList=(List) parentMap.get(real_id);
+				deptData=tempList.get(index_i);
+			}
+		}
+		return deptData;
+	}
+	
+	//根据path获取指定位置数据(data)
+	private static Object getParentObjByPath4text(Map dataMap,String dept_path){
+		String[] pathNode=dept_path.split("/");
+		int size=pathNode.length;
+		if(size<0){
+			return dataMap;
+		}
+		Object subObj=null;
+		Map rowObj=dataMap;
+		if(dept_path.equals("")){
+			return dataMap;
+		}
+		for(int i=0;i<size;i++){
+			String key=pathNode[i];
+			if(key.contains("[")){
+				int start=key.indexOf("[");
+				int end=key.indexOf("]");
+				String realKey=key.substring(0,start);
+				String temp=key.substring(start+1, end);
+				int index=0;
+				if(temp!=null && !"".equals(temp)){
+					index=Integer.valueOf(temp);
+				}
+				List tempList=(List) rowObj.get(realKey);
+				if(tempList==null){
+					tempList=new ArrayList();
+					rowObj.put(realKey, tempList);
+				}
+				int lsize=tempList.size();
+				while(lsize<index+1){
+					tempList.add(new HashMap());
+					lsize=tempList.size();
+				}
+				subObj=tempList.get(index);
+
+			}else{
+				subObj=rowObj.get(key);
+				if(subObj==null){
+					subObj=new HashMap();
+					rowObj.put(key, subObj);
+				}
+			}
+			if(i+1<size){
+				rowObj=(Map) subObj;
+			}
+		}
+		return subObj;
+	}	
+	
+	//根据fullpath设置指定位置数据(data)
+	public static int setCurDataByFull4text(Map dataMap,String dept_fullpath,Object paramObj){
+		String[] paths=dept_fullpath.split("/");
+		int size=paths.length;
+		String dept_id="";
+		if(size>0){
+			dept_id=paths[size-1];
+		}
+		String dept_path="";
+		int dept_id_size=dept_id.length();
+		dept_path=(String) dept_fullpath.subSequence(0, dept_fullpath.length()-dept_id_size);
+
+		Map pMap=(Map) getParentObjByPath4text(dataMap,dept_path);
+		int index=getDeptIdIndex(dept_id);
+		if(index<0){
+			pMap.put(dept_id,paramObj);
+		}else{
+			String realDeptId=getRealDeptId(dept_id);
+			List tempList=(List) pMap.get(realDeptId);
+			Map tempMap=(Map) getDataFromList(tempList,index);
+			tempList.set(index, paramObj);
+		}
+		return 1;
+
+	}	
+	
+	
+	//设置指定位置数据(data)
+	public static int appendParentMap4text(String dept_fullpath,Map dataMap,Map paramObj){
+
+		String[] paths=dept_fullpath.split("/");
+		int size=paths.length;
+		String dept_id="";
+		if(size>0){
+			dept_id=paths[size-1];
+		}
+		String dept_path="";
+		int dept_id_size=dept_id.length();
+		dept_path=(String) dept_fullpath.subSequence(0, dept_fullpath.length()-dept_id_size);
+		
+		Map pMap=(Map) getParentObjByPath4text(dataMap,dept_path);
+		List targetList=(List) pMap.get(dept_id);
+		if(targetList==null){
+			targetList=new ArrayList();
+			pMap.put(dept_id, targetList);
+		}
+		targetList.add(paramObj);
+		return 1;
+	}
+	
+	//获取index值时自动填充之前值
+	private static Object getDataFromList(List dataList,int index){
+		int size=dataList.size();
+		while(size<index+1){
+			dataList.add(new HashMap());
+			size=dataList.size();
+		}
+		Object retObj=dataList.get(index);
+		return retObj;
+	}
+	
+	
+	//获取非index的路径
+	private static String getRealDeptId(String deptId){
+		int start=deptId.indexOf("[");
+		String realKey=deptId;
+		if(start>0){
+			realKey=deptId.substring(0,start);
+		}
+		return realKey;
+	}	
+	
+	//获取最后的index
+	private static int getDeptIdIndex(String deptId){
+		int start=deptId.indexOf("[");
+		if(start<=0){
+			return -1;
+		}
+		int end=deptId.indexOf("]");
+		String temp=deptId.substring(start+1, end);
+		int index=0;
+		if(temp!=null && !"".equals(temp)){
+			index=Integer.valueOf(temp);
+		}
+		return index;
+	}	
+	
+	public static int removeParentMap(Map dataMap,String dept_fullpath){
+		String[] paths=dept_fullpath.split("/");
+		int size=paths.length;
+		String dept_id="";
+		if(size>0){
+			dept_id=paths[size-1];
+		}
+		String dept_path="";
+		int dept_id_size=dept_id.length();
+		dept_path=(String) dept_fullpath.subSequence(0, dept_fullpath.length()-dept_id_size);
+
+		Map pMap=(Map) getParentObjByPath4text(dataMap,dept_path);
+		int index=getDeptIdIndex(dept_id);
+		if(index<0){
+			pMap.remove(dept_id);
+		}else{
+			String realDeptId=getRealDeptId(dept_id);
+			List tempList=(List) pMap.get(realDeptId);
+			if(index+1<tempList.size()){
+				tempList.remove(index);
+			}else{
+				return 0;
+			}
+		}
+
+		return 1;
+	}	
+	
 }
