@@ -28,7 +28,9 @@ public class GroovyScanner extends ClassPathBeanDefinitionScanner {
 		  this.addIncludeFilter(new TypeFilter() {
 		        @Override
 		        public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory) throws IOException {
-		          return true;
+		        	//add 201806 ninghao
+		          boolean flag=metadataReader.getAnnotationMetadata().hasAnnotation("com.nh.micro.service.InjectGroovy");
+		          return flag;
 		        }
 		      });
 		  
