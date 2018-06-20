@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import groovy.lang.GroovyObject;
 
 
@@ -33,6 +35,13 @@ public class MicroInjectPlugin implements IGroovyLoadPlugin {
 				}
 				Object beanObj=MicroContextHolder.getContext().getBean(beanId);
 				field.set(groovyObject, beanObj);
+			}else{
+				Autowired annoAuto=field.getAnnotation(Autowired.class);
+				if(annoAuto!=null){
+					Class fieldCls=field.getType();
+					Object beanObj=MicroContextHolder.getContext().getBean(fieldCls);
+					field.set(groovyObject, beanObj);
+				}
 			}
 		}
 		return proxyObject;
