@@ -207,7 +207,11 @@ public class MicroMetaDao {
 		if(dbType!=null && !"default".equals(dbType)){
 			return dbType;
 		}
-		String retType=(String) MicroDbHolder.getDbTypeMap().get(dbName);
+		String changeDbName=GroovyDbSwitcher.peekCurrentDataSource(dbName);
+		if(changeDbName==null ){
+			changeDbName=dbName;				
+		}
+		String retType=(String) MicroDbHolder.getDbTypeMap().get(changeDbName);
 		if(retType==null){
 			retType="mysql";
 		}

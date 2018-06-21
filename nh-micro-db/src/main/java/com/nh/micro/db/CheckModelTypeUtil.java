@@ -360,8 +360,14 @@ public class CheckModelTypeUtil {
 		return getModelEntryList4Db(tableName,dbName,"");
 	}
 	public static List  getModelEntryList4Db(String tableName,String dbName,String cusSelect){
+		//add 201806 ning
+		String changeDbName=GroovyDbSwitcher.peekCurrentDataSource(dbName);
+		if(changeDbName==null ){
+			changeDbName=dbName;			
+		}
+		
 		List retList=new ArrayList();
-		List<Map> dbColInfo=getColInfoFromMeta(tableName,dbName,cusSelect);
+		List<Map> dbColInfo=getColInfoFromMeta(tableName,changeDbName,cusSelect);
 		for(Map rowMap:dbColInfo){
 			String colId=(String) rowMap.get("fieldName");
 			String colName=(String) rowMap.get("fieldLabel");
