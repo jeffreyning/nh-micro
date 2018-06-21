@@ -83,15 +83,21 @@ public class GroovyDbAopImpl extends GroovyAopInter {
 		if(oldName==null || "".equals(oldName)){
 			oldName=supportName;
 		}
+		
+		//add 201806 ning
+		if(oldName==null || "".equals(oldName)){
+			oldName="default";
+		}	
+		
 		if(changeFlag==true){
 		    try
 		    {
 		    	addCountCall();
-		    	if(oldName!=null && !"".equals(oldName)){
+		    	if(oldName!=null ){
 		    		GroovyDbSwitcher.pushCurrentDataSource(oldName, changeName);
 		    	}
 		    	Object retObj= execNextHandler(groovyObject, GroovyName, methodName, param);
-		    	if(oldName!=null && !"".equals(oldName)){
+		    	if(oldName!=null ){
 		    		GroovyDbSwitcher.popCurrentDataSource(oldName);
 		    	}
 		    	subAndRemoveCountCall();
@@ -99,7 +105,7 @@ public class GroovyDbAopImpl extends GroovyAopInter {
 		    }
 		    catch(Exception ex)
 		    {
-		    	if(oldName!=null && !"".equals(oldName)){
+		    	if(oldName!=null){
 		    		GroovyDbSwitcher.popCurrentDataSource(oldName);
 		    	}
 		    	subAndRemoveCountCall();

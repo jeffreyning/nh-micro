@@ -113,15 +113,21 @@ public class MicroDbProxy implements IMicroProxy {
 		if(oldName==null || "".equals(oldName)){
 			oldName=supportName;
 		}
+		
+		//add 201806 ning
+		if(oldName==null || "".equals(oldName)){
+			oldName="default";
+		}
+		
 		if(changeFlag==true){
 		    try
 		    {
 		    	addCountCall();
-		    	if(oldName!=null && !"".equals(oldName)){
+		    	if(oldName!=null ){
 		    		GroovyDbSwitcher.pushCurrentDataSource(oldName, changeName);
 		    	}
 		    	Object retObj= method0.invoke(groovyObj, args);
-		    	if(oldName!=null && !"".equals(oldName)){
+		    	if(oldName!=null ){
 		    		GroovyDbSwitcher.popCurrentDataSource(oldName);
 		    	}
 		    	subAndRemoveCountCall();
@@ -129,7 +135,7 @@ public class MicroDbProxy implements IMicroProxy {
 		    }
 		    catch(Exception ex)
 		    {
-		    	if(oldName!=null && !"".equals(oldName)){
+		    	if(oldName!=null ){
 		    		GroovyDbSwitcher.popCurrentDataSource(oldName);
 		    	}
 		    	subAndRemoveCountCall();

@@ -20,6 +20,7 @@ import com.nh.micro.template.MicroTranManagerHolder;
 
 import java.lang.reflect.Method;
 
+@Deprecated
 public class GroovyTMAopImpl extends GroovyAopInter {
 
 	public Object invokeMethod(GroovyObject groovyObject, String GroovyName,
