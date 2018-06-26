@@ -1358,8 +1358,18 @@ public class MicroServiceTemplateSupport {
 		
 		List placeList=new ArrayList();
 		String setStr=createUpdateInStr(requestParamMap,modelEntryMap,placeList);
-		String nCondition=Cutil.jn(" and ", cusCondition,condition);
-		String nSetStr=Cutil.jn(",", setStr,cusSetStr);
+		String nCondition=cusCondition;
+		String nSetStr=setStr;
+		
+		//add 201806 ninghao
+		if(condition!=null && !"".equals(condition)){
+			nCondition=Cutil.jn(" and ", condition,cusCondition);
+		}
+		if(cusSetStr!=null && !"".equals(cusSetStr)){
+			nSetStr=Cutil.jn(",", setStr,cusSetStr);
+		}		
+		
+		
 		placeList.add(id);
 		Integer retStatus=getInnerDao().updateObjByCondition(tableName, nCondition, nSetStr,placeList.toArray());
 		return retStatus;
