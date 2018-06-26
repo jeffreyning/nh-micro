@@ -75,6 +75,11 @@ public class GroovyExecUtil {
 			Object... paramArray) {
 		try {
 			GroovyObject groovyObject = (GroovyObject) getGroovyObj(groovyName);
+			//add 201806 ninghao
+			if(groovyObject==null){
+				throw new RuntimeException("groovyName="+groovyName+" is null methodName="+methodName);
+			}	
+			
 			//GroovyAopInter groovyAop=(GroovyAopInter) MicroContextHolder.getContextMap().get("groovyAop");
 			GroovyAopInter firstAop=GroovyAopChain.getFirstAop();
 			Object retObj=null;
@@ -96,6 +101,11 @@ public class GroovyExecUtil {
 	public static Object execGroovyRetObj(GroovyObject groovyObject, String methodName,
 			Object... paramArray) {
 		try {
+			//add 201806 ninghao
+			if(groovyObject==null){
+				throw new RuntimeException("groovyObject is null methodName="+methodName);
+			}			
+			
 			//GroovyObject groovyObject = (GroovyObject) getGroovyObj(groovyName);
 			//GroovyAopInter groovyAop=(GroovyAopInter) MicroContextHolder.getContextMap().get("groovyAop");
 			GroovyAopInter firstAop=GroovyAopChain.getFirstAop();
