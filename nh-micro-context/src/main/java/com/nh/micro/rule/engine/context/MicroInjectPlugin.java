@@ -4,6 +4,10 @@ package com.nh.micro.rule.engine.context;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -39,8 +43,31 @@ public class MicroInjectPlugin implements IGroovyLoadPlugin {
 				Autowired annoAuto=field.getAnnotation(Autowired.class);
 				if(annoAuto!=null){
 					Class fieldCls=field.getType();
-					Object beanObj=MicroContextHolder.getContext().getBean(fieldCls);
-					field.set(groovyObject, beanObj);
+					
+					//add 201806 ning start
+					if(List.class.isAssignableFrom(fieldCls)){
+						Type type=field.getGenericType();
+			            if(type instanceof ParameterizedType) {
+			                ParameterizedType t = (ParameterizedType) type;
+			                Class typeCls=(Class) t.getActualTypeArguments()[0];
+			                String[] beanNames=MicroContextHolder.getContext().getBeanNamesForType(typeCls);
+			                if(beanNames!=null){
+			                	List beanList=new ArrayList();
+			                	for(String n:beanNames){
+			                		Object beanObj=MicroContextHolder.getContext().getBean(n);
+			                		beanList.add(beanObj);
+			                		field.set(groovyObject, beanList);
+			                	}
+			                }
+			              //add 201806 end  
+			            }else{
+							Object beanObj=MicroContextHolder.getContext().getBean(fieldCls);
+							field.set(groovyObject, beanObj);			            	
+			            }
+					}else{
+						Object beanObj=MicroContextHolder.getContext().getBean(fieldCls);
+						field.set(groovyObject, beanObj);
+					}
 				}
 			}
 		}
