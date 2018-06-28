@@ -24,10 +24,12 @@ public class GroovyDbLoadTimer {
 
 	public void setDbName(String dbName) {
 		GroovyInitDbUtil.dbName = dbName;
+		//add 201806 ning
+		GroovyDbLoadTimer.dbName=dbName;
 	}	
 	
 	public void doJob() throws Exception {
-		MicroMetaDao microDao=MicroMetaDao.getInstance(dbName);
+		MicroMetaDao microDao=MicroMetaDao.getInstance(GroovyDbLoadTimer.dbName);
 		String sql="select * from nh_micro_groovy_load_list where valid_flag=1 and time_load_flag=1";
 		List<Map<String, Object>> retList=microDao.getMicroJdbcTemplate().queryForList(sql);
 		for (Map rowMap : retList) {
