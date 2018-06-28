@@ -2,6 +2,8 @@ package com.nh.micro.controller;
 
 
 
+import groovy.lang.GroovyObject;
+
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
@@ -59,6 +61,20 @@ public class MicroControllerServlet extends HttpServlet  {
 		
 		String groovyName=config[0];
 		String methodName=config[1];
+		
+		Object[] typeArray=new Object[3];
+		typeArray[0]=String.class;
+		typeArray[1]=String.class;
+		typeArray[2]=HttpServletRequest.class;
+		GroovyObject authObj=GroovyExecUtil.getGroovyObj(groovyName);
+		if(authObj.getMetaClass().respondsTo(authObj, "checkExecAuth",typeArray).size()>0){
+			Boolean authFlag=(Boolean) GroovyExecUtil.execGroovyRetObj(groovyName, "checkExecAuth",groovyName, methodName,request);
+			if(authFlag==null || authFlag==false){
+				throw new RuntimeException("no auth for access url "+url);
+			}
+		}
+		
+		
 		GroovyExecUtil.execGroovyRetObj(groovyName, methodName, request, response);
 	
 	}
