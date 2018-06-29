@@ -310,16 +310,19 @@ public class MicroServiceTemplateSupport {
 
 			}else if(CheckModelTypeUtil.isDate(modelEntry) ){
 				//for oracle
-				String temp="str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')";
+/*				String temp="str_to_date('<REPLACE>','%Y-%m-%d %H:%i:%s')";
 				if(tempDbType!=null && "oracle".equals(tempDbType)){
 					temp="to_date('<REPLACE>','"+ORCL_DATE_FORMAT+"')";
 				}
-				whereValue=Cutil.rep(temp,(String) value);
+				whereValue=Cutil.rep(temp,(String) value);*/
+				whereValue=Cutil.rep("<REPLACE>",(String) value);
 
 			}else{
 				whereValue=Cutil.rep("<REPLACE>",(String) value);
 
 			}
+			
+			
 			if(CheckModelTypeUtil.isRealCol(modelEntry)==false){
 				String metaName=modelEntry.getMetaContentId();
 				String realKey=CheckModelTypeUtil.getRealColName(key);
@@ -340,10 +343,22 @@ public class MicroServiceTemplateSupport {
 
 				}else{
 					//end
-					cobjValues.append(Cutil.rep("<REPLACE>=?", key),value!=null);
-					if(value!=null){
-						placeList.add(whereValue);
-					}	
+					//add 201806 ning
+					if(CheckModelTypeUtil.isDate(modelEntry)){
+						String temp="str_to_date(?,'%Y-%m-%d %H:%i:%s')";
+						if(tempDbType!=null && "oracle".equals(tempDbType)){
+							temp="to_date(?,'"+ORCL_DATE_FORMAT+"')";
+						}
+						cobjValues.append(Cutil.rep("<REPLACE>="+temp, key),value!=null);
+						if(value!=null){
+							placeList.add(whereValue);
+						}	
+					}else{//end
+						cobjValues.append(Cutil.rep("<REPLACE>=?", key),value!=null);
+						if(value!=null){
+							placeList.add(whereValue);
+						}	
+					}
 				}
 			}
 		}
