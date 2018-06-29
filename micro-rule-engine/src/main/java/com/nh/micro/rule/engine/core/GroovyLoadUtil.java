@@ -92,7 +92,8 @@ public class GroovyLoadUtil {
 	public static List getPluginList() {
 		return pluginList;
 	}
-	public static void setPluginList(List pluginList) {
+	//add 201806 ning
+	public void setPluginList(List pluginList) {
 		GroovyLoadUtil.pluginList = pluginList;
 	}	
 	
