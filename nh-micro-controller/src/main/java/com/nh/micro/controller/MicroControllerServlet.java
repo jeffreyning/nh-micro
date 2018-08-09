@@ -5,6 +5,7 @@ package com.nh.micro.controller;
 import groovy.lang.GroovyObject;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -24,6 +25,7 @@ import com.nh.micro.rule.engine.core.GroovyExecUtil;
 public class MicroControllerServlet extends HttpServlet  {
 
 	private static final long serialVersionUID = 1L;
+
 	private String prepath=null;
     /**
      * @see HttpServlet#HttpServlet()
@@ -31,7 +33,9 @@ public class MicroControllerServlet extends HttpServlet  {
     public MicroControllerServlet() {
         super();
     }
-    public String getPrepath() {
+
+
+	public String getPrepath() {
 		return prepath;
 	}
 	public void setPrepath(String prepath) {
@@ -41,6 +45,7 @@ public class MicroControllerServlet extends HttpServlet  {
 		if(prepath==null){
 			this.prepath=config.getInitParameter("prepath");
 		}
+	
     } 
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -66,13 +71,30 @@ public class MicroControllerServlet extends HttpServlet  {
 		typeArray[0]=String.class;
 		typeArray[1]=String.class;
 		typeArray[2]=HttpServletRequest.class;
-		GroovyObject authObj=GroovyExecUtil.getGroovyObj(groovyName);
-		if(authObj.getMetaClass().respondsTo(authObj, "checkExecAuth",typeArray).size()>0){
+		//boolean methodFlag=false;
+		
+		//add 201808 ning
+/*		if(checkflag!=null && checkflag.equals("yes")){
+			GroovyObject authObj=GroovyExecUtil.getGroovyObj(groovyName);
+			authObj.getClass().getAnnotations()
+			Method[] methods=authObj.getClass().getDeclaredMethods();
+			if(methods!=null){
+				int size=methods.length;
+				for(int i=0;i<size;i++){
+					Method md=methods[i];
+					if(md.getName().equals("checkExecAuth")){
+						methodFlag=true;
+					}
+				}
+			}
+		}
+		
+		if(methodFlag && checkflag!=null && checkflag.equals("yes")){
 			Boolean authFlag=(Boolean) GroovyExecUtil.execGroovyRetObj(groovyName, "checkExecAuth",groovyName, methodName,request);
 			if(authFlag==null || authFlag==false){
 				throw new RuntimeException("no auth for access url "+url);
 			}
-		}
+		}*/
 		
 		
 		GroovyExecUtil.execGroovyRetObj(groovyName, methodName, request, response);
