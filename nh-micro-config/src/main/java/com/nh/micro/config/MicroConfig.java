@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME) 
 @Documented
 public @interface MicroConfig {
-public String configFile() default "micro.properties";
+public String configFile() default "";
 public String name();
 }
