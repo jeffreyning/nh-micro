@@ -59,7 +59,22 @@ public class NhsParseHandler implements ILoadHandler {
 				
 				String temp=node.getTextContent();
 
+				//add 201808 ning
 				if(curId==null){
+					StringBuilder headsb=getCurSb("MICRO_IMPORT",retMap);
+					InputStream is = new ByteArrayInputStream(temp.getBytes("UTF-8"));
+					Reader reader=new InputStreamReader(is);
+					BufferedReader br=new BufferedReader(reader);
+					String line=null;
+					while((line=br.readLine()) != null){
+						String tempLine=line.replace("\"", "\\\"");
+						if(tempLine.startsWith("/*")){
+							continue;
+						}
+						if(tempLine.length()>0){
+							headsb.append(tempLine).append("\r\n");
+						}
+					}					
 					continue;
 				}
 				StringBuilder sb=getCurSb(curId,retMap);
@@ -106,9 +121,20 @@ public class NhsParseHandler implements ILoadHandler {
 	public static String toGroovy(String groovyName, Map midMap){
 		StringBuilder sb=new StringBuilder();
 		sb.append("import com.nh.micro.nhs.CheckSqlUtil;\r\n");
+		
+		//add 201808 ning
+		if(midMap.containsKey("MICRO_IMPORT")){
+			String importStr=((StringBuilder) midMap.get("MICRO_IMPORT")).toString();
+			sb.append(importStr);
+		}
+		sb.append("\r\n");
+		
 		sb.append("public class "+groovyName+" {\r\n");
 		Set<String> keySet=midMap.keySet();
 		for(String key:keySet){
+			if(key.equals("MICRO_IMPORT")){
+				continue;
+			}
 			String value=((StringBuilder) midMap.get(key)).toString();
 			sb.append("  public String "+key+"(Object[] paramArray, List repList){\r\n");
 			sb.append("  StringBuilder sb=new StringBuilder();\r\n");
