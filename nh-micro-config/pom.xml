@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.jeffreyning</groupId>
   <artifactId>nh-micro-config</artifactId>
-  <version>0.0.2-RELEASE</version>
+  <version>0.0.3-RELEASE</version>
   
   <dependencies>
           <dependency>
@@ -18,7 +18,14 @@
 	    <version>1.20</version>
 		  <scope>compile</scope>
 	      <optional>true</optional>   	    
-	</dependency> 		
+	</dependency> 	
+	<dependency>
+	  <groupId>com.github.jeffreyning</groupId>
+	  <artifactId>nh-micro-context</artifactId>
+	  <version>1.1.7-RELEASE</version>	
+		  <scope>compile</scope>
+	      <optional>true</optional>   		  
+	</dependency>	
   		
   		
   </dependencies>
