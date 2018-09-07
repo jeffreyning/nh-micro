@@ -1,0 +1,182 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.github.jeffreyning</groupId>
+	<artifactId>nh-micro-starter</artifactId>
+	<version>0.0.1-RELEASE</version>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<version>1.5.7.RELEASE</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			  <groupId>com.github.jeffreyning</groupId>
+			  <artifactId>nh-micro-config</artifactId>
+			  <version>0.0.2-RELEASE</version>	
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			  <groupId>com.github.jeffreyning</groupId>
+			  <artifactId>nh-micro-controller</artifactId>
+			  <version>1.0.5-RELEASE</version>	
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+		  <groupId>com.github.jeffreyning</groupId>
+		  <artifactId>nh-micro-engine</artifactId>
+		  <version>1.1.9-RELEASE</version>		
+			<scope>compile</scope>
+			<optional>true</optional>		  
+		</dependency>
+		<dependency>
+		  <groupId>com.github.jeffreyning</groupId>
+		  <artifactId>nh-micro-context</artifactId>
+		  <version>1.1.7-RELEASE</version>
+  			<scope>compile</scope>
+			<optional>true</optional>	
+		</dependency>
+		<dependency>
+		  <groupId>com.github.jeffreyning</groupId>
+		  <artifactId>nh-micro-service</artifactId>
+		  <version>1.0.3-RELEASE</version>		
+  			<scope>compile</scope>
+			<optional>true</optional>  
+		</dependency>
+		
+
+		<dependency>
+			<groupId>com.github.jeffreyning</groupId>
+			<artifactId>micro-dao</artifactId>
+			<version>1.2.3-RELEASE</version>
+  			<scope>compile</scope>
+			<optional>true</optional>			
+		</dependency>
+		<dependency>
+			<groupId>com.github.jeffreyning</groupId>
+			<artifactId>nh-micro-db</artifactId>
+			<version>1.2.0-RELEASE</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+
+		
+	</dependencies>
+   <name>com.github.jeffreyning:nh-micro-starter</name>
+   <description>nh-micro-starter</description>
+   <url>https://github.com/jeffreyning/nh-micro</url>
+    <properties>
+        <project.release.version>1.0.0-RELEASE</project.release.version>
+    </properties>
+
+
+<licenses>
+     <license>
+       <name>The Apache License, Version 2.0</name>
+       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+     </license>
+   </licenses>  
+<developers>
+    <developer>
+      <name>ninghao</name>
+      <email>jeffreyning@aliyun.com</email>
+      <organization>jeffreyningsoftware</organization>
+      <organizationUrl>jeffreyningsoftware.com</organizationUrl>
+    </developer>
+  </developers>        
+        <scm>
+            <connection>scm:git:git@github.com:jeffreyning/nh-micro.git</connection>
+            <developerConnection>scm:git:git@github.com:jeffreyning/nh-micro.git</developerConnection>
+            <url>git@github.com:jeffreyning/nh-micro.git</url>
+        </scm>        
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                        <encoding>utf-8</encoding>
+                        <compilerArguments>
+
+            <extdirs>${project.basedir}/lib</extdirs>
+        			</compilerArguments>
+                    </configuration>
+                </plugin>
+
+            <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <executions>
+                            <execution>
+                                    <id>sign-artifacts</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>sign</goal>
+                                    </goals>
+                            </execution>
+                    </executions>
+            </plugin>
+            
+			<plugin>  
+                <groupId>org.sonatype.plugins</groupId>  
+                <artifactId>nexus-staging-maven-plugin</artifactId>  
+                <version>1.6</version>  
+                <extensions>true</extensions>  
+
+                <configuration>  
+                    <serverId>ossrh</serverId>  
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>  
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>  
+                    <sslAllowAll>true</sslAllowAll>  
+                    <stagingProgressPauseDurationSeconds>20</stagingProgressPauseDurationSeconds>  
+                    <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>  
+                    <detectBuildFailures>true</detectBuildFailures>  
+                </configuration>  
+            </plugin>              
+<plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <version>2.2.1</version>
+      <executions>
+        <execution>
+          <id>attach-sources</id>
+          <goals>
+            <goal>jar-no-fork</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <version>2.9.1</version>
+      <executions>
+        <execution>
+          <id>attach-javadocs</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+            </plugins>
+        </build>  
+  <distributionManagement>
+  <snapshotRepository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </snapshotRepository>
+  <repository>
+    <id>ossrh</id>
+    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+  </repository>
+</distributionManagement>   
+
+</project>
