@@ -3,6 +3,7 @@ package com.nh.micro.service;
 import java.io.IOException;
 import java.util.Set;
 
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -39,8 +40,11 @@ public class GroovyScanner extends ClassPathBeanDefinitionScanner {
 	      Set<BeanDefinitionHolder> beanDefinitions =   super.doScan(basePackages);
 	      for (BeanDefinitionHolder holder : beanDefinitions) {
 	          GenericBeanDefinition definition = (GenericBeanDefinition) holder.getBeanDefinition();
-	          definition.getPropertyValues().add("mapperInterface", definition.getBeanClassName());
+	          //definition.getPropertyValues().add("mapperInterface", definition.getBeanClassName());
+	          //add for spring2.x
+	          definition.getPropertyValues().addPropertyValue(new PropertyValue("mapperInterface", definition.getBeanClassName()));
 	          definition.setBeanClass(NServiceMapperFactory.class);
+	          
 	      }
 	      return beanDefinitions;
 	  }
