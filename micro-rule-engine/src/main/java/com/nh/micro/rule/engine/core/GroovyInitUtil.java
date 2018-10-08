@@ -136,4 +136,34 @@ public class GroovyInitUtil {
 		String ret=sdf.format(tempDate);
 		return ret;
 	}
+	//add 201810
+	public static void daemonCheck(){
+        logger.debug("groovyload daemon started.");
+
+        for (;;) {
+            try {
+            	Thread.sleep(1000*3);
+            	initGroovy();
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                break;
+            }
+        }
+
+        logger.debug("groovyload daemon stopped.");
+	}
+	
+	public static void initThread(){
+        Runnable daemonTask = new Runnable() {
+            public void run() {
+                daemonCheck();
+            }
+        };
+        Thread daemonThread=null;
+        daemonThread = new Thread(daemonTask);
+        daemonThread.setDaemon(true);
+        daemonThread.setName("LoadGroovyDaemonByInitThread");
+        daemonThread.start();
+	}	
+	
 }
