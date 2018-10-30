@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.jeffreyning</groupId>
   <artifactId>nh-micro-template</artifactId>
-  <version>1.2.3-RELEASE</version>
+  <version>1.2.7-RELEASE</version>
   
  <dependencies>
    	<dependency>
   		<groupId>com.github.jeffreyning</groupId>
   		<artifactId>nh-micro-db</artifactId>
-  		<version>1.1.7-RELEASE</version>
+  		<version>1.2.0-RELEASE</version>
 	  <scope>compile</scope>
       <optional>true</optional>    		
   	</dependency> 

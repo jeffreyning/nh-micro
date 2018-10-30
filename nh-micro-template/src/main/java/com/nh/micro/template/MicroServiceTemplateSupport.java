@@ -64,6 +64,8 @@ public class MicroServiceTemplateSupport {
 	public static final String TYPE_SELECT_BIZID="insert_bizid";
 	
 	public static final String ORCL_DATE_FORMAT="yyyy-mm-dd hh24:mi:ss";
+	
+	public static final String MICRO_DB_NULL="MICRO_DB_NULL";
 	public MicroServiceTemplateSupport(){
 		
 	}
@@ -159,6 +161,25 @@ public class MicroServiceTemplateSupport {
 		this.dbType=dbType;
 	}
 	
+	public Integer dbInCase=null;
+	
+	public Integer getDbInCase() {
+		return dbInCase;
+	}
+	public void setDbInCase(Integer dbInCase) {
+		this.dbInCase = dbInCase;
+	}
+	
+	public Integer dbOutCase=null;
+	
+	public Integer getDbOutCase() {
+		return dbOutCase;
+	}
+	public void setDbOutCase(Integer dbOutCase) {
+		this.dbOutCase = dbOutCase;
+	}	
+	
+	
 	public String defaultId="default";
 
 	public String getDefaultId() {
@@ -186,6 +207,74 @@ public class MicroServiceTemplateSupport {
 		String tempIdKey=microDao.calcuIdKey();
 		return tempIdKey;		
 	}
+
+	//add 201807 ning
+/*	public int calcuDbInCase(){
+		if(dbInCase!=null ){
+			return dbInCase;
+		}
+		MicroMetaDao microDao=getInnerDao();
+		int tempDbInCase=microDao.getCaseFlag();
+		
+		return tempDbInCase;
+	}
+	
+	public int calcuDbOutCase(){
+		if(dbOutCase!=null ){
+			return dbOutCase;
+		}
+		MicroMetaDao microDao=getInnerDao();
+		int tempDbOutCase=microDao.getCaseFlag();
+		int ret=0;
+		if(tempDbOutCase==0){
+			ret=0;
+		}else if(tempDbOutCase==1){
+			ret=2;
+		}else{
+			ret=1;
+		}
+		
+		return ret;
+	}	
+	
+	public String calcuDbOutCaseId(){
+		String key=calcuIdKey();
+		if(key==null){
+			return null;
+		}
+		int dbOutCase=calcuDbOutCase();
+		if(dbOutCase==0){
+			return key;
+		}
+		if(dbOutCase==1){
+			return key.toLowerCase();
+		}else{
+			return key.toUpperCase();
+		}
+
+	}	
+	
+	public Map changeCase4Param(Map map){
+		if(map==null){
+			return null;
+		}
+		int caseFlag=calcuDbInCase();
+		if(caseFlag==0){
+			return map;
+		}
+		Map retMap=new HashMap();
+		Set<String> keySet=map.keySet();
+		for(String key:keySet){
+			Object value=map.get(key);
+			if(caseFlag==1){
+				retMap.put(key.toLowerCase(), value);				
+			}else{
+				retMap.put(key.toUpperCase(), value);
+			}
+		}
+		
+		return retMap;
+	}*/	
 	
 	/**
 	 * ��ȡ���ģ��
@@ -213,8 +302,40 @@ public class MicroServiceTemplateSupport {
 		CheckModelTypeUtil.getModelEntryMap(modelEntryMap, entryList4Base);
 		CheckModelTypeUtil.getModelEntryMap(modelEntryMap, entryList4ColName);
 		CheckModelTypeUtil.getModelEntryMap(modelEntryMap, entryList4ModelName);
+		//add 201807 ning
+		//Map retMap=changeCase4Model(modelEntryMap);
 		return modelEntryMap;
 	}
+	//add 201807 ning
+/*	public Map changeCase4Model(Map modelMap){
+		if(modelMap==null){
+			return null;
+		}
+		int inflag=calcuDbInCase();
+		if(inflag==0){
+			return modelMap;
+		}
+		Map retMap=new HashMap();
+		Set<String> keySet=modelMap.keySet();
+		for(String key:keySet){
+			MicroDbModelEntry modelEntry=(MicroDbModelEntry) modelMap.get(key);
+			if(CheckModelTypeUtil.isRealCol(modelEntry)){
+				String tempId=modelEntry.getColId();
+				String tempName=modelEntry.getColName();
+				if(inflag==1){
+					modelEntry.setColId(tempId.toLowerCase());
+					modelEntry.setColName(tempName.toLowerCase());
+					retMap.put(key.toLowerCase(), modelEntry);
+				}else{
+					modelEntry.setColId(tempId.toUpperCase());
+					modelEntry.setColName(tempName.toUpperCase());
+					retMap.put(key.toUpperCase(), modelEntry);				
+				}
+			}
+		}
+		return retMap;
+		
+	}*/
 	
 	/**
 	 * ��ݱ�ṹʵʱ��ȡ���ģ��
@@ -271,6 +392,7 @@ public class MicroServiceTemplateSupport {
 			}else{
 				whereValue=Cutil.rep("'<REPLACE>'",(String) value);
 			}
+			
 			if(CheckModelTypeUtil.isRealCol(modelEntry)==false){
 				String metaName=modelEntry.getMetaContentId();
 				String realKey=CheckModelTypeUtil.getRealColName(key);
@@ -305,6 +427,7 @@ public class MicroServiceTemplateSupport {
 			MicroDbModelEntry modelEntry=(MicroDbModelEntry) modelEntryMap.get(key);
 			Object value= requestParamMap.get(key);
 			String whereValue="";
+			
 			if(CheckModelTypeUtil.isNumber(modelEntry)){
 				whereValue=Cutil.rep("<REPLACE>",(String) value);
 
@@ -390,7 +513,6 @@ public class MicroServiceTemplateSupport {
 			String key=(String) it.next();
 			MicroDbModelEntry modelEntry=(MicroDbModelEntry) modelEntryMap.get(key);
 			
-
 			if(CheckModelTypeUtil.isDynamicCol(modelEntry)){
 				String value=(String) dbColMap.get(key);
 				String metaName=modelEntry.getMetaContentId();
@@ -441,7 +563,14 @@ public class MicroServiceTemplateSupport {
 				
 				String value=(String) dbColMap.get(key);
 				String whereValue="";
-				if(CheckModelTypeUtil.isNumber(modelEntry)){
+				//add 201807 ning
+				if(value!=null && MICRO_DB_NULL.equals(value)){
+					if(tempDbType!=null && "oracle".equals(tempDbType)){
+						whereValue="NULL";
+					}else{
+						whereValue="null";
+					}//end
+				}else if(CheckModelTypeUtil.isNumber(modelEntry)){
 					whereValue=Cutil.rep("<REPLACE>",value);
 				}else if(CheckModelTypeUtil.isDate(modelEntry)){
 					if(value!=null ){
@@ -496,8 +625,8 @@ public class MicroServiceTemplateSupport {
 		Iterator it=modelEntryMap.keySet().iterator();
 		while(it.hasNext()){
 			String key=(String) it.next();
-			//������idֵ
-			if(tempKeyId.equals(key)){
+			//add 201807 ning
+			if(tempKeyId.equalsIgnoreCase(key)){
 				continue;
 			}
 			MicroDbModelEntry modelEntry=(MicroDbModelEntry) modelEntryMap.get(key);
@@ -559,7 +688,12 @@ public class MicroServiceTemplateSupport {
 				}
 				//end
 				String value=(String) dbColMap.get(key);
-				if(value!=null && "".equals(value)){//add 201805 ning
+				//add 201807 ning
+				if(value!=null && MICRO_DB_NULL.equals(value)){
+					realValueList.add(null);
+					crealValues.append(key+"=?",value!=null);
+					//end
+				}else if(value!=null && "".equals(value)){//add 201805 ning
 					if(CheckModelTypeUtil.isDate(modelEntry) || CheckModelTypeUtil.isNumber(modelEntry)){
 						realValueList.add(null);
 						crealValues.append(key+"=?",value!=null);	
@@ -705,7 +839,15 @@ public class MicroServiceTemplateSupport {
 				//end				
 				String value=(String) dbColMap.get(key);
 				String whereValue="";
-				if(CheckModelTypeUtil.isNumber(modelEntry)){
+				
+				//add 201807 ning
+				if(value!=null && MICRO_DB_NULL.equals(value)){
+					if(tempDbType!=null && "oracle".equals(tempDbType)){
+						whereValue="NULL";
+					}else{
+						whereValue="null";
+					}//end
+				}else if(CheckModelTypeUtil.isNumber(modelEntry)){
 					whereValue=Cutil.rep("<REPLACE>",value);
 				}else if(CheckModelTypeUtil.isDate(modelEntry)){
 					//add for oracle
@@ -763,6 +905,8 @@ public class MicroServiceTemplateSupport {
 					metaMap=new HashMap();
 					metaFlagMap.put(metaName, metaMap);
 				}
+				
+				
 				if(CheckModelTypeUtil.isNumber(modelEntry)){
 					if(value.contains(".")){
 						metaMap.put(realKey, new BigDecimal(value));
@@ -790,6 +934,7 @@ public class MicroServiceTemplateSupport {
 				//end
 				String value=(String) dbColMap.get(key);
 				String whereValue="";
+				
 				if(CheckModelTypeUtil.isNumber(modelEntry)){
 					
 					whereValue=Cutil.rep("?",value);
@@ -820,7 +965,11 @@ public class MicroServiceTemplateSupport {
 					whereValue=Cutil.rep("?",value);
 				}
 				crealValues.append(whereValue,value!=null);
-				if(value!=null && "".equals(value)){//add 201805 ning
+				//add 201807 ning
+				if(value!=null && MICRO_DB_NULL.equals(value)){
+					placeList.add(null);
+					//end
+				}else if(value!=null && "".equals(value)){//add 201805 ning
 					if(CheckModelTypeUtil.isDate(modelEntry) || CheckModelTypeUtil.isNumber(modelEntry)){
 						placeList.add(null);
 					}else{
@@ -968,6 +1117,8 @@ public class MicroServiceTemplateSupport {
 	 * @throws Exception
 	 */
 	private Map getInfoList4PageServiceInnerEx(Map requestParamMap,String tableName,Map pageMap,String cusWhere,String cusSelect,String modelName,List cusPlaceList) throws Exception{
+		//add 201807 ning
+		//Map requestParamMap=changeCase4Param(requestParamMap0);
 		
 		String page=(String) pageMap.get("page");
 		String rows=(String) pageMap.get("rows");
@@ -1256,6 +1407,10 @@ public class MicroServiceTemplateSupport {
 		//add 20170627 ninghao
 		filterParam(tableName,requestParamMap);
 		
+		//add 201807 ning
+		//Map requestParamMap=changeCase4Param(requestParamMap0);
+		
+		
 		boolean autoFlag=false;
 		if(modelName==null || "".equals(modelName)){
 			modelName=tableName;
@@ -1304,6 +1459,8 @@ public class MicroServiceTemplateSupport {
 				requestParamMap.put(tempKeyId, keyHolder.getKey().toString());
 			}
 		}
+		//add 201807
+		//requestParamMap0.put(calcuDbOutCaseId(), requestParamMap.get(tempKeyId));
 
 		return retStatus;
 	}
@@ -1372,6 +1529,9 @@ public class MicroServiceTemplateSupport {
 		Map modelEntryMap=getModelEntryMap(requestParamMap,tableName,modelName,dbName);
 		
 		List placeList=new ArrayList();
+		//add 201807 ning
+		//Map requestParamMap=changeCase4Param(requestParamMap0);
+		
 		String setStr=createUpdateInStr(requestParamMap,modelEntryMap,placeList);
 		String nCondition=cusCondition;
 		String nSetStr=setStr;
@@ -1405,12 +1565,16 @@ public class MicroServiceTemplateSupport {
 	
 	public Integer updateInfoService(Map requestParamMap,String tableName) throws Exception{
 		String tempKeyId=calcuIdKey();
+		//add 201807 ning
+		//String tempKeyId=calcuDbOutCaseId();
 		String id=(String) requestParamMap.get(tempKeyId);
 		return updateInfoServiceInner(id,requestParamMap,tableName,null,null,null);
 	}
 
 	public Integer updateInfoService(Map requestParamMap,String tableName,String cusCondition,String cusSetStr) throws Exception{
 		String tempKeyId=calcuIdKey();
+		//add 201807 ning
+		//String tempKeyId=calcuDbOutCaseId();		
 		String id=(String) requestParamMap.get(tempKeyId);
 		return updateInfoServiceInner(id,requestParamMap,tableName,cusCondition,cusSetStr,null);
 	}
@@ -1475,6 +1639,10 @@ public class MicroServiceTemplateSupport {
 		if(modelName==null || "".equals(modelName)){
 			modelName=tableName;
 		}
+		
+		//add 201807 ning
+		//Map requestParamMap=changeCase4Param(requestParamMap0);
+		
 		Map modelEntryMap=getModelEntryMap(requestParamMap,tableName,modelName,dbName);
 		
 		List placeList=new ArrayList();
@@ -1687,6 +1855,10 @@ public class MicroServiceTemplateSupport {
 		if(modelName==null || "".equals(modelName)){
 			modelName=tableName;
 		}
+		
+		//add 201807 ning
+		//Map requestParamMap=changeCase4Param(requestParamMap0);		
+		
 		String id=(String) requestParamMap.get(tempKeyId);
 
 		String where="";

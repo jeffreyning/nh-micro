@@ -165,5 +165,8 @@ public class GroovyInitUtil {
         daemonThread.setName("LoadGroovyDaemonByInitThread");
         daemonThread.start();
 	}	
-	
+	public static void initGroovyAndThread() throws Exception {
+		initGroovy();
+		initThread();
+	}	
 }
