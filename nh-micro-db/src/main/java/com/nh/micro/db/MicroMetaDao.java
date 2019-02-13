@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.nh.micro.db.util.CaseInsensitiveKeyMap;
 import com.nh.micro.rule.engine.core.GroovyLoadUtil;
 
 /**
@@ -33,6 +35,7 @@ import com.nh.micro.rule.engine.core.GroovyLoadUtil;
  *
  */
 public class MicroMetaDao {
+	public int caseMapFlag=0;
 	public static Boolean orclEndFlag=false;
 	public static Boolean getOrclEndFlag() {
 		return orclEndFlag;
@@ -608,9 +611,11 @@ public class MicroMetaDao {
 		.getDbSource(dbName);*/
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		logger.debug(sql);
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
 		return retList;
 	}
 
@@ -626,12 +631,15 @@ public class MicroMetaDao {
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		logger.debug(sql);
 		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql);
-		Map retMap=null;
+		Map retMap0=null;
 		if(retList.size()>=1){
-			retMap=retList.get(0);
+			retMap0=retList.get(0);
 		}
 		//add 201807 ning
 		//Map retMap=changeOutKeyCase(retMap0);		
+		
+		//add 201902 ning
+		Map retMap=ignoreKeyCase(retMap0);
 		return retMap;
 	}
 
@@ -646,9 +654,13 @@ public class MicroMetaDao {
 		}	
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		logger.debug(sql);
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);			
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);	
+		
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
+		
 		return retList;
 	}	
 	
@@ -679,12 +691,16 @@ public class MicroMetaDao {
 		paramArray[0]=id;
 		List infoList=queryObjJoinByCondition(sql,paramArray);
 		// init by null
-		Map retMap=null;
+		Map retMap0=null;
 		if(infoList!=null && infoList.size()>0){
-			retMap=(Map) infoList.get(0);
+			retMap0=(Map) infoList.get(0);
 		}		
 		//add 201807 ning
-		//Map retMap=changeOutKeyCase(retMap0);			
+		//Map retMap=changeOutKeyCase(retMap0);	
+		
+		//add 201902 ning
+		Map retMap=ignoreKeyCase(retMap0);
+		
 		return retMap;
 	}	
 
@@ -714,12 +730,16 @@ public class MicroMetaDao {
 		paramArray[0]=bizId;
 		List infoList=queryObjJoinByCondition(sql,paramArray);
 		//init by null
-		Map retMap=null;
+		Map retMap0=null;
 		if(infoList!=null && infoList.size()>0){
-			retMap=(Map) infoList.get(0);
+			retMap0=(Map) infoList.get(0);
 		}		
 		//add 201807 ning
-		//Map retMap=changeOutKeyCase(retMap0);		
+		//Map retMap=changeOutKeyCase(retMap0);	
+		
+		//add 201902 ning
+		Map retMap=ignoreKeyCase(retMap0);
+		
 		return retMap;
 	}	
 	/*
@@ -732,9 +752,13 @@ public class MicroMetaDao {
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql,paramArray,typeArray);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql,paramArray,typeArray);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);	
+		
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
+		
 		return retList;
 	}
 
@@ -749,9 +773,13 @@ public class MicroMetaDao {
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql,paramArray);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql,paramArray);
 		//add 201807 ning
 		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);
+		
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
+		
 		return retList;
 	}	
 
@@ -768,12 +796,16 @@ public class MicroMetaDao {
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
 		List<Map<String, Object>> infoList = jdbcTemplate.queryForList(sql,paramArray);
-		Map retMap=null;
+		Map retMap0=null;
 		if(infoList!=null && infoList.size()>0){
-			retMap=(Map) infoList.get(0);
+			retMap0=(Map) infoList.get(0);
 		}
 		//add 201807 ning
 		//Map retMap=changeOutKeyCase(retMap0);
+		
+		//add 201902 ning
+		Map retMap=ignoreKeyCase(retMap0);
+		
 		return retMap;
 	}	
 	
@@ -789,9 +821,12 @@ public class MicroMetaDao {
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
-		List<Map<String, Object>> infoList = jdbcTemplate.queryForList(sql,paramArray);
+		List<Map<String, Object>> infoList0 = jdbcTemplate.queryForList(sql,paramArray);
 		//add 201807 ning
-		//List<Map<String, Object>> infoList=changeOutKeyCase4List(infoList0);		
+		//List<Map<String, Object>> infoList=changeOutKeyCase4List(infoList0);	
+		
+		//add 201902 ning
+		List<Map<String, Object>> infoList=ignoreKeyCase((List)infoList0);		
 		return infoList;
 	}		
 	/*
@@ -818,9 +853,11 @@ public class MicroMetaDao {
 			sql="SELECT * FROM ( SELECT NHPAGE_TEMP.*, ROWNUM NHPAGE_RN FROM ("+ innerSql +" ) NHPAGE_TEMP "+endLimit+" ) "+ startLimit;
 		}
 		logger.debug(sql);
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);	
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
 		return retList;
 	}	
 
@@ -846,9 +883,11 @@ public class MicroMetaDao {
 		}
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql,paramArray,typeArray);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql,paramArray,typeArray);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);		
 		return retList;
 	}		
 
@@ -874,9 +913,11 @@ public class MicroMetaDao {
 		}
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql,paramArray);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql,paramArray);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);		
 		return retList;
 	}	
 	
@@ -916,9 +957,11 @@ public class MicroMetaDao {
 		JdbcTemplate jdbcTemplate = getMicroJdbcTemplate();
 		String sql = "select "+cols+" from " + tableName + " where "+condition+" order by "+orders;
 		logger.debug(sql);
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);	
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
 		return retList;
 	}
 	
@@ -933,9 +976,11 @@ public class MicroMetaDao {
 		String sql = "select "+cols+" from " + tableName + " where "+condition+" order by "+orders;
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql,paramArray,typeArray);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql,paramArray,typeArray);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);	
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
 		return retList;
 	}
 	
@@ -950,9 +995,11 @@ public class MicroMetaDao {
 		String sql = "select "+cols+" from " + tableName + " where "+condition+" order by "+orders;
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql,paramArray);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql,paramArray);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);	
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
 		return retList;
 	}
 	
@@ -979,9 +1026,11 @@ public class MicroMetaDao {
 		}
 		logger.debug(sql);
 		
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
 		return retList;
 	}	
 	
@@ -1008,9 +1057,11 @@ public class MicroMetaDao {
 		}
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql,paramArray,typeArray);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql,paramArray,typeArray);
 		//add 201807 ning
-		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);		
+		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
 		return retList;
 	}	
 	
@@ -1037,9 +1088,11 @@ public class MicroMetaDao {
 		}
 		logger.debug(sql);
 		logger.debug(Arrays.toString(paramArray));
-		List<Map<String, Object>> retList = jdbcTemplate.queryForList(sql,paramArray);
+		List<Map<String, Object>> retList0 = jdbcTemplate.queryForList(sql,paramArray);
 		//add 201807 ning
 		//List<Map<String, Object>> retList=changeOutKeyCase4List(retList0);
+		//add 201902 ning
+		List<Map<String, Object>> retList=ignoreKeyCase((List)retList0);
 		return retList;
 	}		
 	
@@ -1203,10 +1256,13 @@ public class MicroMetaDao {
 		return retStatus;
 	}
 	
-	public int updateObjById(String tableName, Object id,Map paramMap) {
+	public int updateObjById(String tableName, Object id,Map paramMap0) {
 		//String tableName=changeTableNameCase(otableName);
 		//add 201807 ning
 		//Map paramMap=changeInKeyCase(paramMap0);
+		//add 201902 ning
+		Map paramMap=ignoreKeyCase(paramMap0);
+		
 		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
 		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
 		List paramList=new ArrayList();
@@ -1238,10 +1294,12 @@ public class MicroMetaDao {
 		return retStatus;
 	}
 	
-	public int updateObjByBizId(String tableName, Object bizId,String bizCol,Map paramMap) {
+	public int updateObjByBizId(String tableName, Object bizId,String bizCol,Map paramMap0) {
 		//String tableName=changeTableNameCase(otableName);
 		//add 201807 ning
 		//Map paramMap=changeInKeyCase(paramMap0);
+		//add 201902 ning
+		Map paramMap=ignoreKeyCase(paramMap0);
 		
 		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
 		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
@@ -1459,10 +1517,12 @@ public class MicroMetaDao {
 		return retStatus;
 	}	
 	
-	public int insertObj(String tableName, Map paramMap) {
+	public int insertObj(String tableName, Map paramMap0) {
 		//add 201807 ning
 		//Map paramMap=changeInKeyCase(paramMap0);
 		//String tableName=changeTableNameCase(otableName);
+		//add 201902 ning
+		Map paramMap=ignoreKeyCase(paramMap0);
 		
 		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
 		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
@@ -1540,4 +1600,56 @@ public class MicroMetaDao {
 			}, keyHolder);	
 		return retStatus;
 	}	
+	
+	public List ignoreKeyCase(List<Map> orgList){
+		if(orgList==null){
+			return null;
+		}
+		List retList=new ArrayList();
+		int size=orgList.size();
+		for(int i=0;i<size;i++){
+			Map orgMap=orgList.get(i);
+			CaseInsensitiveKeyMap<Object> caseMap=new CaseInsensitiveKeyMap<Object>();
+			Map cmap=changeKeyCase(orgMap);
+			caseMap.putAll(cmap);
+			retList.add(caseMap);
+		}
+		return retList;
+	}
+	public Map ignoreKeyCase(Map orgMap){
+		if(orgMap==null){
+			return null;
+		}
+
+		CaseInsensitiveKeyMap<Object> caseMap=new CaseInsensitiveKeyMap<Object>();
+		Map cmap=changeKeyCase(orgMap);
+		caseMap.putAll(cmap);
+		return caseMap;
+
+	}	
+	public Map changeKeyCase(Map orgMap){
+		if(orgMap==null){
+			return null;
+		}
+		if(caseMapFlag==0){
+			return orgMap;
+		}
+		Set<Entry> entrySet=orgMap.entrySet();
+		if(entrySet==null){
+			return orgMap;
+		}
+
+		Map retMap=new HashMap();
+		for(Entry entry:entrySet){
+			String key=(String) entry.getKey();
+			Object val=entry.getValue();
+			if(caseMapFlag==1){
+				retMap.put(key.toLowerCase(), val);
+			}else{
+				retMap.put(key.toUpperCase(), val);
+			}
+		}
+		return retMap;
+		
+	}
 }
