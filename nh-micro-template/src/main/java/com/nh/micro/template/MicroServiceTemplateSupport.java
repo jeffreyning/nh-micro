@@ -29,6 +29,7 @@ import com.nh.micro.db.MicroDbModelEntry;
 
 
 import com.nh.micro.db.CheckModelTypeUtil;
+import com.nh.micro.db.util.CaseInsensitiveKeyMap;
 import com.nh.micro.rule.engine.core.GroovyExecUtil;
 
 import java.util.LinkedHashMap;
@@ -288,7 +289,8 @@ public class MicroServiceTemplateSupport {
 		return getModelEntryMap( requestParamMap, tableName, modelName, dbName,"");
 	}	
 	public Map getModelEntryMap(Map requestParamMap,String tableName,String modelName,String dbName,String cusSelect) throws Exception{
-		Map modelEntryMap=new HashMap();
+		//add 201902 ning
+		Map modelEntryMap=new CaseInsensitiveKeyMap();
 		if(requestParamMap==null || requestParamMap.isEmpty()){
 			return modelEntryMap;
 		}
@@ -367,10 +369,15 @@ public class MicroServiceTemplateSupport {
 	 * @return
 	 * @throws Exception
 	 */
-	public String createWhereInStr(Map requestParamMap,Map modelEntryMap){
+	public String createWhereInStr(Map requestParamMap0,Map modelEntryMap){
 		if(modelEntryMap==null){
 			return null;
 		}
+		//add 201902 ning
+		Map requestParamMap=new CaseInsensitiveKeyMap();
+		if(requestParamMap0!=null){
+			requestParamMap.putAll(requestParamMap0);
+		}		
 		Cobj cobjValues=Cutil.createCobj(" and ");
 		String tempDbType=calcuDbType();
 		Iterator it=modelEntryMap.keySet().iterator();
@@ -415,10 +422,17 @@ public class MicroServiceTemplateSupport {
 		return cobjValues.getStr();
 	}
 
-	public String createWhereInStr(Map requestParamMap,Map modelEntryMap,List placeList){
+	public String createWhereInStr(Map requestParamMap0,Map modelEntryMap,List placeList){
 		if(modelEntryMap==null){
 			return null;
 		}
+		
+		//add 201902 ning
+		Map requestParamMap=new CaseInsensitiveKeyMap();
+		if(requestParamMap0!=null){
+			requestParamMap.putAll(requestParamMap0);
+		}
+		
 		Cobj cobjValues=Cutil.createCobj(" and ");
 		Iterator it=modelEntryMap.keySet().iterator();
 		String tempDbType=calcuDbType();
@@ -497,10 +511,17 @@ public class MicroServiceTemplateSupport {
 	 * @return
 	 * @throws Exception
 	 */
-	public String createUpdateInStr(Map dbColMap,Map modelEntryMap){
-		if(dbColMap==null){
+	public String createUpdateInStr(Map dbColMap0,Map modelEntryMap){
+		if(dbColMap0==null){
 			return null;
 		}
+		
+		//add 201902 ning
+		Map dbColMap=new CaseInsensitiveKeyMap();
+		if(dbColMap0!=null){
+			dbColMap.putAll(dbColMap0);
+		}
+		
 		List realValueList=new ArrayList();
 		List extValueList=new ArrayList();
 		Boolean metaFlag=false;
@@ -610,10 +631,17 @@ public class MicroServiceTemplateSupport {
 
 		return crealValues.getStr();
 	}	
-	public String createUpdateInStr(Map dbColMap,Map modelEntryMap,List placeList){
-		if(dbColMap==null){
+	public String createUpdateInStr(Map dbColMap0,Map modelEntryMap,List placeList){
+		if(dbColMap0==null){
 			return null;
 		}
+		
+		//add 201902 ning
+		Map dbColMap=new CaseInsensitiveKeyMap();
+		if(dbColMap0!=null){
+			dbColMap.putAll(dbColMap0);
+		}
+		
 		List realValueList=new ArrayList();
 		List extValueList=new ArrayList();
 		Boolean metaFlag=false;
@@ -749,10 +777,17 @@ public class MicroServiceTemplateSupport {
 	 * @return
 	 * @throws Exception
 	 */	
-	public String createInsertBeforeStr4ModelEntry(Map dbColMap,Map<String,MicroDbModelEntry> modelEntryMap){
-		if(dbColMap==null){
+	public String createInsertBeforeStr4ModelEntry(Map dbColMap0,Map<String,MicroDbModelEntry> modelEntryMap){
+		if(dbColMap0==null){
 			return null;
 		}
+		
+		//add 201902 ning
+		Map dbColMap=new CaseInsensitiveKeyMap();
+		if(dbColMap0!=null){
+			dbColMap.putAll(dbColMap0);
+		}
+		
 		Cobj crealValues=Cutil.createCobj();
 		Map metaMap=new HashMap();
 		Iterator it=dbColMap.keySet().iterator();
@@ -789,10 +824,16 @@ public class MicroServiceTemplateSupport {
 	 * @return
 	 * @throws Exception
 	 */	
-	public String createInsertValueStr4ModelEntry(Map dbColMap,Map<String,MicroDbModelEntry> modelEntryMap){
-		if(dbColMap==null){
+	public String createInsertValueStr4ModelEntry(Map dbColMap0,Map<String,MicroDbModelEntry> modelEntryMap){
+		if(dbColMap0==null){
 			return null;
 		}
+		//add 201902 ning
+		Map dbColMap=new CaseInsensitiveKeyMap();
+		if(dbColMap0!=null){
+			dbColMap.putAll(dbColMap0);
+		}
+		
 		Cobj crealValues=Cutil.createCobj();
 		Map metaFlagMap=new TreeMap();
 		
@@ -878,10 +919,15 @@ public class MicroServiceTemplateSupport {
 		return crealValues.getStr();
 	}
 
-	public String createInsertValueStr4ModelEntry(Map dbColMap,Map<String,MicroDbModelEntry> modelEntryMap,List placeList){
-		if(dbColMap==null){
+	public String createInsertValueStr4ModelEntry(Map dbColMap0,Map<String,MicroDbModelEntry> modelEntryMap,List placeList){
+		if(dbColMap0==null){
 			return null;
 		}
+		//add 201902 ning
+		Map dbColMap=new CaseInsensitiveKeyMap();
+		if(dbColMap0!=null){
+			dbColMap.putAll(dbColMap0);
+		}		
 		Cobj crealValues=Cutil.createCobj();
 		Map metaFlagMap=new TreeMap();
 		
@@ -1031,8 +1077,13 @@ public class MicroServiceTemplateSupport {
 	}	
 	
 	//����joinʱ��ǰ׺��where����
-	public String createWhere4Join(Map requestParamMap,String joinName,String colsStr) throws Exception{
-
+	public String createWhere4Join(Map requestParamMap0,String joinName,String colsStr) throws Exception{
+		//add 201902 ning
+		Map requestParamMap=new CaseInsensitiveKeyMap();
+		if(requestParamMap0!=null){
+			requestParamMap.putAll(requestParamMap0);
+		}
+		
 		String[] colsArray=colsStr.split(",");
 		Map<String,String> colsMap=new HashMap();
 		for(String colName:colsArray){
@@ -1061,8 +1112,13 @@ public class MicroServiceTemplateSupport {
 		return retStr;
 	}	
 	
-	public String createWhere4Join(Map requestParamMap,String joinName,String colsStr,List placeList) throws Exception{
-
+	public String createWhere4Join(Map requestParamMap0,String joinName,String colsStr,List placeList) throws Exception{
+		//add 201902 ning
+		Map requestParamMap=new CaseInsensitiveKeyMap();
+		if(requestParamMap0!=null){
+			requestParamMap.putAll(requestParamMap0);
+		}
+		
 		String[] colsArray=colsStr.split(",");
 		Map<String,String> colsMap=new HashMap();
 		for(String colName:colsArray){
@@ -1116,10 +1172,14 @@ public class MicroServiceTemplateSupport {
 	 * @return
 	 * @throws Exception
 	 */
-	private Map getInfoList4PageServiceInnerEx(Map requestParamMap,String tableName,Map pageMap,String cusWhere,String cusSelect,String modelName,List cusPlaceList) throws Exception{
+	private Map getInfoList4PageServiceInnerEx(Map requestParamMap0,String tableName,Map pageMap,String cusWhere,String cusSelect,String modelName,List cusPlaceList) throws Exception{
 		//add 201807 ning
 		//Map requestParamMap=changeCase4Param(requestParamMap0);
-		
+		//add 201902 ning
+		Map requestParamMap=new CaseInsensitiveKeyMap();
+		if(requestParamMap0!=null){
+			requestParamMap.putAll(requestParamMap0);
+		}
 		String page=(String) pageMap.get("page");
 		String rows=(String) pageMap.get("rows");
 		String sort=(String) pageMap.get("sort");
@@ -1397,7 +1457,12 @@ public class MicroServiceTemplateSupport {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer createInfoServiceInner(Map requestParamMap,String tableName,String cusCol,String cusValue,String modelName) throws Exception{
+	public Integer createInfoServiceInner(Map requestParamMap0,String tableName,String cusCol,String cusValue,String modelName) throws Exception{
+		//add 201902 ning
+		Map requestParamMap=new CaseInsensitiveKeyMap();
+		if(requestParamMap0!=null){
+			requestParamMap.putAll(requestParamMap0);
+		}
 		//add 20170829 ninghao
 		Integer filterViewRet=filterView(tableName,requestParamMap,"","",TYPE_INSERT);
 		if(filterViewRet!=null && filterViewRet>0){
@@ -1456,7 +1521,7 @@ public class MicroServiceTemplateSupport {
 						requestParamMap.put(defaultId, retId.toString());
 					}
 				}*/
-				requestParamMap.put(tempKeyId, keyHolder.getKey().toString());
+				requestParamMap0.put(tempKeyId, keyHolder.getKey().toString());
 			}
 		}
 		//add 201807
