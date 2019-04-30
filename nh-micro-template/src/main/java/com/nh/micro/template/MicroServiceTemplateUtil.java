@@ -11,7 +11,7 @@ import org.apache.velocity.app.VelocityEngine;
 public class MicroServiceTemplateUtil {
 	public static String sqlTemplateService(String template,Map paramMap,List placeList){
 		VelocityEngine ve = new VelocityEngine();
-		ve.addProperty("userdirective", "com.minxin.micro.template.vext.MicroSqlReplace");
+		ve.addProperty("userdirective", "com.nh.micro.template.vext.MicroSqlReplace");
 		ve.init();
 		VelocityContext context = new VelocityContext();
 		context.put("param", paramMap);

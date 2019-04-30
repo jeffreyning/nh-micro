@@ -67,6 +67,13 @@ public class MicroServiceTemplateSupport {
 	public static final String ORCL_DATE_FORMAT="yyyy-mm-dd hh24:mi:ss";
 	
 	public static final String MICRO_DB_NULL="MICRO_DB_NULL";
+
+	//4page
+	public static final String PAGE="page";
+	public static final String ROW="row";
+	public static final String SORTCol="sort";
+	public static final String ORDER="order";
+	
 	public MicroServiceTemplateSupport(){
 		
 	}
@@ -1291,6 +1298,14 @@ public class MicroServiceTemplateSupport {
 		return getInfoList4PageServiceInnerExBySql(countSql, countPlaceList, sql, placeList, pageMap);
 	}
 	
+	//add by ning 20190430
+	public Map getInfoList4PageServiceByRep(String countSql,String sql, Map paramMap, Map pageMap) throws Exception{
+		List countPlaceList=new ArrayList();
+		List placeList=new ArrayList();
+		String realCountSql=sqlTemplateService(countSql, paramMap, countPlaceList);
+		String realSql=sqlTemplateService(sql, paramMap, placeList);
+		return getInfoList4PageServiceInnerExBySql(realCountSql,countPlaceList,realSql,placeList,pageMap);
+	}	
 	
 	public Map getInfoList4PageServiceBySql(SupportParamBean supportParamBean) throws Exception{
 		String countSql=supportParamBean.getCountSql();
@@ -1344,6 +1359,13 @@ public class MicroServiceTemplateSupport {
 
 	}	
 
+	//add by ning 20190430
+	public Map getInfoList4PageServiceByMySqlRep(String sql,Map paramMap, Map pageMap) throws Exception{
+		List placeList=new ArrayList();
+		String realSql=sqlTemplateService(sql, paramMap, placeList);
+		return getInfoList4PageServiceInnerExByMySql(realSql, placeList, pageMap);
+	}
+	
 	public Map getInfoList4PageServiceByMySql(String sql,List placeList,Map pageMap) throws Exception{
 		return getInfoList4PageServiceInnerExByMySql(sql,placeList,pageMap);
 	}
@@ -1627,6 +1649,14 @@ public class MicroServiceTemplateSupport {
 	public Integer updateInfoServiceBySql(String sql,List placeList) throws Exception{
 		return updateInfoServiceInnerBySql(sql,placeList);
 	}
+	
+	//add by ning 20190430
+	public Integer updateInfoServiceByRep(String sql,Map paramMap) throws Exception{
+		List placeList=new ArrayList();
+		String realSql=sqlTemplateService(sql, paramMap, placeList);
+		return updateInfoServiceInnerBySql(realSql, placeList);
+	}
+	
 	
 	public Integer updateInfoService(Map requestParamMap,String tableName) throws Exception{
 		String tempKeyId=calcuIdKey();
@@ -2020,7 +2050,22 @@ public class MicroServiceTemplateSupport {
 		CheckModelTypeUtil.changeNoStrCols(infoList);
 		return infoList;
 	}
-
+	
+	//add by ning 20190430
+	public List getInfoListAllServiceByReq(String sql,Map paramMap) throws Exception{
+		
+		List placeList=new ArrayList();
+		String realSql=sqlTemplateService(sql,paramMap,placeList);
+		return getInfoListAllServiceInnerExBySql(realSql, placeList);
+	}
+	
+	public List getInfoListAllServiceByReq(String sql,Map paramMap, int limit) throws Exception{
+		
+		List placeList=new ArrayList();
+		String realSql=sqlTemplateService(sql,paramMap,placeList);
+		return getInfoListLimitServiceInnerExBySql(realSql, placeList, limit);
+	}
+	
 	//sql
 	public List getInfoListAllServiceBySql(String sql) throws Exception{
 		return getInfoListAllServiceInnerExBySql(sql, null);
@@ -2109,6 +2154,14 @@ public class MicroServiceTemplateSupport {
 	}	
 	
 	//single
+	public Map getSingleInfoService(Map requestParamMap,String tableName,Map sortMap) throws Exception{
+		List retList= getInfoListAllServiceInner(requestParamMap,tableName,sortMap,"","","",1);
+		if(retList==null || retList.size()<=0){
+			return null;
+		}
+		return (Map) retList.get(0);
+	}
+	
 	public Map getSingleInfoService(Map requestParamMap,String tableName,Map sortMap,String cusWhere,String cusSelect,String modelName) throws Exception{
 		List retList= getInfoListAllServiceInner(requestParamMap,tableName,sortMap,cusWhere,cusSelect,modelName,1);
 		if(retList==null || retList.size()<=0){
@@ -2124,6 +2177,18 @@ public class MicroServiceTemplateSupport {
 		}
 		return (Map) retList.get(0);
 	}
+	
+	//add 20190430 by ning
+	public Map getSingleInfoServiceByRep(String sql,Map requestParamMap) throws Exception{
+		List placeList=new ArrayList();
+		sqlTemplateService(sql,requestParamMap,placeList);
+		String realSql=sqlTemplateService(sql,requestParamMap,placeList);;
+		Map retMap= getInnerDao().querySingleObjJoinByCondition(realSql,placeList.toArray());
+		CheckModelTypeUtil.addMetaCols(retMap);
+		CheckModelTypeUtil.changeNoStrCols(retMap);	
+		return retMap;		
+	}	
+	
 	//sql
 	public Map getSingleInfoService(String sql) throws Exception{
 		
@@ -2156,11 +2221,11 @@ public class MicroServiceTemplateSupport {
 		return retMap;		
 	}
 	
-	@Deprecated
+	
 	public String sqlTemplateService(String template,Map paramMap,List placeList){
 		return MicroServiceTemplateUtil.sqlTemplateService(template, paramMap, placeList);
 	}
-	@Deprecated
+	
 	public String sqlTemplateService(String template,Map paramMap){
 		return MicroServiceTemplateUtil.sqlTemplateService(template,paramMap,new ArrayList());
 	}
