@@ -228,6 +228,20 @@ public class MicroMetaDao {
 		}
 		return retType;
 	}	
+
+	
+	//add by ning 201905
+	public String calcuIdKey(String tableName){
+		Map idHolder=(Map) MicroDbHolder.getIdMap().get(dbName);
+		if(idHolder!=null){
+			String idKey=(String) idHolder.get(tableName);
+			if(idKey!=null && !"".equals(idKey)){
+				return idKey;
+			}
+		}
+		return calcuIdKey();
+	}	
+	
 	
 	public String calcuIdKey(){
 		if(defaultId!=null && !"default".equals(defaultId)){
@@ -672,6 +686,10 @@ public class MicroMetaDao {
 	public Map<String, Object> queryObjJoinById(String tableName,Object id) {
 		//String tableName=changeTableNameCase(otableName);
 		//String tempIdKey=changeInIdKeyCase(calcuIdKey());
+		
+		//add ning 201905
+		//String tempIdKey=calcuIdKey(tableName);
+		
 		String tempIdKey=calcuIdKey();
 		String where="where "+tempIdKey+"=?";
 		String limitStr="";
@@ -1284,7 +1302,11 @@ public class MicroMetaDao {
 		if(autoOperTime){
 			setStr="update_time="+timeName+","+setStr;
 		}
+		
+		//add ning 201905
+		//String tempIdKey=calcuIdKey(tableName);
 		String tempIdKey=calcuIdKey();
+		
 		String sql = "update " + tableName +" set "+setStr+ " where "+tempIdKey+"=?";
 
 		paramList.add(id);
@@ -1380,7 +1402,11 @@ public class MicroMetaDao {
 		//JdbcTemplate jdbcTemplate = (JdbcTemplate) MicroDbHolder.getDbSource(dbName);
 		//String tableName=changeTableNameCase(otableName);
 		JdbcTemplate jdbcTemplate =getMicroJdbcTemplate();
+		
+		//add ning 201905
+		//String tempIdKey=calcuIdKey(tableName);
 		String tempIdKey=calcuIdKey();
+		
 		String sql = "delete from " + tableName + " where "+tempIdKey+"=?";
 		Object[] paramArray=new Object[1];
 		paramArray[0]=id;

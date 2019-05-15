@@ -14,6 +14,17 @@ public class MicroDbHolder {
 public static Map dbHolder=new HashMap();
 public static Map readOnlyMap=new HashMap();
 public static Map dbTypeMap=new HashMap();
+
+// add by ning 201905
+public static Map idMap=new HashMap();
+public static Map getIdMap() {
+	return idMap;
+}
+
+public static void setIdMap(Map idMap) {
+	MicroDbHolder.idMap = idMap;
+}
+
 public static Map getDbTypeMap() {
 	return dbTypeMap;
 }
